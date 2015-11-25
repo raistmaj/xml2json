@@ -1,0 +1,46 @@
+{
+  "success": 1,
+  "data": {
+    "score": 50,
+    "submission": 102913,
+    "malicious_activity": "dangerous virus",
+    "errors": [
+      "break",
+      "things",
+      "badly "
+    ],
+    "threat": "your family",
+    "threat_class": "very badly",
+    "report": {
+      "task_uuid": "8198138ABSHAD",
+      "score": 10,
+      "submission": "190131",
+      "analysis_subject": {
+        "url": "oneurl",
+        "referer": "your mother",
+        "md5": "10931093ASBD",
+        "sha1": "aisda0913123",
+        "mime_type": "pdf"
+      },
+      "malicious_activity": [
+        "omn",
+        "nom",
+        "nom"
+      ],
+      "threat": "again",
+      "threat_class": "and again",
+      "child_tasks": [
+        {
+          "task_uuid": "10923190831",
+          "score": 100,
+          "tag": "1093901390"
+        },
+        {
+          "task_uuid": "10923190831",
+          "score": 100,
+          "tag": "1093901390"
+        }
+      ]
+    }
+  }
+}

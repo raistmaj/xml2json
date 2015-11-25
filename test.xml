@@ -1,0 +1,48 @@
+<cudason>
+    <class name="data_get_results_reports">
+        <string name="report_uuid"/>
+        <integer name="relevance"/>
+        <string name="description" optional="true"/>
+        <string name="report_versions" optional="true"/>
+    </class>
+    <class name="child_tasks">
+        <string name="task_uuid"/>
+        <integer name="score"/>
+        <string name="tag"/>
+    </class>
+    <class name="data_get_results_report_analysis_subject">
+        <string name="url" optional="true"/>
+        <string name="referer" optional="true"/>
+        <string name="md5" optional="true"/>
+        <string name="sha1" optional="true"/>
+        <string name="mime_type" optional="true"/>
+    </class>
+    <class name="data_get_results_report">
+        <string name="task_uuid"/>
+        <integer name="score"/>
+        <string name="submission"/>
+        <refclass name="analysis_subject" refclass="data_get_results_report_analysis_subject"/>
+        <list name="malicious_activity" refclass="string" optional="true"/>
+        <string name="threat" optional="true"/>
+        <string name="threat_class" optional="true"/>
+        <list name="child_tasks" optional="true" refclass="child_tasks"/>
+    </class>
+
+    <class name="data_get_results">
+        <integer name="score"/>
+        <integer name="submission"/>
+        <string name="malicious_activity" optional="true"/>
+        <list name="errors" refclass="string" optional="true"/>
+        <string name="threat" optional="true"/>
+        <string name="threat_class" optional="true"/>
+        <refclass name="report" optional="true" refclass="data_get_results_report"/>
+        <refclass name="reports" optional="true" refclass="data_get_results_reports"/>
+    </class>
+    <!-- Main json to process the results get results-->
+    <json name="get_results">
+        <integer name="success"/>
+        <integer condition="success == 0" name="error_code"/>
+        <string condition="success == 0" name="error"/>
+        <refclass condition="success == 1" name="data" refclass="data_get_results"/>
+    </json>
+</cudason>
