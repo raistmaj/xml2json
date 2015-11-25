@@ -28,34 +28,29 @@
 
 #include "cudaxmltype.h"
 
-namespace cuda
-{
-	/**
-	 * xml type to reference a boolean
-	 * */
-	class cudaxmltypeboolean : public cudaxmltype
-	{
-	public:
-		/**
-		 * Constructor of the boolean
-		 * */
-		cudaxmltypeboolean() : cudaxmltype()
-		{
-		}
-		/**
-		 * Destructor of the boolean
-		 * */
-		virtual ~cudaxmltypeboolean()
-		{
-		}
-		/**
-		 * Is true for this class
-		 * */
-		virtual bool isBoolean() const final
-		{
-			return true;
-		}
-	};
+namespace cuda {
+  /**
+   * xml type to reference a boolean
+   * */
+  class cudaxmltypeboolean : public cudaxmltype {
+  public:
+    /**
+     * Constructor of the boolean
+     * */
+    cudaxmltypeboolean() : cudaxmltype() {
+    }
+    /**
+     * Destructor of the boolean
+     * */
+    virtual ~cudaxmltypeboolean() {
+    }
+    /**
+     * Is true for this class
+     * */
+    virtual bool isBoolean() const final {
+      return true;
+    }
+  };
 }
 
 #endif //CUDASON_CUDAXMLTYPEBOOLEAN_H

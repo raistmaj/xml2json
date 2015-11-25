@@ -28,34 +28,29 @@
 
 #include "cudaxmltype.h"
 
-namespace cuda
-{
-	/**
-	 * Type float of the xml template
-	 * */
-	class cudaxmltypefloat : public cudaxmltype
-	{
-	public:
-		/**
-		 * Constructor of type float
-		 * */
-		cudaxmltypefloat() : cudaxmltype()
-		{
-		}
-		/**
-		 * Destructor
-		 * */
-		virtual ~cudaxmltypefloat()
-		{
-		}
-		/**
-		 * It is a float
-		 * */
-		virtual bool isFloat() const final
-		{
-			return true;
-		}
-	};
+namespace cuda {
+  /**
+   * Type float of the xml template
+   * */
+  class cudaxmltypefloat : public cudaxmltype {
+  public:
+    /**
+     * Constructor of type float
+     * */
+    cudaxmltypefloat() : cudaxmltype() {
+    }
+    /**
+     * Destructor
+     * */
+    virtual ~cudaxmltypefloat() {
+    }
+    /**
+     * It is a float
+     * */
+    virtual bool isFloat() const final {
+      return true;
+    }
+  };
 }
 
 #endif //CUDASON_CUDAXMLTYPEFLOAT_H

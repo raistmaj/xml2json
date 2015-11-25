@@ -30,90 +30,88 @@
 #include <string>
 #include <sstream>
 
-namespace cuda
-{
-	/**
-	 * Main class of the application. Cudason will be used to
-	 * encapsulate the initialization logic.
-	 *
-	 * Depending on the input parameters the behavior will change.
-	 * By default the input will be stdin and the output stdout, both
-	 * files will share the same output.
-	 *
-	 * If we want a different solution, like an input file or split
-	 * the header and the implementation in different files
-	 * we can use different parameters
-	 *
-	 * cudason allowed options:
-  	 * -h [ --help ]               produce this help message
-  	 * -e [ --write-file-h ] arg   The .h output will be written to this file
-  	 * -p [ --write-file-cpp ] arg The .cpp output will be written to this file
-  	 * -i [ --read-file ] arg      Use this file as input xml template
-  	 * -a [ --apped-string ] arg   String to be appended in the internal namespace
+namespace cuda {
+  /**
+   * Main class of the application. Cudason will be used to
+   * encapsulate the initialization logic.
+   *
+   * Depending on the input parameters the behavior will change.
+   * By default the input will be stdin and the output stdout, both
+   * files will share the same output.
+   *
+   * If we want a different solution, like an input file or split
+   * the header and the implementation in different files
+   * we can use different parameters
+   *
+   * cudason allowed options:
+     * -h [ --help ]               produce this help message
+     * -e [ --write-file-h ] arg   The .h output will be written to this file
+     * -p [ --write-file-cpp ] arg The .cpp output will be written to this file
+     * -i [ --read-file ] arg      Use this file as input xml template
+     * -a [ --apped-string ] arg   String to be appended in the internal namespace
      *                             to avoid collisions with existing code
-	 * */
-	class cudason
-	{
-	public:
-		/**
-		 * Default constructor of the class, will accept a standar
-		 * input from the terminal
-		 *
-		 * \argc number of arguments
-		 * \argv arguments
-		 * */
-		cudason(int argc, char **argv);
-		/**
-		 * Releases the resources used by the instance
-		 * */
-		~cudason();
-		/**
-		 * Run the program, in this case we will read the input stream
-		 * and output in the outputs stream
-		 * */
-		void run();
-	protected:
-		/**
-		 * Stream used to enter data in the application, by default will
-		 * be std::cin
-		 * */
-		std::istream m_inputStream;
-		/**
-		 * Stream used to output data in the application, this stream
-		 * will be used to print the .h file
-		 *
-		 * By default is std::cout
-		 * */
-		std::ostream m_h_stream;
-		/**
-		 * Stream used to output data in the application, this stream
-		 * will be used to print the .cpp file
-		 *
-		 * By default is std::cout
-		 * */
-		std::ostream m_cpp_stream;
+   * */
+  class cudason {
+  public:
+    /**
+     * Default constructor of the class, will accept a standar
+     * input from the terminal
+     *
+     * \argc number of arguments
+     * \argv arguments
+     * */
+    cudason(int argc, char **argv);
+    /**
+     * Releases the resources used by the instance
+     * */
+    ~cudason();
+    /**
+     * Run the program, in this case we will read the input stream
+     * and output in the outputs stream
+     * */
+    void run();
+  protected:
+    /**
+     * Stream used to enter data in the application, by default will
+     * be std::cin
+     * */
+    std::istream m_inputStream;
+    /**
+     * Stream used to output data in the application, this stream
+     * will be used to print the .h file
+     *
+     * By default is std::cout
+     * */
+    std::ostream m_h_stream;
+    /**
+     * Stream used to output data in the application, this stream
+     * will be used to print the .cpp file
+     *
+     * By default is std::cout
+     * */
+    std::ostream m_cpp_stream;
 
-		/**
-		 * Input file used to read the template we want to process
-		 * */
-		std::ifstream m_input_file;
-		/**
-		 * Stream to keep and manipulate the .h file
-		 * */
-		std::ofstream m_h_file;
-		/**
-		 * Stream to keep and manipulate the .cpp file
-		 * */
-		std::ofstream m_cpp_file;
-		/**
-		 * String used to store the file of the .h
-		 * */
-		std::string m_h_filename;
-		/**
-		 * String used to append data to the namespace
-		 * */
-		std::string m_append_string;
-	};
+    /**
+     * Input file used to read the template we want to process
+     * */
+    std::ifstream m_input_file;
+    /**
+     * Stream to keep and manipulate the .h file
+     * */
+    std::ofstream m_h_file;
+    /**
+     * Stream to keep and manipulate the .cpp file
+     * */
+    std::ofstream m_cpp_file;
+    /**
+     * String used to store the file of the .h
+     * */
+    std::string m_h_filename;
+    /**
+     * String used to append data to the namespace
+     * */
+    std::string m_append_string;
+  };
 }
 
 #endif //CUDASON_CUDASON_H

@@ -30,59 +30,52 @@
 #include <memory>
 #include <vector>
 
-namespace cuda
-{
-	/**
-	 * This class is used to store multiple children of one node
-	 *
-	 * Don't get confused as we will never have a possible "class",
-	 * only refclass on the json, this is used to store the templates
-	 * of possible referenced classes
-	 * */
-	class cudaxmltypeclass : public cudaxmltype
-	{
-	public:
-		/**
-		 * Constructor of the class
-		 * */
-		cudaxmltypeclass() : cudaxmltype()
-		{
-		}
-		/**
-		 * Destructor
-		 * */
-		virtual ~cudaxmltypeclass()
-		{
-		}
-		/**
-		 * It is a class
-		 * */
-		virtual bool isClass() const final
-		{
-			return true;
-		}
-		/**
-		 * Adds one children to the list
-		 * */
-		template<typename T>
-		inline void addChildren(T &&val)
-		{
-			m_children.push_back(val);
-		}
-		/**
-		 * Gets the list of children we have in the class
-		 * */
-		const std::vector<std::shared_ptr<cudaxmltype>> &getChildren() const
-		{
-			return m_children;
-		}
-	protected:
-		/**
-		 * Array of children are included within the class. It is a vector as we
-		 * want to keep the order
-		 * */
-		std::vector<std::shared_ptr<cudaxmltype>> m_children;
-	};
+namespace cuda {
+  /**
+   * This class is used to store multiple children of one node
+   *
+   * Don't get confused as we will never have a possible "class",
+   * only refclass on the json, this is used to store the templates
+   * of possible referenced classes
+   * */
+  class cudaxmltypeclass : public cudaxmltype {
+  public:
+    /**
+     * Constructor of the class
+     * */
+    cudaxmltypeclass() : cudaxmltype() {
+    }
+    /**
+     * Destructor
+     * */
+    virtual ~cudaxmltypeclass() {
+    }
+    /**
+     * It is a class
+     * */
+    virtual bool isClass() const final {
+      return true;
+    }
+    /**
+     * Adds one children to the list
+     * */
+    template<typename T>
+    inline void addChildren(T &&val) {
+      m_children.push_back(val);
+    }
+    /**
+     * Gets the list of children we have in the class
+     * */
+    const std::vector<std::shared_ptr<cudaxmltype>> &getChildren() const {
+      return m_children;
+    }
+  protected:
+    /**
+     * Array of children are included within the class. It is a vector as we
+     * want to keep the order
+     * */
+    std::vector<std::shared_ptr<cudaxmltype>> m_children;
+  };
 }
 
 #endif //CUDASON_CUDAXMLTYPECLASS_H

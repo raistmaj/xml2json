@@ -28,34 +28,29 @@
 
 #include "cudaxmltype.h"
 
-namespace cuda
-{
-	/**
-	 * String type on the xml template
-	 * */
-	class cudaxmltypestring : public cudaxmltype
-	{
-	public:
-		/**
-		 * Constructor
-		 * */
-		cudaxmltypestring() : cudaxmltype()
-		{
-		}
-		/**
-		 * Destructor
-		 * */
-		virtual ~cudaxmltypestring()
-		{
-		}
-		/**
-		 * It is a string
-		 * */
-		virtual bool isString() const final
-		{
-			return true;
-		}
-	};
+namespace cuda {
+  /**
+   * String type on the xml template
+   * */
+  class cudaxmltypestring : public cudaxmltype {
+  public:
+    /**
+     * Constructor
+     * */
+    cudaxmltypestring() : cudaxmltype() {
+    }
+    /**
+     * Destructor
+     * */
+    virtual ~cudaxmltypestring() {
+    }
+    /**
+     * It is a string
+     * */
+    virtual bool isString() const final {
+      return true;
+    }
+  };
 }
 
 #endif //CUDASON_CUDAXMLTYPESTRING_H

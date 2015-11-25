@@ -25,9 +25,8 @@
  ****************************************************************************************/
 #include "cudason.h"
 
-int main(int argc, char **argv)
-{
-	cuda::cudason program(argc, argv);
-	program.run();
-	return 0;
+int main(int argc, char **argv) {
+  cuda::cudason program(argc, argv);
+  program.run();
+  return 0;
 }

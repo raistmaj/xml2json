@@ -30,34 +30,29 @@
 #include <vector>
 #include <memory>
 
-namespace cuda
-{
-	/**
-	 * List type on the xml template, reference array json object
-	 * */
-	class cudaxmltypelist : public cudaxmltype
-	{
-	public:
-		/**
-		 * Constructor
-		 * */
-		cudaxmltypelist() : cudaxmltype()
-		{
-		}
-		/**
-		 * Destructor
-		 * */
-		virtual ~cudaxmltypelist()
-		{
-		}
-		/**
-		 * It is a list
-		 * */
-		virtual bool isList() const final
-		{
-			return true;
-		}
-	};
+namespace cuda {
+  /**
+   * List type on the xml template, reference array json object
+   * */
+  class cudaxmltypelist : public cudaxmltype {
+  public:
+    /**
+     * Constructor
+     * */
+    cudaxmltypelist() : cudaxmltype() {
+    }
+    /**
+     * Destructor
+     * */
+    virtual ~cudaxmltypelist() {
+    }
+    /**
+     * It is a list
+     * */
+    virtual bool isList() const final {
+      return true;
+    }
+  };
 }
 
 #endif //CUDASON_CUDAXMLTYPELIST_H

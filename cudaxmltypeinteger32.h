@@ -28,34 +28,29 @@
 
 #include "cudaxmltype.h"
 
-namespace cuda
-{
-	/**
-	 * Integer type of the xml template
-	 * */
-	class cudaxmltypeinteger32 : public cudaxmltype
-	{
-	public:
-		/**
-		 * Constructor
-		 * */
-		cudaxmltypeinteger32() : cudaxmltype()
-		{
-		}
-		/**
-		 * Destructor
-		 * */
-		virtual ~cudaxmltypeinteger32()
-		{
-		}
-		/**
-		 * It is an integer
-		 * */
-		virtual bool isInteger32() const final
-		{
-			return true;
-		}
-	};
+namespace cuda {
+  /**
+   * Integer type of the xml template
+   * */
+  class cudaxmltypeinteger32 : public cudaxmltype {
+  public:
+    /**
+     * Constructor
+     * */
+    cudaxmltypeinteger32() : cudaxmltype() {
+    }
+    /**
+     * Destructor
+     * */
+    virtual ~cudaxmltypeinteger32() {
+    }
+    /**
+     * It is an integer
+     * */
+    virtual bool isInteger32() const final {
+      return true;
+    }
+  };
 }
 
 #endif //CUDASON_CUDAXMLTYPEINTEGER32_H

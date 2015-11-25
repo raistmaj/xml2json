@@ -28,34 +28,29 @@
 
 #include "cudaxmltype.h"
 
-namespace cuda
-{
-	/**
-	 * Referenced class xml type, is an object on the json
-	 * */
-	class cudaxmltyperefclass : public cuda::cudaxmltype
-	{
-	public:
-		/**
-		 * Constructor
-		 * */
-		cudaxmltyperefclass() : cudaxmltype()
-		{
-		}
-		/**
-		 * Destructor
-		 * */
-		virtual ~cudaxmltyperefclass()
-		{
-		}
-		/**
-		 * Is a referenced class
-		 * */
-		virtual bool isRefClass() const final
-		{
-			return true;
-		}
-	};
+namespace cuda {
+  /**
+   * Referenced class xml type, is an object on the json
+   * */
+  class cudaxmltyperefclass : public cuda::cudaxmltype {
+  public:
+    /**
+     * Constructor
+     * */
+    cudaxmltyperefclass() : cudaxmltype() {
+    }
+    /**
+     * Destructor
+     * */
+    virtual ~cudaxmltyperefclass() {
+    }
+    /**
+     * Is a referenced class
+     * */
+    virtual bool isRefClass() const final {
+      return true;
+    }
+  };
 }
 
 #endif //CUDASON_CUDAXMLTYPEREFCLASS_H

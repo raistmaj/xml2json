@@ -33,57 +33,53 @@
 #include <unordered_set>
 #include <string>
 
-namespace cuda
-{
-	/**
-	 * Class used to store our XML tree with its properties
-	 * and transform it afterwards to json
-	 * */
-	class cudaxml
-	{
-	public:
-		/**
-		 * Creates a full xml tree ready to be written
-		 * on disk based on the content string
-		 * */
-		explicit cudaxml(const std::string &content);
-		/**
-		 * Forbid copy
-		 * */
-		cudaxml(const cudaxml &) = delete;
-		/**
-		 * Clean the resources
-		 * */
-		~cudaxml();
-		/**
-		 * Forbid assignement
-		 * */
-		cudaxml &operator=(const cudaxml &) = delete;
-		/**
-		 * Gets the class map
-		 * */
-		inline const std::vector<std::pair<std::string, std::shared_ptr<cuda::cudaxmltypeclass>>> &getClassMap() const
-		{
-			return m_classMap;
-		}
-		/**
-		 * Gets the json array map
-		 * */
-		inline const std::vector<std::shared_ptr<cuda::cudaxmltypeclass>> &getJsonArray() const
-		{
-			return m_jsonArray;
-		}
-	protected:
-		/**
-		 * List of classes we will use in the creation of the json, we use a vector of pairs as we need to keep
-		 * the dependencies declared on the input template, anyway the intention is to use it as a map
-		 * */
-		std::vector<std::pair<std::string, std::shared_ptr<cuda::cudaxmltypeclass>>> m_classMap;
-		/**
-		 * List of json documents we will output
-		 * */
-		std::vector<std::shared_ptr<cuda::cudaxmltypeclass>> m_jsonArray;
-	};
+namespace cuda {
+  /**
+   * Class used to store our XML tree with its properties
+   * and transform it afterwards to json
+   * */
+  class cudaxml {
+  public:
+    /**
+     * Creates a full xml tree ready to be written
+     * on disk based on the content string
+     * */
+    explicit cudaxml(const std::string &content);
+    /**
+     * Forbid copy
+     * */
+    cudaxml(const cudaxml &) = delete;
+    /**
+     * Clean the resources
+     * */
+    ~cudaxml();
+    /**
+     * Forbid assignement
+     * */
+    cudaxml &operator=(const cudaxml &) = delete;
+    /**
+     * Gets the class map
+     * */
+    inline const std::vector<std::pair<std::string, std::shared_ptr<cuda::cudaxmltypeclass>>> &getClassMap() const {
+      return m_classMap;
+    }
+    /**
+     * Gets the json array map
+     * */
+    inline const std::vector<std::shared_ptr<cuda::cudaxmltypeclass>> &getJsonArray() const {
+      return m_jsonArray;
+    }
+  protected:
+    /**
+     * List of classes we will use in the creation of the json, we use a vector of pairs as we need to keep
+     * the dependencies declared on the input template, anyway the intention is to use it as a map
+     * */
+    std::vector<std::pair<std::string, std::shared_ptr<cuda::cudaxmltypeclass>>> m_classMap;
+    /**
+     * List of json documents we will output
+     * */
+    std::vector<std::shared_ptr<cuda::cudaxmltypeclass>> m_jsonArray;
+  };
 }
 
 #endif //CUDASON_CUDAXML_H
