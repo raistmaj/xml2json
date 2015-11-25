@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+    File used to implement the rest api from riot games
+    https://developer.riotgames.com/api
+ -->
+<cudason>
+    <class name="ChampionDto">
+        <boolean name="active"/>
+        <boolean name="botEnable"/>
+        <boolean name="botMmEnable"/>
+        <boolean name="freeToPlay"/>
+        <integer name="id"/>
+        <boolean name="rankedPlayEnabled"/>
+    </class>
+
+    <class name="player_dto">
+        <integer32 name="championId"/>
+        <integer name="summonerId"/>
+        <integer32 name="teamId"/>
+    </class>
+
+    <class name="banned_champion">
+        <integer name="championId"/>
+        <integer32 name="pickTurn"/>
+        <integer name="teamId"/>
+    </class>
+
+    <class name="observer">
+        <string name="encryptionKey"/>
+    </class>
+
+    <class name="mastery">
+        <integer name="masteryId"/>
+        <integer32 name="rank"/>
+    </class>
+
+    <class name="rune">
+        <integer32 name="count"/>
+        <integer name="runeId"/>
+    </class>
+
+    <class name="current_game_participant">
+        <boolean name="bot"/>
+        <integer name="championId"/>
+        <list name="masteries" refclass="mastery"/>
+        <integer name="profileIconId"/>
+        <list name="runes" refclass="rune"/>
+        <integer name="spell1Id"/>
+        <integer name="spell2Id"/>
+        <integer name="summonerId"/>
+        <string name="summonerName"/>
+        <integer name="teamId"/>
+    </class>
+
+    <class name="participant">
+        <boolean name="bot"/>
+        <integer name="championId"/>
+        <integer name="profileIconId"/>
+        <integer name="spell1Id"/>
+        <integer name="spell2Id"/>
+        <string name="summonerName"/>
+        <integer name="teamId"/>
+    </class>
+
+    <class name="featured_game_info">
+        <list name="bannedChampions" refclass="banned_champion"/>
+        <integer name="gameId"/>
+        <integer name="gameLength"/>
+        <string name="gameMode"/>
+        <integer name="gameQueueConfigId"/>
+        <integer name="gameStartTime"/>
+        <string name="gameType"/>
+        <integer name="mapId"/>
+        <refclass name="observers" refclass="observer"/>
+        <list name="participants" refclass="participant"/>
+        <string name="platformId"/>
+    </class>
+
+    <class name="raw_stats_dto">
+        <integer32 name="assists"/>
+        <integer32 name="barracksKilled"/>
+        <integer32 name="championsKilled"/>
+        <integer32 name="combatPlayerScore"/>
+        <integer32 name="consumablesPurchased"/>
+        <integer32 name="damageDealtPlayer"/>
+        <integer32 name="doubleKills"/>
+        <integer32 name="firstBlood"/>
+        <integer32 name="gold"/>
+        <integer32 name="goldEarned"/>
+        <integer32 name="goldSpent"/>
+        <integer32 name="item0"/>
+        <integer32 name="item1"/>
+        <integer32 name="item2"/>
+        <integer32 name="item3"/>
+        <integer32 name="item4"/>
+        <integer32 name="item5"/>
+        <integer32 name="item6"/>
+        <integer32 name="itemsPurchased"/>
+        <integer32 name="killingSprees"/>
+        <integer32 name="largestCriticalStrike"/>
+        <integer32 name="largestKillingSpree"/>
+        <integer32 name="largestMultiKill"/>
+        <integer32 name="legendaryItemsCreated"/>
+        <integer32 name="level"/>
+        <integer32 name="magicDamageDealtPlayer"/>
+        <integer32 name="magicDamageDealtToChampions"/>
+        <integer32 name="magicDamageTaken"/>
+        <integer32 name="minionsDenied"/>
+        <integer32 name="minionsKilled"/>
+        <integer32 name="neutralMinionsKilled"/>
+        <integer32 name="neutralMinionsKilledEnemyJungle"/>
+        <integer32 name="neutralMinionsKilledYourJungle"/>
+        <boolean name="nexusKilled"/>
+        <integer32 name="nodeCapture"/>
+        <integer32 name="nodeCaptureAssist"/>
+        <integer32 name="nodeNeutralize"/>
+        <integer32 name="nodeNeutralizeAssist"/>
+        <integer32 name="numDeaths"/>
+        <integer32 name="numItemsBought"/>
+        <integer32 name="objectivePlayerScore"/>
+        <integer32 name="pentaKills"/>
+        <integer32 name="physicalDamageDealtPlayer"/>
+        <integer32 name="physicalDamageDealtToChampions"/>
+        <integer32 name="physicalDamageTaken"/>
+        <integer32 name="playerPosition"/>
+        <integer32 name="playerRole"/>
+        <integer32 name="quadrakills"/>
+        <integer32 name="sightWardsBought"/>
+        <integer32 name="spell1Cast"/>
+        <integer32 name="spell2Cast"/>
+        <integer32 name="spell3Cast"/>
+        <integer32 name="spell4Cast"/>
+        <integer32 name="summonSpell1Cast"/>
+        <integer32 name="summonSpeel2Cast"/>
+        <integer32 name="superMonsterKilled"/>
+        <integer32 name="team"/>
+        <integer32 name="teamObjective"/>
+        <integer32 name="timePlayed"/>
+        <integer32 name="totalDamageDealt"/>
+        <integer32 name="totalDamageDealtToChampions"/>
+        <integer32 name="totalDamageTaken"/>
+        <integer32 name="totalHeal"/>
+        <integer32 name="totalPlayerScore"/>
+        <integer32 name="totalScoreRank"/>
+        <integer32 name="totalTimeCrowdControlDealt"/>
+        <integer32 name="totalUnitsHealed"/>
+        <integer32 name="tripleKills"/>
+        <integer32 name="trueDamageDealtPlayer"/>
+        <integer32 name="trueDamageDealtToChampions"/>
+        <integer32 name="truDamageTaken"/>
+        <integer32 name="turretsKilled"/>
+        <integer32 name="unrealKills"/>
+        <integer32 name="victoryPointTotal"/>
+        <integer32 name="visionsWardsBought"/>
+        <integer32 name="wardKilled"/>
+        <integer32 name="wardPlaced"/>
+        <boolean name="win"/>
+    </class>
+
+    <class name="game_dto">
+        <integer32 name="championId"/>
+        <integer name="createDate"/>
+        <list name="fellowPlayers" refclass="player_dto"/>
+        <integer name="gameId"/>
+        <string name="gameMode"/>
+        <string name="gameType"/>
+        <boolean name="invalid"/>
+        <integer32 name="ipEarned"/>
+        <integer32 name="level"/>
+        <integer32 name="mapId"/>
+        <integer32 name="spell1"/>
+        <integer32 name="spell2"/>
+        <refclass name="starts" refclass="raw_stats_dto"/>
+        <string name="subType"/>
+        <integer32 name="teamId"/>
+    </class>
+
+    <json name="recent_game_by_summoner_id">
+        <list name="games" refclass="game_dto"/>
+        <integer name="summonerId"/>
+    </json>
+
+    <json name="featuredGames">
+        <integer name="clientRefreshInterval"/>
+        <list name="gameList" refclass="featured_game_info"/>
+    </json>
+
+    <json name="getSpectatorGameInfo">
+        <list name="bannedChampions" refclass="banned_champion"/>
+        <integer name="gameId"/>
+        <integer name="gameLength"/>
+        <string name="gameMode"/>
+        <integer name="gameQueueConfigId"/>
+        <integer name="gameStartTime"/>
+        <string name="gameType"/>
+        <integer name="mapId"/>
+        <refclass name="observers" refclass="observer"/>
+        <list name="participants" refclass="current_game_participant"/>
+        <string name="platformId"/>
+    </json>
+
+
+    <json name="champion">
+        <list name="champions" refclass="ChampionDto"/>
+    </json>
+</cudason>
