@@ -41,7 +41,7 @@ cuda::cudason::cudason(int argc, char **argv) : m_inputStream(std::cin.rdbuf()),
       ("write-file-cpp,p", boost::program_options::value<std::string>(),
        "The .cpp output will be written to this file")
       ("read-file,i", boost::program_options::value<std::string>(), "Use this file as input xml template")
-      ("apped-string,a", boost::program_options::value<std::string>(),
+      ("append-string,a", boost::program_options::value<std::string>(),
        "String to be appended in the internal namespace to avoid collisions with existing code");
 
   boost::program_options::variables_map variables_map;
