@@ -32,7 +32,7 @@
 #define CUDA_XMLTAGS_CLASS "class"
 #define CUDA_XMLTAGS_STRING "string"
 #define CUDA_XMLTAGS_INTEGER "integer"
-#define CUDA_XMLTAGS_INTEGER32 "integer32"
+#define CUDA_XMLTAGS_INTEGER32 "int32"
 #define CUDA_XMLTAGS_FLOAT "float"
 #define CUDA_XMLTAGS_BOOLEAN "boolean"
 #define CUDA_XMLTAGS_LIST "list"

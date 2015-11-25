@@ -14,14 +14,14 @@
     </class>
 
     <class name="player_dto">
-        <integer32 name="championId"/>
+        <int32 name="championId"/>
         <integer name="summonerId"/>
-        <integer32 name="teamId"/>
+        <int32 name="teamId"/>
     </class>
 
     <class name="banned_champion">
         <integer name="championId"/>
-        <integer32 name="pickTurn"/>
+        <int32 name="pickTurn"/>
         <integer name="teamId"/>
     </class>
 
@@ -31,11 +31,11 @@
 
     <class name="mastery">
         <integer name="masteryId"/>
-        <integer32 name="rank"/>
+        <int32 name="rank"/>
     </class>
 
     <class name="rune">
-        <integer32 name="count"/>
+        <int32 name="count"/>
         <integer name="runeId"/>
     </class>
 
@@ -77,102 +77,102 @@
     </class>
 
     <class name="raw_stats_dto">
-        <integer32 name="assists"/>
-        <integer32 name="barracksKilled"/>
-        <integer32 name="championsKilled"/>
-        <integer32 name="combatPlayerScore"/>
-        <integer32 name="consumablesPurchased"/>
-        <integer32 name="damageDealtPlayer"/>
-        <integer32 name="doubleKills"/>
-        <integer32 name="firstBlood"/>
-        <integer32 name="gold"/>
-        <integer32 name="goldEarned"/>
-        <integer32 name="goldSpent"/>
-        <integer32 name="item0"/>
-        <integer32 name="item1"/>
-        <integer32 name="item2"/>
-        <integer32 name="item3"/>
-        <integer32 name="item4"/>
-        <integer32 name="item5"/>
-        <integer32 name="item6"/>
-        <integer32 name="itemsPurchased"/>
-        <integer32 name="killingSprees"/>
-        <integer32 name="largestCriticalStrike"/>
-        <integer32 name="largestKillingSpree"/>
-        <integer32 name="largestMultiKill"/>
-        <integer32 name="legendaryItemsCreated"/>
-        <integer32 name="level"/>
-        <integer32 name="magicDamageDealtPlayer"/>
-        <integer32 name="magicDamageDealtToChampions"/>
-        <integer32 name="magicDamageTaken"/>
-        <integer32 name="minionsDenied"/>
-        <integer32 name="minionsKilled"/>
-        <integer32 name="neutralMinionsKilled"/>
-        <integer32 name="neutralMinionsKilledEnemyJungle"/>
-        <integer32 name="neutralMinionsKilledYourJungle"/>
+        <int32 name="assists"/>
+        <int32 name="barracksKilled"/>
+        <int32 name="championsKilled"/>
+        <int32 name="combatPlayerScore"/>
+        <int32 name="consumablesPurchased"/>
+        <int32 name="damageDealtPlayer"/>
+        <int32 name="doubleKills"/>
+        <int32 name="firstBlood"/>
+        <int32 name="gold"/>
+        <int32 name="goldEarned"/>
+        <int32 name="goldSpent"/>
+        <int32 name="item0"/>
+        <int32 name="item1"/>
+        <int32 name="item2"/>
+        <int32 name="item3"/>
+        <int32 name="item4"/>
+        <int32 name="item5"/>
+        <int32 name="item6"/>
+        <int32 name="itemsPurchased"/>
+        <int32 name="killingSprees"/>
+        <int32 name="largestCriticalStrike"/>
+        <int32 name="largestKillingSpree"/>
+        <int32 name="largestMultiKill"/>
+        <int32 name="legendaryItemsCreated"/>
+        <int32 name="level"/>
+        <int32 name="magicDamageDealtPlayer"/>
+        <int32 name="magicDamageDealtToChampions"/>
+        <int32 name="magicDamageTaken"/>
+        <int32 name="minionsDenied"/>
+        <int32 name="minionsKilled"/>
+        <int32 name="neutralMinionsKilled"/>
+        <int32 name="neutralMinionsKilledEnemyJungle"/>
+        <int32 name="neutralMinionsKilledYourJungle"/>
         <boolean name="nexusKilled"/>
-        <integer32 name="nodeCapture"/>
-        <integer32 name="nodeCaptureAssist"/>
-        <integer32 name="nodeNeutralize"/>
-        <integer32 name="nodeNeutralizeAssist"/>
-        <integer32 name="numDeaths"/>
-        <integer32 name="numItemsBought"/>
-        <integer32 name="objectivePlayerScore"/>
-        <integer32 name="pentaKills"/>
-        <integer32 name="physicalDamageDealtPlayer"/>
-        <integer32 name="physicalDamageDealtToChampions"/>
-        <integer32 name="physicalDamageTaken"/>
-        <integer32 name="playerPosition"/>
-        <integer32 name="playerRole"/>
-        <integer32 name="quadrakills"/>
-        <integer32 name="sightWardsBought"/>
-        <integer32 name="spell1Cast"/>
-        <integer32 name="spell2Cast"/>
-        <integer32 name="spell3Cast"/>
-        <integer32 name="spell4Cast"/>
-        <integer32 name="summonSpell1Cast"/>
-        <integer32 name="summonSpeel2Cast"/>
-        <integer32 name="superMonsterKilled"/>
-        <integer32 name="team"/>
-        <integer32 name="teamObjective"/>
-        <integer32 name="timePlayed"/>
-        <integer32 name="totalDamageDealt"/>
-        <integer32 name="totalDamageDealtToChampions"/>
-        <integer32 name="totalDamageTaken"/>
-        <integer32 name="totalHeal"/>
-        <integer32 name="totalPlayerScore"/>
-        <integer32 name="totalScoreRank"/>
-        <integer32 name="totalTimeCrowdControlDealt"/>
-        <integer32 name="totalUnitsHealed"/>
-        <integer32 name="tripleKills"/>
-        <integer32 name="trueDamageDealtPlayer"/>
-        <integer32 name="trueDamageDealtToChampions"/>
-        <integer32 name="truDamageTaken"/>
-        <integer32 name="turretsKilled"/>
-        <integer32 name="unrealKills"/>
-        <integer32 name="victoryPointTotal"/>
-        <integer32 name="visionsWardsBought"/>
-        <integer32 name="wardKilled"/>
-        <integer32 name="wardPlaced"/>
+        <int32 name="nodeCapture"/>
+        <int32 name="nodeCaptureAssist"/>
+        <int32 name="nodeNeutralize"/>
+        <int32 name="nodeNeutralizeAssist"/>
+        <int32 name="numDeaths"/>
+        <int32 name="numItemsBought"/>
+        <int32 name="objectivePlayerScore"/>
+        <int32 name="pentaKills"/>
+        <int32 name="physicalDamageDealtPlayer"/>
+        <int32 name="physicalDamageDealtToChampions"/>
+        <int32 name="physicalDamageTaken"/>
+        <int32 name="playerPosition"/>
+        <int32 name="playerRole"/>
+        <int32 name="quadrakills"/>
+        <int32 name="sightWardsBought"/>
+        <int32 name="spell1Cast"/>
+        <int32 name="spell2Cast"/>
+        <int32 name="spell3Cast"/>
+        <int32 name="spell4Cast"/>
+        <int32 name="summonSpell1Cast"/>
+        <int32 name="summonSpeel2Cast"/>
+        <int32 name="superMonsterKilled"/>
+        <int32 name="team"/>
+        <int32 name="teamObjective"/>
+        <int32 name="timePlayed"/>
+        <int32 name="totalDamageDealt"/>
+        <int32 name="totalDamageDealtToChampions"/>
+        <int32 name="totalDamageTaken"/>
+        <int32 name="totalHeal"/>
+        <int32 name="totalPlayerScore"/>
+        <int32 name="totalScoreRank"/>
+        <int32 name="totalTimeCrowdControlDealt"/>
+        <int32 name="totalUnitsHealed"/>
+        <int32 name="tripleKills"/>
+        <int32 name="trueDamageDealtPlayer"/>
+        <int32 name="trueDamageDealtToChampions"/>
+        <int32 name="truDamageTaken"/>
+        <int32 name="turretsKilled"/>
+        <int32 name="unrealKills"/>
+        <int32 name="victoryPointTotal"/>
+        <int32 name="visionsWardsBought"/>
+        <int32 name="wardKilled"/>
+        <int32 name="wardPlaced"/>
         <boolean name="win"/>
     </class>
 
     <class name="game_dto">
-        <integer32 name="championId"/>
+        <int32 name="championId"/>
         <integer name="createDate"/>
         <list name="fellowPlayers" refclass="player_dto"/>
         <integer name="gameId"/>
         <string name="gameMode"/>
         <string name="gameType"/>
         <boolean name="invalid"/>
-        <integer32 name="ipEarned"/>
-        <integer32 name="level"/>
-        <integer32 name="mapId"/>
-        <integer32 name="spell1"/>
-        <integer32 name="spell2"/>
+        <int32 name="ipEarned"/>
+        <int32 name="level"/>
+        <int32 name="mapId"/>
+        <int32 name="spell1"/>
+        <int32 name="spell2"/>
         <refclass name="starts" refclass="raw_stats_dto"/>
         <string name="subType"/>
-        <integer32 name="teamId"/>
+        <int32 name="teamId"/>
     </class>
 
     <json name="recent_game_by_summoner_id">

@@ -27,6 +27,7 @@
 #define CUDASON_CUDASONOUTPUTENGINE_H
 
 #include "cudaxml.h"
+#include <cstdlib>
 #include <string>
 #include <iostream>
 #include <memory>
@@ -50,7 +51,7 @@ namespace cuda {
  * If you want to report any bug, please contact me at jpalma at barracuda dot com\n\
  * \n\
  * If you didn't get a copy of the code used to create these templates, you can always\n\
- * download it for free from https://github.com/raistmaj/cudason\n\
+ * download it for free from https://github.com/raistmaj/xml2json\n\
  * */\n"
 
 /**
@@ -481,7 +482,8 @@ namespace cuda {
         << "if (!__internal__cudason" << ADDITIONAL_STRING << "::_read_list("\
         << ""#INOUT"" << TYPE_NAME << ", "#RDATA"[\"" << TYPE_NAME\
         << "\"])) {\n"\
-        << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error reading list\\n\";"\
+        << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
+        << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error reading list\\n\";\n"\
         << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"") << "}\n\n"
 
 #define _DATA_READER_REFCLASS_ASSIGN(STREAMER, SPACE, ADDITIONAL_SPACE, REFCLASS, TYPE_NAME, INOUT, RDATA)\
@@ -540,7 +542,7 @@ namespace cuda {
               << "if (!rData.HasMember(\"" << single_element->name() << "\")) {\n"
               << TABS << TABS << TABS
               << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error entity: "
-              << class_map_it.first << " is missing mandatory entry " << single_element->name() << "\";\n"
+              << class_map_it.first << " is missing mandatory entry " << single_element->name() << "\\n\";\n"
               << TABS << TABS << TABS << "return false;\n"
               << TABS << TABS << "}\n";
               // Second if Check the type is the valid value
@@ -567,7 +569,7 @@ namespace cuda {
                                     single_element->name(), class_map_it.first, Array, rData);
               } else {
                 std::cerr << "Invalid element\n";
-                std::abort();
+                exit(-1);
               }
               // Third line, read the element depending on the type
               if (single_element->isBoolean()) {
@@ -595,7 +597,7 @@ namespace cuda {
                                              rData);
               } else {
                 std::cerr << "Invalid element\n";
-                std::abort();
+                exit(-1);
               }
             } else { // optional
               // First if
@@ -625,7 +627,7 @@ namespace cuda {
                                                 single_element->name(), Object, rData);
               } else {
                 std::cerr << "Invalid element\n";
-                std::abort();
+                exit(-1);
               }
               // Assign data
               if (single_element->isBoolean()) {
@@ -655,7 +657,7 @@ namespace cuda {
                                                          single_element->name(), inout., rData);
               } else {
                 std::cerr << "Invalid element\n";
-                std::abort();
+                exit(-1);
               }
               output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << "}\n"; // Close first if
             }
@@ -669,7 +671,7 @@ namespace cuda {
               << "if (!rData.HasMember(\"" << single_element->name() << "\")) {\n"
               << TABS << TABS << TABS << TABS
               << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error entity: "
-              << class_map_it.first << " is missing mandatory entry " << single_element->name() << "\";\n"
+              << class_map_it.first << " is missing mandatory entry " << single_element->name() << "\\n\";\n"
               << TABS << TABS << TABS << TABS << "return false;\n"
               << TABS << TABS << TABS << "}\n";
               // Second if Check the type is the valid value
@@ -696,7 +698,7 @@ namespace cuda {
                                     single_element->name(), class_map_it.first, Array, rData);
               } else {
                 std::cerr << "Invalid element\n";
-                std::abort();
+                  exit(-1);
               }
               // Third line, read the element depending on the type
               if (single_element->isBoolean()) {
@@ -724,7 +726,7 @@ namespace cuda {
                                              rData);
               } else {
                 std::cerr << "Invalid element\n";
-                std::abort();
+                  exit(-1);
               }
             } else {
               // The data is optional
@@ -754,7 +756,7 @@ namespace cuda {
                                                 single_element->name(), Object, rData);
               } else {
                 std::cerr << "Invalid element\n";
-                std::abort();
+                  exit(-1);
               }
               // Assign data
               if (single_element->isBoolean()) {
@@ -784,7 +786,7 @@ namespace cuda {
                                                          single_element->name(), inout., rData);
               } else {
                 std::cerr << "Invalid element\n";
-                std::abort();
+                exit(-1);
               }
               output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << TABS << "}\n"; // Close first if
             }
@@ -823,7 +825,7 @@ namespace cuda {
               << TABS << TABS << TABS
               << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error entity: "
               << class_map_it->name() << " is missing mandatory entry " << single_element->name() <<
-              "\";\n"
+              "\\n\";\n"
               << TABS << TABS << TABS << "return false;\n"
               << TABS << TABS << "}\n";
               // Second if Check the type is the valid value
@@ -850,7 +852,7 @@ namespace cuda {
                                     single_element->name(), class_map_it->name(), Array, _document);
               } else {
                 std::cerr << "Invalid element\n";
-                std::abort();
+                exit(-1);
               }
               // Third line, read the element depending on the type
               if (single_element->isBoolean()) {
@@ -878,7 +880,7 @@ namespace cuda {
                                              _document);
               } else {
                 std::cerr << "Invalid element\n";
-                std::abort();
+                exit(-1);
               }
               output_engine<T1, T2>::m_cpp_streamer << "\n";
             } else { // optional
@@ -909,7 +911,7 @@ namespace cuda {
                                                 single_element->name(), Object, _document);
               } else {
                 std::cerr << "Invalid element\n";
-                std::abort();
+                exit(-1);
               }
               // Assign data
               if (single_element->isBoolean()) {
@@ -939,7 +941,7 @@ namespace cuda {
                                                          single_element->name(), , _document);
               } else {
                 std::cerr << "Invalid element\n";
-                std::abort();
+                exit(-1);
               }
               output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << "}\n"; // Close first if
             }
@@ -957,7 +959,7 @@ namespace cuda {
               << TABS << TABS << TABS << TABS
               << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error entity: "
               << class_map_it->name() << " is missing mandatory entry " << single_element->name() <<
-              "\";\n"
+              "\\n\";\n"
               << TABS << TABS << TABS << TABS << "return false;\n"
               << TABS << TABS << TABS << "}\n";
               // Second if Check the type is the valid value
@@ -984,7 +986,7 @@ namespace cuda {
                                     single_element->name(), class_map_it->name(), Array, _document);
               } else {
                 std::cerr << "Invalid element\n";
-                std::abort();
+                exit(-1);
               }
               // Third line, read the element depending on the type
               if (single_element->isBoolean()) {
@@ -1012,7 +1014,7 @@ namespace cuda {
                                              _document);
               } else {
                 std::cerr << "Invalid element\n";
-                std::abort();
+                exit(-1);
               }
               output_engine<T1, T2>::m_cpp_streamer << "\n";
             } else {
@@ -1043,7 +1045,7 @@ namespace cuda {
                                                 single_element->name(), Object, _document);
               } else {
                 std::cerr << "Invalid element\n";
-                std::abort();
+                exit(-1);
               }
               // Assign data
               if (single_element->isBoolean()) {
@@ -1073,7 +1075,7 @@ namespace cuda {
                                                          single_element->name(), , _document);
               } else {
                 std::cerr << "Invalid element\n";
-                std::abort();
+                exit(-1);
               }
               output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << TABS << "}\n"; // Close first if
             }

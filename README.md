@@ -145,7 +145,7 @@ Inside *class* and *json* we can use the following table to guide us on wich att
 | Data type / Attribute | optional | condition | name | refclass |
 |-----------------------|----------|-----------|------|----------|
 | integer               | X        | X         | X    |          |
-| integer32             | X        | X         | X    |          |
+| int32                 | X        | X         | X    |          |
 | float                 | X        | X         | X    |          |
 | string                | X        | X         | X    |          |
 | list                  | X        | X         | X    | X        |
@@ -163,7 +163,7 @@ exists and the type is wrong.
 The next types are supported by the refclass attribute
 
 * integer: The array/class will be an integer of 64 bits
-* integer32: The array/class will be an integer of 32 bits
+* int32: The array/class will be an integer of 32 bits
 * float: The array/class will be a float
 * string: The array/class wll be a string
 * class name: The array/class will be a class already defined in your template
