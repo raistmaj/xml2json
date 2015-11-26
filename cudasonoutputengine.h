@@ -591,7 +591,7 @@ namespace cuda {
                  << SPACE << "bool _read_list(std::vector<__internal__cudason" << ADDITIONAL_STR << "::" << TYPE << "> &str, T &data)\n"\
                  << SPACE << "{\n"\
                  << SPACE << SPACE << "if (!data.IsArray()) {\n"\
-                 << SPACE << SPACE << SPACE << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error data is not an array\\n\";\n"\
+                 << SPACE << SPACE << SPACE << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error data is not an array\\n\";\n"\
                  << SPACE << SPACE << SPACE << "return false;\n"\
                  << SPACE << SPACE << "}\n\n"\
                  << SPACE << SPACE << "for (rapidjson::SizeType i = 0; i < data.Size(); ++i) {\n"\
@@ -599,7 +599,8 @@ namespace cuda {
                  << SPACE << SPACE << SPACE << "if (" << TYPE << "__input_parse(local_" << TYPE << ", data[i])) {\n"\
                  << SPACE << SPACE << SPACE << SPACE << "str.push_back(local_" << TYPE << ");\n"\
                  << SPACE << SPACE << SPACE << "} else {\n"\
-                 << SPACE << SPACE << SPACE << SPACE << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error data is not an " << TYPE << "\\n\";\n"\
+                 << SPACE << SPACE << SPACE << SPACE << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error data is not an " << TYPE << "\\n\";\n"\
+                 << SPACE << SPACE << SPACE << SPACE << "return false;\n"\
                  << SPACE << SPACE << SPACE << "}\n"\
                  << SPACE << SPACE << "}\n"\
                  << SPACE << SPACE << "return true;\n"\
@@ -625,18 +626,25 @@ namespace cuda {
                  << SPACE << SPACE << SPACE << "i != data.MemberEnd();\n"\
                  << SPACE << SPACE << SPACE << "++i) {\n"\
                  << SPACE << SPACE << SPACE << "if (!i->name.IsString()) {\n"\
-                 << SPACE << SPACE << SPACE << SPACE << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error map name is not a string\\n\";\n"\
+                 << SPACE << SPACE << SPACE << SPACE << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error map name is not a string\\n\";\n"\
                  << SPACE << SPACE << SPACE << SPACE << "return false;\n"\
                  << SPACE << SPACE << SPACE << "}\n"\
-                 << SPACE << SPACE << SPACE << "if (!i->value.IsObject()) {\n"\
-                 << SPACE << SPACE << SPACE << SPACE << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error map value is not an object\\n\";\n"\
-                 << SPACE << SPACE << SPACE << SPACE << "return false;\n"\
-                 << SPACE << SPACE << SPACE << "}\n"\
-                 << SPACE << SPACE << SPACE << "__internal__cudason" << ADDITIONAL_STR << "::" << TYPE << " local_" << TYPE << ";\n"\
-                 << SPACE << SPACE << SPACE << "if (" << TYPE << "__input_parse(local_" << TYPE << ", i->value)) {\n"\
-                 << SPACE << SPACE << SPACE << SPACE << "str.insert(std::make_pair(std::string(i->name.GetString()), local_" << TYPE << "));\n"\
-                 << SPACE << SPACE << SPACE << "} else {\n"\
-                 << SPACE << SPACE << SPACE << SPACE << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error data is not an " << TYPE << "\\n\";\n"\
+                 << SPACE << SPACE << SPACE << "if (i->value.IsObject()) {\n"\
+                 << SPACE << SPACE << SPACE << SPACE << "__internal__cudason" << ADDITIONAL_STR << "::" << TYPE << " local_" << TYPE << ";\n"\
+                 << SPACE << SPACE << SPACE << SPACE << "if (" << TYPE << "__input_parse(local_" << TYPE << ", i->value)) {\n"\
+                 << SPACE << SPACE << SPACE << SPACE << SPACE << "str.insert(std::make_pair(std::string(i->name.GetString()), local_" << TYPE << "));\n"\
+                 << SPACE << SPACE << SPACE << SPACE << "} else {\n"\
+                 << SPACE << SPACE << SPACE << SPACE << SPACE << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error data is not an " << TYPE << "\\n\";\n"\
+                 << SPACE << SPACE << SPACE << SPACE << "}\n"\
+                 << SPACE << SPACE << SPACE << "} else if (i->value.IsArray()){\n"\
+                 << SPACE << SPACE << SPACE << SPACE << "for (rapidjson::SizeType j = 0; j < i->value.Size(); ++j){\n"\
+                 << SPACE << SPACE << SPACE << SPACE << SPACE << "__internal__cudason" << ADDITIONAL_STR << "::" << TYPE << " local_" << TYPE << ";\n"\
+                 << SPACE << SPACE << SPACE << SPACE << SPACE << "if (" << TYPE << "__input_parse(local_" << TYPE << ", i->value[j])) {\n"\
+                 << SPACE << SPACE << SPACE << SPACE << SPACE << SPACE << "str.insert(std::make_pair(std::string(i->name.GetString()), local_" << TYPE << "));\n"\
+                 << SPACE << SPACE << SPACE << SPACE << SPACE << "} else {\n"\
+                 << SPACE << SPACE << SPACE << SPACE << SPACE << SPACE << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error data is not an " << TYPE << "\\n\";\n"\
+                 << SPACE << SPACE << SPACE << SPACE << SPACE << "}\n"\
+                 << SPACE << SPACE << SPACE << SPACE << "}\n"\
                  << SPACE << SPACE << SPACE << "}\n"\
                  << SPACE << SPACE << "}\n"\
                  << SPACE << SPACE << "return true;\n"\
@@ -657,7 +665,7 @@ namespace cuda {
         STREAMER << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "if (!"#RDATA"[\"" << TYPE_NAME << "\"].Is"#RAPID_JSON_TYPE"()) {\n"\
         << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
-        << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error entity: "\
+        << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error entity: "\
         << CLASS_NAME << " is wrong type " << TYPE_NAME << "\\n\";\n"\
         << SPACE << SPACE << SPACE <<  ((ADDITIONAL_SPACE == true)?SPACE:"") << "return false;\n"\
         << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"") <<  "}\n"
@@ -666,7 +674,7 @@ namespace cuda {
         STREAMER << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "if ("#RDATA".MemberCount() == 0) {\n"\
         << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
-        << "std::cerr << __FILE__ <<  \":\" << __LINE__ << \"Error mandatory map with 0 elements\\n\";\n"\
+        << "std::cerr << __FILE__ <<  \":\" << __LINE__ << \" Error mandatory map with 0 elements\\n\";\n"\
         << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "return false;\n"\
         << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
@@ -680,19 +688,21 @@ namespace cuda {
         << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "if (!i->name.IsString()) {\n"\
         << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
-        << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error map key is not string\\n\";\n"\
+        << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error map key is not string\\n\";\n"\
         << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "return false;\n"\
         << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "}\n"\
-        << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
-        << "if (!i->value.Is" << RAPID_JSON_TYPE << "()) {\n"\
-        << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
-        << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error map value is not " << RAPID_JSON_TYPE << "\\n\";\n"\
-        << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
-        << "return false;\n"\
-        << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
-        << "}\n"\
+        << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
+        << "}\n"
+//        << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
+//        << "if (!i->value.Is" << RAPID_JSON_TYPE << "()) {\n"\
+//        << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
+//        << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error map value is not " << RAPID_JSON_TYPE << " Actual Type: \" << i->value.GetType() << \"\\n\";\n"\
+//        << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
+//        << "return false;\n"\
+//        << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
+//        << "}\n"\
         << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "}\n"
 
@@ -707,7 +717,7 @@ namespace cuda {
         << ""#INOUT"" << TYPE_NAME << ", "#RDATA"[\"" << TYPE_NAME\
         << "\"])) {\n"\
         << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
-        << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error reading list\\n\";\n"\
+        << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error reading list\\n\";\n"\
         << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "return false;\n"\
         << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"") \
@@ -719,7 +729,7 @@ namespace cuda {
         << TYPE_NAME << ", "#RDATA"[\"" << TYPE_NAME\
         << "\"])) {\n"\
         <<  SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
-        << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error reading refclass\\n\";\n"\
+        << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error reading refclass\\n\";\n"\
         <<  SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "return false;\n"\
         << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
@@ -729,7 +739,7 @@ namespace cuda {
         STREAMER << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "if (!__internal__cudason" << ADDITIONAL_STRING << "::_read_map("#INOUT"" << TYPE_NAME << ", "#RDATA")) {\n"\
         << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
-        << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error reading map\\n\";\n"\
+        << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error reading map\\n\";\n"\
         << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "return false;\n"\
         << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
@@ -756,7 +766,7 @@ namespace cuda {
         << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "if (!i->name.IsString()) {\n"\
         << SPACE << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
-        << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error map key is not string\\n\";\n"\
+        << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error map key is not string\\n\";\n"\
         << SPACE << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "return false;\n"\
         << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
@@ -764,7 +774,7 @@ namespace cuda {
         << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "if (!i->value.Is" << RAPID_JSON_TYPE << "()) {\n"\
         << SPACE << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
-        << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error map value is not " << RAPID_JSON_TYPE << "\\n\";\n"\
+        << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error map value is not " << RAPID_JSON_TYPE << " Actual type - \" << i->value.GetType() << \"\\n\";\n"\
         << SPACE << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "return false;\n"\
         << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
@@ -823,7 +833,7 @@ namespace cuda {
                 output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
                 << "if (!rData.HasMember(\"" << single_element->name() << "\")) {\n"
                 << TABS << TABS << TABS
-                << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error entity: "
+                << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error entity: "
                 << class_map_it.first << " is missing mandatory entry " << single_element->name() << "\\n\";\n"
                 << TABS << TABS << TABS << "return false;\n"
                 << TABS << TABS << "}\n";
@@ -985,7 +995,7 @@ namespace cuda {
                 output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << TABS
                 << "if (!rData.HasMember(\"" << single_element->name() << "\")) {\n"
                 << TABS << TABS << TABS << TABS
-                << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error entity: "
+                << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error entity: "
                 << class_map_it.first << " is missing mandatory entry " << single_element->name() << "\\n\";\n"
                 << TABS << TABS << TABS << TABS << "return false;\n"
                 << TABS << TABS << TABS << "}\n";
@@ -1170,7 +1180,7 @@ namespace cuda {
                 output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
                 << "if (!_document.HasMember(\"" << single_element->name() << "\")) {\n"
                 << TABS << TABS << TABS
-                << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error entity: "
+                << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error entity: "
                 << class_map_it->name() << " is missing mandatory entry " << single_element->name() <<
                 "\\n\";\n"
                 << TABS << TABS << TABS << "return false;\n"
@@ -1328,7 +1338,7 @@ namespace cuda {
                 output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << TABS
                 << "if (!_document.HasMember(\"" << single_element->name() << "\")) {\n"
                 << TABS << TABS << TABS << TABS
-                << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error entity: "
+                << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error entity: "
                 << class_map_it->name() << " is missing mandatory entry " << single_element->name() <<
                 "\\n\";\n"
                 << TABS << TABS << TABS << TABS << "return false;\n"

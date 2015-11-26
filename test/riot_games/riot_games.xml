@@ -6,8 +6,8 @@
 <cudason>
     <class name="ChampionDto">
         <boolean name="active"/>
-        <boolean name="botEnable"/>
-        <boolean name="botMmEnable"/>
+        <boolean name="botEnable" optional="true"/>
+        <boolean name="botMmEnable" optional="true"/>
         <boolean name="freeToPlay"/>
         <integer name="id"/>
         <boolean name="rankedPlayEnabled"/>
@@ -170,7 +170,7 @@
         <int32 name="mapId"/>
         <int32 name="spell1"/>
         <int32 name="spell2"/>
-        <refclass name="starts" refclass="raw_stats_dto"/>
+        <refclass name="starts" refclass="raw_stats_dto" optional="true"/>
         <string name="subType"/>
         <int32 name="teamId"/>
     </class>
@@ -190,7 +190,7 @@
         <boolean name="isVeteran"/>
         <int32 name="leaguePoints"/>
         <int32 name="losses"/>
-        <refclass name="miniSeries" refclass="mini_series_dto"/>
+        <refclass name="miniSeries" refclass="mini_series_dto" optional="true"/>
         <string name="playerOrTeamId"/>
         <string name="playerOrTeamName"/>
         <int32 name="wins"/>
