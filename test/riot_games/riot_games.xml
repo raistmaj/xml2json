@@ -175,6 +175,10 @@
         <int32 name="teamId"/>
     </class>
 
+    <json name="get_leagues_by_summoner_ids">
+
+    </json>
+
     <json name="recent_game_by_summoner_id">
         <list name="games" refclass="game_dto"/>
         <integer name="summonerId"/>

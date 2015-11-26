@@ -93,6 +93,12 @@ namespace cuda {
       return false;
     }
     /**
+     * Will inform if the type is a map
+     * */
+    virtual bool isMap() const {
+      return false;
+    }
+    /**
      * Gets Name we want to use in the json reading and the data structure
      * */
     inline const std::string &name() const {

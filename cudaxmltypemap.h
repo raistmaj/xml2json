@@ -23,30 +23,37 @@
  *	 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *	 POSSIBILITY OF SUCH DAMAGE.
  ****************************************************************************************/
-#ifndef CUDASON_CUDAXMLTAGS_H
-#define CUDASON_CUDAXMLTAGS_H
+#ifndef CUDASON_CUDAXMLTYPEMAP_H_H
+#define CUDASON_CUDAXMLTYPEMAP_H_H
 
-// Tags used in the xml parsing process
+#include "cudaxmltype.h"
 
-#define CUDA_XMLTAGS_CUDASON "cudason"
-#define CUDA_XMLTAGS_CLASS "class"
-#define CUDA_XMLTAGS_STRING "string"
-#define CUDA_XMLTAGS_INTEGER "integer"
-#define CUDA_XMLTAGS_INTEGER32 "int32"
-#define CUDA_XMLTAGS_FLOAT "float"
-#define CUDA_XMLTAGS_BOOLEAN "boolean"
-#define CUDA_XMLTAGS_LIST "list"
-#define CUDA_XMLTAGS_REFCLASS "refclass"
-#define CUDA_XMLTAGS_MAP "map"
-#define CUDA_XMLTAGS_JSON "json"
+namespace cuda {
+  /**
+   * Map type of the xml template
+   *
+   * The first key will be an anonymous string and the second type can be anything
+   * basic or referenced type
+   * */
+  class cudaxmltypemap : public cudaxmltype {
+  public:
+    /**
+     * Constructor
+     * */
+    cudaxmltypemap() : cudaxmltype() {
+    }
+    /**
+     * Destructor
+     * */
+    virtual ~cudaxmltypemap() {
+    }
+    /**
+     * It is an integer
+     * */
+    virtual bool isMap() const final {
+      return true;
+    }
+  };
+}
 
-
-// Attributes used in the xml parsing process
-
-#define CUDA_XMLATTR_NAME "name"
-#define CUDA_XMLATTR_OPTIONAL "optional"
-#define CUDA_XMLATTR_REFCLASS "refclass"
-#define CUDA_XMLATTR_CONDITION "condition"
-#define CUDA_XMLATTR_VALUE "value"
-
-#endif //CUDASON_CUDAXMLTAGS_H
+#endif //CUDASON_CUDAXMLTYPEMAP_H_H

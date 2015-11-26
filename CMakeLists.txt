@@ -27,7 +27,7 @@ set(SOURCE_FILES main.cpp
         cudasonoutputengine.h
         cudaxmltags.h cudaxmltyperefclass.h
         ${PUGIFILES}
-        cudaxmltypeinteger32.h)
+        cudaxmltypeinteger32.h cudaxmltypemap.h)
 add_executable(cudason ${SOURCE_FILES})
 
 target_link_libraries(cudason boost_program_options)

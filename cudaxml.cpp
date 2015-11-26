@@ -71,7 +71,44 @@ namespace cuda {
       throw std::runtime_error("Wrong value");
     }
     /**
-     * Reads one node from rapid xmla nd fills the referenced class stored in it
+     * Reads one node from rapid xml and fills the map stored in it
+     * */
+    bool read_map_node(std::shared_ptr<cudaxmltypemap> &map_node, pugi::xml_node &node) {
+      bool retval = false;
+      if (node == nullptr) {
+        std::cerr << "Trying to read a nullptr node. Expecting map node.\n";
+      } else {
+        // Get attributes and fill them
+        pugi::xml_attribute_iterator node_attribute = node.attributes_begin();
+        while (node_attribute != node.attributes_end()) {
+          if (strncmp(CUDA_XMLATTR_NAME, node_attribute->name(), strlen(CUDA_XMLATTR_NAME)) == 0) {
+            map_node->name(node_attribute->value());
+          } else if (strncmp(CUDA_XMLATTR_OPTIONAL, node_attribute->name(), strlen(CUDA_XMLATTR_OPTIONAL)) ==
+                     0) {
+            try {
+              map_node->optional(boolean_to_bool(node_attribute->value()));
+            } catch (std::exception &ex) {
+              std::cerr << "Wrong boolean value: " << node_attribute->value()
+              << ". Setting optional to false.\n";
+            }
+          } else if (
+              strncmp(CUDA_XMLATTR_CONDITION, node_attribute->name(), strlen(CUDA_XMLATTR_CONDITION)) ==
+              0) {
+            map_node->condition(node_attribute->value());
+          } else if (strncmp(CUDA_XMLATTR_VALUE, node_attribute->name(), strlen(CUDA_XMLATTR_VALUE)) ==
+                     0) {
+            map_node->refclass(node_attribute->value());
+          } else {
+            std::cerr << "Unsupported attribute on node refclass: << " << node_attribute->name()
+            << " ignoring it.\n";
+          }
+          node_attribute++;
+        }
+        retval = true;
+      }
+    }
+    /**
+     * Reads one node from rapid xml and fills the referenced class stored in it
      * */
     bool read_refclass_node(std::shared_ptr<cudaxmltyperefclass> &refclass_node, pugi::xml_node &node) {
       bool retval = false;
@@ -384,6 +421,10 @@ namespace cuda {
           } else if (strncmp(CUDA_XMLTAGS_REFCLASS, child_node.name(), strlen(CUDA_XMLTAGS_REFCLASS)) == 0) {
             auto ptr_refclass = std::make_shared<cuda::cudaxmltyperefclass>();
             read_refclass_node(ptr_refclass, child_node);
+            class_node->addChildren(std::dynamic_pointer_cast<cuda::cudaxmltype>(ptr_refclass));
+          } else if (strncmp(CUDA_XMLTAGS_MAP, child_node.name(), strlen(CUDA_XMLTAGS_MAP)) == 0) {
+            auto ptr_refclass = std::make_shared<cuda::cudaxmltypemap>();
+            read_map_node(ptr_refclass, child_node);
             class_node->addChildren(std::dynamic_pointer_cast<cuda::cudaxmltype>(ptr_refclass));
           } else {
             std::cerr << "Unsupported node on node class: << " << child_node.name() << " ignoring it.\n";

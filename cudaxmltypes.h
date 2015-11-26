@@ -34,5 +34,6 @@
 #include "cudaxmltypelist.h"
 #include "cudaxmltypeclass.h"
 #include "cudaxmltyperefclass.h"
+#include "cudaxmltypemap.h"
 
 #endif //CUDASON_CUDAXMLTYPES_H
