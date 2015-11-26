@@ -140,16 +140,54 @@ One important note about classes and references is that the code will be created
 template, so as in C/C++ you can't use an undefined data structure and the objects are designed to use RAII(no pointers
 are involved so automatic memory management and possible compile time optimizations).
 
+#### Data types and attributes
+
+We must identify basic type(the ones that are supported by the parser automatically), and composed types(the ones built
+with multiple types).
+
+Basic types are:
+
+* integer: 64 bits integer
+* int32: 32 bits integer, the reason of this names is because I wanted the default be 64 bits
+* float: a floating point number.
+* string: a string value
+* list: a Json array
+* refclass: a named object which references a complex type.
+* map: an anonymous object where its name is not given in the json, for example we can query an user and retrieve
+something like this
+
+```json
+{
+    "22039182" : {
+        ...
+    }
+}
+```
+
+In that fragment 22039182 is the user ID but we don't have something like this
+
+```json
+{
+    "user_data" : {
+        "user_id" : 22039182,
+        "internal_user_data" : {
+            ...
+        }
+    }
+}
+```
+
 Inside *class* and *json* we can use the following table to guide us on wich attributes are supported by each tag
 
-| Data type / Attribute | optional | condition | name | refclass |
-|-----------------------|----------|-----------|------|----------|
-| integer               | X        | X         | X    |          |
-| int32                 | X        | X         | X    |          |
-| float                 | X        | X         | X    |          |
-| string                | X        | X         | X    |          |
-| list                  | X        | X         | X    | X        |
-| refclass              | X        | X         | X    | X        |
+| Data type / Attribute | optional | condition | name | refclass | value |
+|-----------------------|----------|-----------|------|----------|-------|
+| integer               | X        | X         | X    |          |       |
+| int32                 | X        | X         | X    |          |       |
+| float                 | X        | X         | X    |          |       |
+| string                | X        | X         | X    |          |       |
+| list                  | X        | X         | X    | X        |       |
+| refclass              | X        | X         | X    | X        |       |
+| map                   | X        | X         | X    |          | X     |
 
 Each attribute will have a different default value, and in the case of name, if we leave it empty, the behavior is undefined.
 On list and refclass if we left empty refclass attribute the behavior is undefined too.
@@ -159,6 +197,7 @@ exists and the type is wrong.
 * condition: Empty by default, C/C++ code to be evaluate within an if condition to consider if we must read that node
 * name: Name we want to use to identify the element in our data structure and in the json, is 1-1
 * refclass: Class to be used in the referenced elements.
+* value: Type we want to use on the map
 
 The next types are supported by the refclass attribute
 
@@ -168,7 +207,26 @@ The next types are supported by the refclass attribute
 * string: The array/class wll be a string
 * class name: The array/class will be a class already defined in your template
 
-For a complete example please see the file test.xml
+For a complete example please see the file test.xml or the test folder.
+
+The final representation depends on the output engine.
+
+### Output engines
+
+The system requires what is known as output engines to produce our .h and .cpp, depending on the one you select the results
+may differ(the .cpp).
+
+The .h is always the same, will not be different no matter what, as this is a C++ creator we use STL for the data structures
+if necessary.
+
+The next list shows the conversion from xml type to cpp type
+
+* integer: long long int
+* int32: int
+* float: float
+* string: std::string
+* list: std::list<refType>
+* map: std::multimap<std::string,refType>
 
 ### Tested
 
