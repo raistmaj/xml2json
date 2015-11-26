@@ -27,6 +27,7 @@
 #include "cudaxmltags.h"
 #include "cudaxmltypestring.h"
 #include <boost/algorithm/string.hpp>
+#include <exception>
 #include <iostream>
 #include <pugixml.hpp>
 
@@ -452,14 +453,14 @@ cuda::cudaxml::cudaxml(const std::string &content) {
     if (!parse_result) {
       std::cerr << "Error parsing the input string.\n" << parse_result.description() << "\n"
       << "Offset: " << parse_result.offset << "\n";
-      std::abort();
+      throw std::runtime_error("Error parsing the input string.");
     }
     std::cerr << "XML parsing complete.\n";
     pugi::xml_node cudason_node(local_document.first_child());
     if (!cudason_node && cudason_node.name() != CUDA_XMLTAGS_CUDASON) {
       std::cerr << "Missing parent cudason node on the input string, aborting.\n"
       << cudason_node.name() << "\n";
-      std::abort();
+      throw std::runtime_error("Missing parent cudason node on input string");
     }
 
     // Cudason must have a minimum of one "json" node and possibly "class" nodes
@@ -476,7 +477,7 @@ cuda::cudaxml::cudaxml(const std::string &content) {
     }
     if (json_nodes.empty()) {
       std::cerr << "Missing at least one json node on the input string, aborting.\n";
-      std::abort();
+      throw std::runtime_error("Missing at least one json node on the input string.");
     }
 
     std::cerr << "XML checking minimum requirements.\n";
@@ -515,7 +516,7 @@ cuda::cudaxml::cudaxml(const std::string &content) {
             // Check if it is an internal type
             std::cerr << "Error wrong class referenced on class: " << class_it.first
             << " Refvalue: " << child->refclass() << " Aborting execution.\n";
-            std::abort();
+            throw std::runtime_error("Error wrong class referenced on class.");
           }
         }
       }
@@ -536,7 +537,7 @@ cuda::cudaxml::cudaxml(const std::string &content) {
           if (classFound == m_classMap.end() && !cuda_helper.is_internal(child->refclass())) {
             std::cerr << "Error wrong class referenced on json: " << class_it->name()
             << " Refvalue: " << child->refclass() << " Aborting execution.\n";
-            std::abort();
+            throw std::runtime_error("Error wron class referenced within the json.");
           }
         }
       }
