@@ -664,28 +664,36 @@ namespace cuda {
 
 #define _DATA_READER_SINGLE_MAP(STREAMER, SPACE, ADDITIONAL_SPACE, TYPE_NAME, CLASS_NAME, RAPID_JSON_TYPE, RDATA)\
         STREAMER << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
+        << "if ("#RDATA".MemberCount() == 0) {\n"\
+        << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
+        << "std::cerr << __FILE__ <<  \":\" << __LINE << \"Error mandatory map with 0 elements\\n\";\n"\
+        << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
+        << "return false;\n"\
+        << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
+        << "}\n"\
+        << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "for (rapidjson::Document::MemberIterator i = "#RDATA".MemberBegin();\n"\
         << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "i != "#RDATA".MemberEnd();\n"\
         << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "++i) {\n"\
-        << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
+        << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "if (!i->name.IsString()) {\n"\
-        << SPACE << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
+        << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error map key is not string\\n\";\n"\
-        << SPACE << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
+        << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "return false;\n"\
-        << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
-        << "}\n"\
-        << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
-        << "if (!i->value.Is" << RAPID_JSON_TYPE << "()) {\n"\
-        << SPACE << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
-        << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error map value is not " << RAPID_JSON_TYPE << "\\n\";\n"\
-        << SPACE << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
-        << "return false;\n"\
-        << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
+        << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "}\n"\
         << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
+        << "if (!i->value.Is" << RAPID_JSON_TYPE << "()) {\n"\
+        << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
+        << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error map value is not " << RAPID_JSON_TYPE << "\\n\";\n"\
+        << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
+        << "return false;\n"\
+        << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
+        << "}\n"\
+        << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "}\n"
 
 #define _DATA_READER_SINGLE_ASSIGN(STREAMER, SPACE, ADDITIONAL_SPACE, TYPE_NAME, RAPID_JSON_TYPE, INOUT, RDATA)\
@@ -737,29 +745,33 @@ namespace cuda {
         << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"") << "}\n"
 
 #define _DATA_READER_SECOND_IF_OPTIONAL_MEMBER(STREAMER, SPACE, ADDITIONAL_SPACE, TYPE_NAME, RAPID_JSON_TYPE, RDATA)\
-        STREAMER << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
+        STREAMER << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
+        << "if ("#RDATA".MemberCount() > 0) {\n"\
+        << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "for (rapidjson::Document::MemberIterator i = "#RDATA".MemberBegin();\n"\
         << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "i != "#RDATA".MemberEnd();\n"\
         << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "++i) {\n"\
-        << SPACE << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
+        << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "if (!i->name.IsString()) {\n"\
-        << SPACE << SPACE << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
+        << SPACE << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error map key is not string\\n\";\n"\
-        << SPACE << SPACE << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
-        << "return false;\n"\
         << SPACE << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
+        << "return false;\n"\
+        << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "}\n"\
-        << SPACE << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
+        << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "if (!i->value.Is" << RAPID_JSON_TYPE << "()) {\n"\
-        << SPACE << SPACE << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
-        << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error map value is not " << RAPID_JSON_TYPE << "\\n\";\n"\
-        << SPACE << SPACE << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
-        << "return false;\n"\
         << SPACE << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
+        << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error map value is not " << RAPID_JSON_TYPE << "\\n\";\n"\
+        << SPACE << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
+        << "return false;\n"\
+        << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "}\n"\
         << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
+        << "}\n"\
+        << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "}\n"
 
 #define _DATA_READER_SECOND_IF_OPTIONAL_LIST(STREAMER, SPACE, ADDITIONAL_SPACE, ADDITIONAL_STRING, TYPE_NAME, RDATA)\
@@ -779,7 +791,9 @@ namespace cuda {
         << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"") << "}\n"
 
 #define _DATA_READER_SECOND_IF_OPTIONAL_MAP(STREAMER, SPACE, ADDITIONAL_SPACE, ADDITIONAL_STRING, TYPE_NAME, RDATA)\
-        STREAMER << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
+        STREAMER << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
+        << "if ("#RDATA".MemberCount() > 0) {\n"\
+        << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "if (!__internal__cudason" << ADDITIONAL_STRING << "::_read_map(inout." << TYPE_NAME << ", "#RDATA")) {\n"\
         << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "std::cerr << \"Error reading map\\n\";\n"\
@@ -1191,7 +1205,7 @@ namespace cuda {
                 }
                 _DATA_READER_SINGLE_MAP((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
                                         single_element->name(), class_map_it.first,
-                                        internal_to_rapidjson(single_element->refclass()), rData);
+                                        internal_to_rapidjson(single_element->refclass()), _document);
               } else {
                 std::cerr << "Invalid element\n";
                 exit(-1);
@@ -1223,7 +1237,7 @@ namespace cuda {
               } else if (single_element->isMap()) {
                 _DATA_READER_MAP_ASSIGN((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
                                         (output_engine<T1, T2>::m_additional_string),
-                                        single_element->name(), inout., rData);
+                                        single_element->name(), inout., _document);
               } else {
                 std::cerr << "Invalid element\n";
                 exit(-1);
@@ -1264,7 +1278,7 @@ namespace cuda {
                 }
                 _DATA_READER_SECOND_IF_OPTIONAL_MEMBER((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
                                                        single_element->name(),
-                                                       internal_to_rapidjson(single_element->refclass()), rData);
+                                                       internal_to_rapidjson(single_element->refclass()), _document);
               } else {
                 std::cerr << "Invalid element\n";
                 exit(-1);
@@ -1294,7 +1308,7 @@ namespace cuda {
                 _DATA_READER_SECOND_IF_OPTIONAL_MAP((output_engine<T1, T2>::m_cpp_streamer), TABS,
                                                     false,
                                                     (output_engine<T1, T2>::m_additional_string),
-                                                    single_element->name(), rData);
+                                                    single_element->name(), _document);
               } else {
                 std::cerr << "Invalid element\n";
                 exit(-1);
@@ -1349,7 +1363,7 @@ namespace cuda {
                 }
                 _DATA_READER_SINGLE_MAP((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
                                         single_element->name(), class_map_it.first,
-                                        internal_to_rapidjson(single_element->refclass()), rData);
+                                        internal_to_rapidjson(single_element->refclass()), _document);
               } else {
                 std::cerr << "Invalid element\n";
                 exit(-1);
@@ -1381,7 +1395,7 @@ namespace cuda {
               } else if (single_element->isMap()) {
                 _DATA_READER_MAP_ASSIGN((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
                                         (output_engine<T1, T2>::m_additional_string),
-                                        single_element->name(), inout., rData);
+                                        single_element->name(), inout., _document);
               } else {
                 std::cerr << "Invalid element\n";
                 exit(-1);
@@ -1422,7 +1436,7 @@ namespace cuda {
                 }
                 _DATA_READER_SECOND_IF_OPTIONAL_MEMBER((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
                                                        single_element->name(),
-                                                       internal_to_rapidjson(single_element->refclass()), rData);
+                                                       internal_to_rapidjson(single_element->refclass()), _document);
               } else {
                 std::cerr << "Invalid element\n";
                 exit(-1);
@@ -1457,7 +1471,7 @@ namespace cuda {
                 _DATA_READER_SECOND_IF_OPTIONAL_MAP((output_engine<T1, T2>::m_cpp_streamer), TABS,
                                                     true,
                                                     (output_engine<T1, T2>::m_additional_string),
-                                                    single_element->name(), rData);
+                                                    single_element->name(), _document);
               } else {
                 std::cerr << "Invalid element\n";
                 exit(-1);

@@ -38,12 +38,18 @@
         <refclass name="report" optional="true" refclass="data_get_results_report"/>
         <refclass name="reports" optional="true" refclass="data_get_results_reports"/>
     </class>
+
+    <json name="test3">
+        <map name="mapilla" optional="true" value="data_get_results_report"/>
+    </json>
+    <json name="test2">
+        <map name="mapilla" value="data_get_results_report"/>
+    </json>
     <!-- Main json to process the results get results-->
     <json name="get_results">
         <integer name="success"/>
         <integer condition="success == 0" name="error_code"/>
         <string condition="success == 0" name="error"/>
-      <!--  <map name="testmap" value="data_get_results"/>-->
         <refclass condition="success == 1" name="data" refclass="data_get_results"/>
     </json>
 </cudason>
