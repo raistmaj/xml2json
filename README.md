@@ -221,12 +221,12 @@ if necessary.
 
 The next list shows the conversion from xml type to cpp type
 
-* integer: long long int
-* int32: int
-* float: float
-* string: std::string
-* list: std::list<refType>
-* map: std::multimap<std::string,refType>
+* integer: `long long int`
+* int32: `int`
+* float: `float`
+* string: `std::string`
+* list: `std::list<refType>`
+* map: `std::multimap<std::string,refType>`
 
 ### Tested
 
