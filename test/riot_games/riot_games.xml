@@ -175,8 +175,37 @@
         <int32 name="teamId"/>
     </class>
 
-    <json name="get_leagues_by_summoner_ids">
+    <class name="mini_series_dto">
+        <int32 name="losses"/>
+        <string name="progress"/>
+        <int32 name="target"/>
+        <int32 name="wins"/>
+    </class>
 
+    <class name="league_entry_dto">
+        <string name="division"/>
+        <boolean name="isFreshBlood"/>
+        <boolean name="isHotStreak"/>
+        <boolean name="isInactive"/>
+        <boolean name="isVeteran"/>
+        <int32 name="leaguePoints"/>
+        <int32 name="losses"/>
+        <refclass name="miniSeries" refclass="mini_series_dto"/>
+        <string name="playerOrTeamId"/>
+        <string name="playerOrTeamName"/>
+        <int32 name="wins"/>
+    </class>
+
+    <class name="league_dto">
+        <list name="entries" refclass="league_entry_dto"/>
+        <string name="name"/>
+        <string name="participantId"/>
+        <string name="queue"/>
+        <string name="tier"/>
+    </class>
+
+    <json name="get_leagues_by_summoner_ids">
+        <map name="summoner_leagues" value="league_dto"/>
     </json>
 
     <json name="recent_game_by_summoner_id">

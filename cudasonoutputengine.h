@@ -95,7 +95,7 @@ namespace cuda {
       return "Bool";
     }
     if (val == CUDA_XMLTAGS_FLOAT) {
-      return "Float";
+      return "Double";
     }
     if (val == CUDA_XMLTAGS_STRING) {
       return "String";
@@ -153,7 +153,7 @@ namespace cuda {
             if (childrenIt->isString()) {
               stream << "std::string " << childrenIt->name() << ";\n";
             } else if (childrenIt->isFloat()) {
-              stream << "float " << childrenIt->name() << ";\n";
+              stream << "double " << childrenIt->name() << ";\n";
             } else if (childrenIt->isBoolean()) {
               stream << "bool " << childrenIt->name() << ";\n";
             } else if (childrenIt->isInteger()) {
@@ -169,7 +169,7 @@ namespace cuda {
               } else if (childrenIt->refclass() == "boolean") {
                 stream << "bool";
               } else if (childrenIt->refclass() == "float") {
-                stream << "float";
+                stream << "double";
               } else if (childrenIt->refclass() == "string") {
                 stream << "std::string";
               } else {
@@ -189,7 +189,7 @@ namespace cuda {
               } else if (childrenIt->refclass() == "boolean") {
                 stream << "bool";
               } else if (childrenIt->refclass() == "float") {
-                stream << "float";
+                stream << "double";
               } else if (childrenIt->refclass() == "string") {
                 stream << "std::string";
               } else {
@@ -220,7 +220,7 @@ namespace cuda {
           if (childrenIt->isString()) {
             stream << "std::string " << childrenIt->name() << ";\n";
           } else if (childrenIt->isFloat()) {
-            stream << "float " << childrenIt->name() << ";\n";
+            stream << "double " << childrenIt->name() << ";\n";
           } else if (childrenIt->isBoolean()) {
             stream << "bool " << childrenIt->name() << ";\n";
           } else if (childrenIt->isInteger()) {
@@ -236,7 +236,7 @@ namespace cuda {
             } else if (childrenIt->refclass() == "boolean") {
               stream << "bool";
             } else if (childrenIt->refclass() == "float") {
-              stream << "float";
+              stream << "double";
             } else if (childrenIt->refclass() == "string") {
               stream << "std::string";
             } else {
@@ -256,7 +256,7 @@ namespace cuda {
             } else if (childrenIt->refclass() == "boolean") {
               stream << "bool";
             } else if (childrenIt->refclass() == "float") {
-              stream << "float";
+              stream << "double";
             } else if (childrenIt->refclass() == "string") {
               stream << "std::string";
             } else {
@@ -443,7 +443,7 @@ namespace cuda {
       << TABS << "template<typename T>\n"
       << TABS << "bool _read_list(std::vector<long long int> &str, T &data);\n"
       << TABS << "template<typename T>\n"
-      << TABS << "bool _read_list(std::vector<float> &str, T &data);\n"
+      << TABS << "bool _read_list(std::vector<double> &str, T &data);\n"
       << TABS << "template<typename T>\n"
       << TABS << "bool _read_list(std::vector<bool> &str, T &data);\n"
       << TABS << "template<typename T>\n"
@@ -469,7 +469,7 @@ namespace cuda {
       << TABS << "template<typename T>\n"
       << TABS << "bool _read_map(std::multimap<std::string, long long int> &str, T &data);\n"
       << TABS << "template<typename T>\n"
-      << TABS << "bool _read_map(std::multimap<std::string, float> &str, T &data);\n"
+      << TABS << "bool _read_map(std::multimap<std::string, double> &str, T &data);\n"
       << TABS << "template<typename T>\n"
       << TABS << "bool _read_map(std::multimap<std::string, bool> &str, T &data);\n"
       << TABS << "template<typename T>\n"
@@ -545,10 +545,10 @@ namespace cuda {
      * */
     void create_array_readers_basic_types() {
       __READ_LIST((output_engine<T1, T2>::m_cpp_streamer), TABS, int, Int);
-      __READ_LIST((output_engine<T1, T2>::m_cpp_streamer), TABS, (long
+      __READ_LIST((output_engine<T1, T2>::m_cpp_streamer), TABS, long
           long
-          int), Int64);
-      __READ_LIST((output_engine<T1, T2>::m_cpp_streamer), TABS, float, Float);
+          int, Int64);
+      __READ_LIST((output_engine<T1, T2>::m_cpp_streamer), TABS, double, Double);
       __READ_LIST((output_engine<T1, T2>::m_cpp_streamer), TABS, bool, Bool);
       __READ_LIST((output_engine<T1, T2>::m_cpp_streamer), TABS, std::string, String);
     }
@@ -568,7 +568,7 @@ namespace cuda {
                  << SPACE << SPACE << SPACE << SPACE << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error map value is not a "#RAPID_JSON_TYPE"\\n\";\n"\
                  << SPACE << SPACE << SPACE << SPACE << "return false;\n"\
                  << SPACE << SPACE << SPACE << "}\n"\
-                 << SPACE << SPACE << SPACE << "str.insert(std::make_pair(std::string(i->name.GetString()), "#TYPE"(i->value.Get"#RAPID_JSON_TYPE"())));\n"\
+                 << SPACE << SPACE << SPACE << "str.insert(std::make_pair(std::string(i->name.GetString()), ("#TYPE")(i->value.Get"#RAPID_JSON_TYPE"())));\n"\
                  << SPACE << SPACE << "}\n"\
                  << SPACE << SPACE << "return true;\n"\
                  << SPACE << "}\n\n"
@@ -578,10 +578,10 @@ namespace cuda {
      * */
     void create_map_readers_basic_types() {
       __READ_MAP((output_engine<T1, T2>::m_cpp_streamer), TABS, int, Int);
-      __READ_MAP((output_engine<T1, T2>::m_cpp_streamer), TABS, (long
+      __READ_MAP((output_engine<T1, T2>::m_cpp_streamer), TABS, long
           long
-          int), Int64);
-      __READ_MAP((output_engine<T1, T2>::m_cpp_streamer), TABS, float, Float);
+          int, Int64);
+      __READ_MAP((output_engine<T1, T2>::m_cpp_streamer), TABS, double, Double);
       __READ_MAP((output_engine<T1, T2>::m_cpp_streamer), TABS, bool, Bool);
       __READ_MAP((output_engine<T1, T2>::m_cpp_streamer), TABS, std::string, String);
     }
@@ -666,7 +666,7 @@ namespace cuda {
         STREAMER << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "if ("#RDATA".MemberCount() == 0) {\n"\
         << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
-        << "std::cerr << __FILE__ <<  \":\" << __LINE << \"Error mandatory map with 0 elements\\n\";\n"\
+        << "std::cerr << __FILE__ <<  \":\" << __LINE__ << \"Error mandatory map with 0 elements\\n\";\n"\
         << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "return false;\n"\
         << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
@@ -727,7 +727,7 @@ namespace cuda {
 
 #define _DATA_READER_MAP_ASSIGN(STREAMER, SPACE, ADDITIONAL_SPACE, ADDITIONAL_STRING, TYPE_NAME, INOUT, RDATA)\
         STREAMER << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
-        << "if (!_internal_cudason" << ADDITIONAL_STRING << "::_read_map("#INOUT"" << TYPE_NAME << ", "#RDATA")) {\n"\
+        << "if (!__internal__cudason" << ADDITIONAL_STRING << "::_read_map("#INOUT"" << TYPE_NAME << ", "#RDATA")) {\n"\
         << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error reading map\\n\";\n"\
         << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
@@ -840,7 +840,7 @@ namespace cuda {
                                     single_element->name(), class_map_it.first, Int, rData);
               } else if (single_element->isFloat()) {
                 _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
-                                    single_element->name(), class_map_it.first, Float, rData);
+                                    single_element->name(), class_map_it.first, Double, rData);
               } else if (single_element->isString()) {
                 _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
                                     single_element->name(), class_map_it.first, String, rData);
@@ -874,7 +874,7 @@ namespace cuda {
                                            single_element->name(), Int, inout., rData);
               } else if (single_element->isFloat()) {
                 _DATA_READER_SINGLE_ASSIGN((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
-                                           single_element->name(), Float, inout., rData);
+                                           single_element->name(), Double, inout., rData);
               } else if (single_element->isString()) {
                 _DATA_READER_SINGLE_ASSIGN((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
                                            single_element->name(), String, inout., rData);
@@ -912,7 +912,7 @@ namespace cuda {
                                                 single_element->name(), Int, rData);
               } else if (single_element->isFloat()) {
                 _DATA_READER_SECOND_IF_OPTIONAL((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
-                                                single_element->name(), Float, rData);
+                                                single_element->name(), Double, rData);
               } else if (single_element->isString()) {
                 _DATA_READER_SECOND_IF_OPTIONAL((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
                                                 single_element->name(), String, rData);
@@ -946,7 +946,7 @@ namespace cuda {
                                            single_element->name(), Int, inout., rData);
               } else if (single_element->isFloat()) {
                 _DATA_READER_SINGLE_ASSIGN((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
-                                           single_element->name(), Float, inout., rData);
+                                           single_element->name(), Double, inout., rData);
               } else if (single_element->isString()) {
                 _DATA_READER_SINGLE_ASSIGN((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
                                            single_element->name(), String, inout., rData);
@@ -1002,7 +1002,7 @@ namespace cuda {
                                     single_element->name(), class_map_it.first, Int, rData);
               } else if (single_element->isFloat()) {
                 _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
-                                    single_element->name(), class_map_it.first, Float, rData);
+                                    single_element->name(), class_map_it.first, Double, rData);
               } else if (single_element->isString()) {
                 _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
                                     single_element->name(), class_map_it.first, String, rData);
@@ -1036,7 +1036,7 @@ namespace cuda {
                                            single_element->name(), Int, inout., rData);
               } else if (single_element->isFloat()) {
                 _DATA_READER_SINGLE_ASSIGN((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
-                                           single_element->name(), Float, inout., rData);
+                                           single_element->name(), Double, inout., rData);
               } else if (single_element->isString()) {
                 _DATA_READER_SINGLE_ASSIGN((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
                                            single_element->name(), String, inout., rData);
@@ -1074,7 +1074,7 @@ namespace cuda {
                                                 single_element->name(), Int, rData);
               } else if (single_element->isFloat()) {
                 _DATA_READER_SECOND_IF_OPTIONAL((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
-                                                single_element->name(), Float, rData);
+                                                single_element->name(), Double, rData);
               } else if (single_element->isString()) {
                 _DATA_READER_SECOND_IF_OPTIONAL((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
                                                 single_element->name(), String, rData);
@@ -1108,7 +1108,7 @@ namespace cuda {
                                            single_element->name(), Int, inout., rData);
               } else if (single_element->isFloat()) {
                 _DATA_READER_SINGLE_ASSIGN((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
-                                           single_element->name(), Float, inout., rData);
+                                           single_element->name(), Double, inout., rData);
               } else if (single_element->isString()) {
                 _DATA_READER_SINGLE_ASSIGN((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
                                            single_element->name(), String, inout., rData);
@@ -1188,7 +1188,7 @@ namespace cuda {
                                     single_element->name(), class_map_it->name(), Int, _document);
               } else if (single_element->isFloat()) {
                 _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
-                                    single_element->name(), class_map_it->name(), Float, _document);
+                                    single_element->name(), class_map_it->name(), Double, _document);
               } else if (single_element->isString()) {
                 _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
                                     single_element->name(), class_map_it->name(), String, _document);
@@ -1222,7 +1222,7 @@ namespace cuda {
                                            single_element->name(), Int, , _document);
               } else if (single_element->isFloat()) {
                 _DATA_READER_SINGLE_ASSIGN((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
-                                           single_element->name(), Float, , _document);
+                                           single_element->name(), Double, , _document);
               } else if (single_element->isString()) {
                 _DATA_READER_SINGLE_ASSIGN((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
                                            single_element->name(), String, , _document);
@@ -1237,7 +1237,7 @@ namespace cuda {
               } else if (single_element->isMap()) {
                 _DATA_READER_MAP_ASSIGN((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
                                         (output_engine<T1, T2>::m_additional_string),
-                                        single_element->name(), inout., _document);
+                                        single_element->name(), , _document);
               } else {
                 std::cerr << "Invalid element\n";
                 exit(-1);
@@ -1261,7 +1261,7 @@ namespace cuda {
                                                 single_element->name(), Int, _document);
               } else if (single_element->isFloat()) {
                 _DATA_READER_SECOND_IF_OPTIONAL((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
-                                                single_element->name(), Float, _document);
+                                                single_element->name(), Double, _document);
               } else if (single_element->isString()) {
                 _DATA_READER_SECOND_IF_OPTIONAL((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
                                                 single_element->name(), String, _document);
@@ -1295,7 +1295,7 @@ namespace cuda {
                                            single_element->name(), Int, , _document);
               } else if (single_element->isFloat()) {
                 _DATA_READER_SINGLE_ASSIGN((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
-                                           single_element->name(), Float, , _document);
+                                           single_element->name(), Double, , _document);
               } else if (single_element->isString()) {
                 _DATA_READER_SINGLE_ASSIGN((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
                                            single_element->name(), String, , _document);
@@ -1346,7 +1346,7 @@ namespace cuda {
                                     single_element->name(), class_map_it->name(), Int, _document);
               } else if (single_element->isFloat()) {
                 _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
-                                    single_element->name(), class_map_it->name(), Float, _document);
+                                    single_element->name(), class_map_it->name(), Double, _document);
               } else if (single_element->isString()) {
                 _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
                                     single_element->name(), class_map_it->name(), String, _document);
@@ -1380,7 +1380,7 @@ namespace cuda {
                                            single_element->name(), Int, , _document);
               } else if (single_element->isFloat()) {
                 _DATA_READER_SINGLE_ASSIGN((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
-                                           single_element->name(), Float, , _document);
+                                           single_element->name(), Double, , _document);
               } else if (single_element->isString()) {
                 _DATA_READER_SINGLE_ASSIGN((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
                                            single_element->name(), String, , _document);
@@ -1395,7 +1395,7 @@ namespace cuda {
               } else if (single_element->isMap()) {
                 _DATA_READER_MAP_ASSIGN((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
                                         (output_engine<T1, T2>::m_additional_string),
-                                        single_element->name(), inout., _document);
+                                        single_element->name(), , _document);
               } else {
                 std::cerr << "Invalid element\n";
                 exit(-1);
@@ -1419,7 +1419,7 @@ namespace cuda {
                                                 single_element->name(), Int, _document);
               } else if (single_element->isFloat()) {
                 _DATA_READER_SECOND_IF_OPTIONAL((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
-                                                single_element->name(), Float, _document);
+                                                single_element->name(), Double, _document);
               } else if (single_element->isString()) {
                 _DATA_READER_SECOND_IF_OPTIONAL((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
                                                 single_element->name(), String, _document);
@@ -1453,7 +1453,7 @@ namespace cuda {
                                            single_element->name(), Int, , _document);
               } else if (single_element->isFloat()) {
                 _DATA_READER_SINGLE_ASSIGN((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
-                                           single_element->name(), Float, , _document);
+                                           single_element->name(), Double, , _document);
               } else if (single_element->isString()) {
                 _DATA_READER_SINGLE_ASSIGN((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
                                            single_element->name(), String, , _document);
