@@ -153,11 +153,11 @@ Basic types are:
 * string: a string value
 * list: a Json array
 * refclass: a named object which references a complex type.
-* map: an anonymous object where its name is not given in the json, for example we can query an user and retrieve
-something like this. One really important note about maps is that they are the only allowed type on one branch level
-as we expect that level to be fully a map. Maps are distinguish from the rest as the first string is not known at
-compile time and will be filled with the retrieved result, this is extremely important as we must avoid collisions.
-At the moment is user responsibility to avoid maps with other elements on one level within the xml.
+* map: an anonymous object where its name is not given in the json. One important note about maps is, they are the only
+allowed type on one level, we expect that level to be only a map. Maps are distinguish from the rest as the first
+element is a string and is not known at compile time, as consequence will be filled with the retrieved result,
+this is important so the solution to avoid collisions is to forbid different elementson that level. At the moment is
+user responsibility to avoid maps with other elements on one level within the xml.
 
 ```json
 {
