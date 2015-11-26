@@ -226,7 +226,7 @@ The next list shows the conversion from xml type to cpp type
 
 * integer: `long long int`
 * int32: `int`
-* float: `float`
+* float: `double`
 * string: `std::string`
 * list: `std::list<refType>`
 * map: `std::multimap<std::string,refType>`
@@ -234,6 +234,10 @@ The next list shows the conversion from xml type to cpp type
 ### Tested
 
 The software and resulting files have been tested on Linux but should work on Windows.
+
+The main binary is kinda fragile and will abort under some scenarios.
+
+The resulting json parser MUST be pretty solid and avoid
 
 LICENSE
 ----
