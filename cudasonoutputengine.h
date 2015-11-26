@@ -91,7 +91,7 @@ namespace cuda {
     template<typename streamer>
     void print(std::shared_ptr<cuda::cudaxml> &ff, streamer &&stream) {
       stream << DISCLAIMER
-      << "\n#include <string>\n#include <vector>\n\n";
+      << "\n#include <string>\n#include <vector>\n#include <map>\n\n";
 
       if (!ff->getClassMap().empty()) {
         stream << "// Internal namespace declaration\nnamespace __internal__cudason"
@@ -122,7 +122,7 @@ namespace cuda {
               stream << "std::vector<";
               if (childrenIt->refclass() == "integer") {
                 stream << "long long int";
-              } else if (childrenIt->refclass() == "integer32") {
+              } else if (childrenIt->refclass() == "int32") {
                 stream << "int";
               } else if (childrenIt->refclass() == "boolean") {
                 stream << "bool";
@@ -138,6 +138,23 @@ namespace cuda {
             } else if (childrenIt->isRefClass()) {
               stream << "__internal__cudason" << m_additional_string << "::"
               << childrenIt->refclass() << " " << childrenIt->name() << ";\n";
+            } else if (childrenIt->isMap()) {
+              stream << "std::multimap<std::string,";
+              if (childrenIt->refclass() == "integer") {
+                stream << "long long int";
+              } else if (childrenIt->refclass() == "int32") {
+                stream << "int";
+              } else if (childrenIt->refclass() == "boolean") {
+                stream << "bool";
+              } else if (childrenIt->refclass() == "float") {
+                stream << "float";
+              } else if (childrenIt->refclass() == "string") {
+                stream << "std::string";
+              } else {
+                stream << "__internal__cudason" << m_additional_string << "::"
+                << childrenIt->refclass();
+              }
+              stream << "> " << childrenIt->name() << ";\n";
             }
           }
           stream << TABS << "};\n\n";
@@ -172,7 +189,7 @@ namespace cuda {
             stream << "std::vector<";
             if (childrenIt->refclass() == "integer") {
               stream << "long long int";
-            } else if (childrenIt->refclass() == "integer32") {
+            } else if (childrenIt->refclass() == "int32") {
               stream << "int";
             } else if (childrenIt->refclass() == "boolean") {
               stream << "bool";
@@ -188,6 +205,23 @@ namespace cuda {
           } else if (childrenIt->isRefClass()) {
             stream << "__internal__cudason" << m_additional_string << "::"
             << childrenIt->refclass() << " " << childrenIt->name() << ";\n";
+          } else if (childrenIt->isMap()) {
+            stream << "std::multimap<std::string,";
+            if (childrenIt->refclass() == "integer") {
+              stream << "long long int";
+            } else if (childrenIt->refclass() == "int32") {
+              stream << "int";
+            } else if (childrenIt->refclass() == "boolean") {
+              stream << "bool";
+            } else if (childrenIt->refclass() == "float") {
+              stream << "float";
+            } else if (childrenIt->refclass() == "string") {
+              stream << "std::string";
+            } else {
+              stream << "__internal__cudason" << m_additional_string << "::"
+              << childrenIt->refclass();
+            }
+            stream << "> " << childrenIt->name() << ";\n";
           }
         }
         stream << "\n" << TABS << TABS << "// read one input string and fill the data\n"
@@ -314,6 +348,8 @@ namespace cuda {
       create_forward_declarations(ff);
       // Create the array parsers
       create_array_readers(ff);
+      // Create the map readers
+      create_map_readers(ff);
       // Create the json parsers
       create_data_readers(ff);
       // Close the namespace
@@ -339,7 +375,9 @@ namespace cuda {
       }
       output_engine<T1, T2>::m_cpp_streamer << "#include \"rapidjson/rapidjson.h\"\n"
       << "#include \"rapidjson/document.h\"\n"
-      << "#include <iostream>\n\n";
+      << "#include <iostream>\n"
+      << "#include <map>\n"
+      << "#include <vector>\n\n";
     }
     /**
      * Create the forward declaration if we want to use any of the elements
@@ -349,6 +387,8 @@ namespace cuda {
       output_engine<T1, T2>::m_cpp_streamer << TABS << "// Forward declaration of parse functions\n";
       create_forward_declaration_basic_types();
       create_forward_declaration_classes(ff);
+      create_forward_declaration_map_basic_types();
+      create_forward_declaration_map_classes(ff);
       create_forward_declaration_parse_classes(ff);
       output_engine<T1, T2>::m_cpp_streamer << "\n";
     }
@@ -378,6 +418,33 @@ namespace cuda {
         << output_engine<T1, T2>::m_additional_string << "::" << class_map_it.first << "> &str, T &data);\n";
       }
     }
+    /**
+     * Create the forward declaration of the maps with basic types
+     * */
+    void create_forward_declaration_map_basic_types() {
+      output_engine<T1, T2>::m_cpp_streamer << TABS << "template<typename T>\n"
+      << TABS << "bool _read_map(std::multimap<std::string, int> &str, T &data);\n"
+      << TABS << "template<typename T>\n"
+      << TABS << "bool _read_map(std::multimap<std::string, long long int> &str, T &data);\n"
+      << TABS << "template<typename T>\n"
+      << TABS << "bool _read_map(std::multimap<std::string, float> &str, T &data);\n"
+      << TABS << "template<typename T>\n"
+      << TABS << "bool _read_map(std::multimap<std::string, bool> &str, T &data);\n"
+      << TABS << "template<typename T>\n"
+      << TABS << "bool _read_map(std::multimap<std::string, std::string> &str, T &data);\n";
+    }
+
+    /**
+     * Creates the forward declaration of the parse method of the classes
+     * */
+    void create_forward_declaration_map_classes(std::shared_ptr<cuda::cudaxml> &ff) {
+      auto class_map = ff->getClassMap();
+      for (auto &&class_map_it: class_map) {
+        output_engine<T1, T2>::m_cpp_streamer << TABS << "template<typename T>\n"
+        << TABS << "bool _read_list(std::multimap<std::string, __internal__cudason"
+        << output_engine<T1, T2>::m_additional_string << "::" << class_map_it.first << "> &str, T &data);\n";
+      }
+    }
 
     /**
      * Creates the forward declaration of the parse method of the classes
@@ -391,6 +458,7 @@ namespace cuda {
       }
     }
 
+
     /**
      * Creates the different array readers
      * */
@@ -398,6 +466,16 @@ namespace cuda {
       output_engine<T1, T2>::m_cpp_streamer << TABS << "// Json type array readers implementation\n";
       create_array_readers_basic_types();
       create_array_readers_class_types(ff);
+      output_engine<T1, T2>::m_cpp_streamer << "\n";
+    }
+
+    /**
+     * Creates the different map readers
+     * */
+    void create_map_readers(std::shared_ptr<cuda::cudaxml> &ff) {
+      output_engine<T1, T2>::m_cpp_streamer << TABS << "// Json type map readers implementation\n";
+      create_map_readers_basic_types();
+      create_map_readers_class_types(ff);
       output_engine<T1, T2>::m_cpp_streamer << "\n";
     }
 
@@ -414,6 +492,7 @@ namespace cuda {
                  << SPACE << SPACE << SPACE << SPACE << "str.push_back(data[i].Get"#RAPID_JSON_TYPE"());\n"\
                  << SPACE << SPACE << SPACE << "} else {\n"\
                  << SPACE << SPACE << SPACE << SPACE << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error data is not an "#RAPID_JSON_TYPE"\\n\";\n"\
+                 << SPACE << SPACE << SPACE << SPACE << "return false;\n"\
                  << SPACE << SPACE << SPACE << "}\n"\
                  << SPACE << SPACE << "}\n"\
                  << SPACE << SPACE << "return true;\n"\
@@ -430,6 +509,39 @@ namespace cuda {
       __READ_LIST((output_engine<T1, T2>::m_cpp_streamer), TABS, float, Float);
       __READ_LIST((output_engine<T1, T2>::m_cpp_streamer), TABS, bool, Bool);
       __READ_LIST((output_engine<T1, T2>::m_cpp_streamer), TABS, std::string, String);
+    }
+
+#define __READ_MAP(STREAMER, SPACE, TYPE, RAPID_JSON_TYPE)\
+    STREAMER     << SPACE << "template<typename T>\n"\
+                 << SPACE << "bool _read_map(std::multimap<std::string, "#TYPE"> &str, T &data)\n"\
+                 << SPACE << "{\n"\
+                 << SPACE << SPACE << "for (rapidjson::Document::MemberIterator i = data.MemberBegin();\n"\
+                 << SPACE << SPACE << SPACE << "i != data.MemberEnd();\n"\
+                 << SPACE << SPACE << SPACE << "++i) {\n"\
+                 << SPACE << SPACE << SPACE << "if (!i->name.IsString()) {\n"\
+                 << SPACE << SPACE << SPACE << SPACE << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error map name is not a string\\n\";\n"\
+                 << SPACE << SPACE << SPACE << SPACE << "return false;\n"\
+                 << SPACE << SPACE << SPACE << "}\n"\
+                 << SPACE << SPACE << SPACE << "if (!i->value.Is"#RAPID_JSON_TYPE"()) {\n"\
+                 << SPACE << SPACE << SPACE << SPACE << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error map value is not a "#RAPID_JSON_TYPE"\\n\";\n"\
+                 << SPACE << SPACE << SPACE << SPACE << "return false;\n"\
+                 << SPACE << SPACE << SPACE << "}\n"\
+                 << SPACE << SPACE << SPACE << "str.insert(std::make_pair(std::string(i->name.GetString()), "#TYPE"(i->value.Get"#RAPID_JSON_TYPE"())));\n"\
+                 << SPACE << SPACE << "}\n"\
+                 << SPACE << SPACE << "return true;\n"\
+                 << SPACE << "}\n\n"
+
+    /**
+     * Create the readers for basic types
+     * */
+    void create_map_readers_basic_types() {
+      __READ_MAP((output_engine<T1, T2>::m_cpp_streamer), TABS, int, Int);
+      __READ_MAP((output_engine<T1, T2>::m_cpp_streamer), TABS, (long
+          long
+          int), Int64);
+      __READ_MAP((output_engine<T1, T2>::m_cpp_streamer), TABS, float, Float);
+      __READ_MAP((output_engine<T1, T2>::m_cpp_streamer), TABS, bool, Bool);
+      __READ_MAP((output_engine<T1, T2>::m_cpp_streamer), TABS, std::string, String);
     }
 
 #define __READ_LIST_CLASS(STREAMER, SPACE, ADDITIONAL_STR, TYPE)\
@@ -460,6 +572,42 @@ namespace cuda {
         __READ_LIST_CLASS((output_engine<T1, T2>::m_cpp_streamer), TABS,
                           (output_engine<T1, T2>::m_additional_string),
                           class_map_it.first);
+      }
+    }
+
+#define __READ_MAP_CLASS(STREAMER, SPACE, ADDITIONAL_STR, TYPE)\
+     STREAMER    << SPACE << "template<typename T>\n"\
+                 << SPACE << "bool _read_map(std::multimap<std::string, __internal__cudason" << ADDITIONAL_STR << "::" << TYPE << "> &str, T &data)\n"\
+                 << SPACE << "{\n"\
+                 << SPACE << SPACE << "for (rapidjson::Document::MemberIterator i = data.MemberBegin();\n"\
+                 << SPACE << SPACE << SPACE << "i != data.MemberEnd();\n"\
+                 << SPACE << SPACE << SPACE << "++i) {\n"\
+                 << SPACE << SPACE << SPACE << "if (!i->name.IsString()) {\n"\
+                 << SPACE << SPACE << SPACE << SPACE << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error map name is not a string\\n\";\n"\
+                 << SPACE << SPACE << SPACE << SPACE << "return false;\n"\
+                 << SPACE << SPACE << SPACE << "}\n"\
+                 << SPACE << SPACE << SPACE << "if (!i->value.IsObject()) {\n"\
+                 << SPACE << SPACE << SPACE << SPACE << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error map value is not an object\\n\";\n"\
+                 << SPACE << SPACE << SPACE << SPACE << "return false;\n"\
+                 << SPACE << SPACE << SPACE << "}\n"\
+                 << SPACE << SPACE << SPACE << "__internal__cudason" << ADDITIONAL_STR << "::" << TYPE << " local_" << TYPE << ";\n"\
+                 << SPACE << SPACE << SPACE << "if (" << TYPE << "__input_parse(local_" << TYPE << ", i->value)) {\n"\
+                 << SPACE << SPACE << SPACE << SPACE << "str.insert(std::make_pair(std::string(i->name.GetString()), local_" << TYPE << "));\n"\
+                 << SPACE << SPACE << SPACE << "} else {\n"\
+                 << SPACE << SPACE << SPACE << SPACE << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error data is not an " << TYPE << "\\n\";\n"\
+                 << SPACE << SPACE << SPACE << "}\n"\
+                 << SPACE << SPACE << "}\n"\
+                 << SPACE << SPACE << "return true;\n"\
+                 << SPACE << "}\n\n"
+    /**
+     * Create the readers for the different maps types on classes
+     * */
+    void create_map_readers_class_types(std::shared_ptr<cuda::cudaxml> &ff) {
+      auto class_map = ff->getClassMap();
+      for (auto &&class_map_it : class_map) {
+        __READ_MAP_CLASS((output_engine<T1, T2>::m_cpp_streamer), TABS,
+                         (output_engine<T1, T2>::m_additional_string),
+                         class_map_it.first);
       }
     }
 

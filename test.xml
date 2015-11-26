@@ -43,6 +43,7 @@
         <integer name="success"/>
         <integer condition="success == 0" name="error_code"/>
         <string condition="success == 0" name="error"/>
+      <!--  <map name="testmap" value="data_get_results"/>-->
         <refclass condition="success == 1" name="data" refclass="data_get_results"/>
     </json>
 </cudason>
