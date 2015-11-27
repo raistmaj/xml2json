@@ -464,11 +464,11 @@ namespace umi {
         << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"") << "return false;\n"\
         << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"") << "}\n"
 
-#define _DATA_READER_SECOND_IF_OPTIONAL_MAP(STREAMER, SPACE, ADDITIONAL_SPACE, ADDITIONAL_STRING, TYPE_NAME, RDATA)\
+#define _DATA_READER_SECOND_IF_OPTIONAL_MAP(STREAMER, SPACE, ADDITIONAL_SPACE, ADDITIONAL_STRING, TYPE_NAME, INOUT, RDATA)\
         STREAMER << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "if ("#RDATA".MemberCount() > 0) {\n"\
         << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
-        << "if (!__internal__umison" << ADDITIONAL_STRING << "::_read_map(inout." << TYPE_NAME << ", "#RDATA")) {\n"\
+        << "if (!__internal__umison" << ADDITIONAL_STRING << "::_read_map("#INOUT"" << TYPE_NAME << ", "#RDATA")) {\n"\
         << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "std::cerr << \"Error reading map\\n\";\n"\
         << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
@@ -638,7 +638,7 @@ namespace umi {
                 _DATA_READER_SECOND_IF_OPTIONAL_MAP((output_engine<T1, T2>::m_cpp_streamer), TABS,
                                                     false,
                                                     (output_engine<T1, T2>::m_additional_string),
-                                                    single_element->name(), rData);
+                                                    single_element->name(), inout., rData);
               } else {
                 std::cerr << "Invalid element\n";
                 exit(-1);
@@ -800,7 +800,7 @@ namespace umi {
                 _DATA_READER_SECOND_IF_OPTIONAL_MAP((output_engine<T1, T2>::m_cpp_streamer), TABS,
                                                     true,
                                                     (output_engine<T1, T2>::m_additional_string),
-                                                    single_element->name(), rData);
+                                                    single_element->name(), inout., rData);
               } else {
                 std::cerr << "Invalid element\n";
                 exit(-1);
@@ -982,7 +982,7 @@ namespace umi {
                 _DATA_READER_SECOND_IF_OPTIONAL_MAP((output_engine<T1, T2>::m_cpp_streamer), TABS,
                                                     false,
                                                     (output_engine<T1, T2>::m_additional_string),
-                                                    single_element->name(), _document);
+                                                    single_element->name(), , _document);
               } else {
                 std::cerr << "Invalid element\n";
                 exit(-1);
@@ -1145,7 +1145,7 @@ namespace umi {
                 _DATA_READER_SECOND_IF_OPTIONAL_MAP((output_engine<T1, T2>::m_cpp_streamer), TABS,
                                                     true,
                                                     (output_engine<T1, T2>::m_additional_string),
-                                                    single_element->name(), _document);
+                                                    single_element->name(), , _document);
               } else {
                 std::cerr << "Invalid element\n";
                 exit(-1);

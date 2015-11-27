@@ -8,7 +8,7 @@ int main(int argc, char** argv) {
   while(std::getline(std::cin, local)) {
     input += local;
   }
-  umison::get_leagues_by_summoner_ids fea;
+  umison::champion fea;
   if(!fea.read_data(input)) {
     std::cout << "Failed\n";
   } else {
