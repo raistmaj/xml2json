@@ -24,15 +24,15 @@
  *	 POSSIBILITY OF SUCH DAMAGE.
  ****************************************************************************************/
 
-#include "cudason.h"
-#include "cudasonoutputengines.h"
+#include "umison.h"
+#include "umisonoutputengines.h"
 #include <boost/algorithm/string.hpp>
 #include <boost/program_options.hpp>
 
-cuda::cudason::cudason(int argc, char **argv) : m_inputStream(std::cin.rdbuf()),
-                                                m_cpp_stream(std::cout.rdbuf()),
-                                                m_h_stream(std::cout.rdbuf()) {
-  boost::program_options::options_description description("cudason allowed options");
+umi::umison::umison(int argc, char **argv) : m_inputStream(std::cin.rdbuf()),
+                                             m_cpp_stream(std::cout.rdbuf()),
+                                             m_h_stream(std::cout.rdbuf()) {
+  boost::program_options::options_description description("umison allowed options");
   description.add_options()
       ("help,h", "produce this help message")
       ("write-file-h,e", boost::program_options::value<std::string>(),
@@ -88,7 +88,7 @@ cuda::cudason::cudason(int argc, char **argv) : m_inputStream(std::cin.rdbuf()),
     m_append_string = variables_map["apped-string"].as<std::string>();
   }
 }
-cuda::cudason::~cudason() {
+umi::umison::~umison() {
   m_inputStream.rdbuf(std::cin.rdbuf());
   m_h_stream.rdbuf(std::cout.rdbuf());
   m_cpp_stream.rdbuf(std::cout.rdbuf());
@@ -97,7 +97,7 @@ cuda::cudason::~cudason() {
   m_h_file.close();
   m_cpp_file.close();
 }
-void cuda::cudason::run() {
+void umi::umison::run() {
   std::string tmpString;
   {
     while (!m_inputStream.eof()) {
@@ -106,8 +106,8 @@ void cuda::cudason::run() {
       tmpString += boost::algorithm::trim_copy(std::string(buf));
     }
   }
-  auto xml = std::make_shared<cuda::cudaxml>(tmpString);
-  cuda::output_engine_rapid_json<std::ostream, std::ostream> oe(m_h_stream, m_cpp_stream);
+  auto xml = std::make_shared<umi::umixml>(tmpString);
+  umi::output_engine_rapid_json<std::ostream, std::ostream> oe(m_h_stream, m_cpp_stream);
   oe.h_filename(m_h_filename);
   oe.additional_string(m_append_string);
   oe.write(xml);

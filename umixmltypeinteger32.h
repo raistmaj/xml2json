@@ -23,32 +23,31 @@
  *	 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *	 POSSIBILITY OF SUCH DAMAGE.
  ****************************************************************************************/
-#ifndef CUDASON_CUDAXMLTYPEINTEGER_H
-#define CUDASON_CUDAXMLTYPEINTEGER_H
+#ifndef UMISON_UMIXMLTYPEINTEGER32_H
+#define UMISON_UMIXMLTYPEINTEGER32_H
 
-#include "cudaxmltype.h"
-#include <cstdint>
+#include "umixmltype.h"
 
-namespace cuda {
+namespace umi {
   /**
    * Integer type of the xml template
    * */
-  class cudaxmltypeinteger : public cudaxmltype {
+  class umixmltypeinteger32 : public umixmltype {
   public:
     /**
      * Constructor
      * */
-    cudaxmltypeinteger() : cudaxmltype() {
+    umixmltypeinteger32() : umixmltype() {
     }
     /**
      * Destructor
      * */
-    virtual ~cudaxmltypeinteger() {
+    virtual ~umixmltypeinteger32() {
     }
     /**
      * It is an integer
      * */
-    virtual bool isInteger() const final {
+    virtual bool isInteger32() const final {
       return true;
     }
     /**
@@ -56,7 +55,7 @@ namespace cuda {
      * append the new line
      * */
     virtual std::string header_type(const std::string& additiona_text, bool append_new_line = true) {
-      std::string retval =  "long long int ";
+      std::string retval =  "int ";
       retval += m_name;
       if(append_new_line) {
         retval += ";\n";
@@ -67,4 +66,5 @@ namespace cuda {
     }
   };
 }
-#endif //CUDASON_CUDAXMLTYPEINTEGER_H
+
+#endif

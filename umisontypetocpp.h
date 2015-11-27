@@ -23,48 +23,43 @@
  *	 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *	 POSSIBILITY OF SUCH DAMAGE.
  ****************************************************************************************/
-#ifndef CUDASON_CUDAXMLTYPEFLOAT_H
-#define CUDASON_CUDAXMLTYPEFLOAT_H
+#ifndef UMISON_UMISONTYPETOCPP_H
+#define UMISON_UMISONTYPETOCPP_H
 
-#include "cudaxmltype.h"
+#include <unordered_map>
 
-namespace cuda {
+namespace umi {
   /**
-   * Type float of the xml template
+   * Class used to transform from one type to a cpp type only basic types
    * */
-  class cudaxmltypefloat : public cudaxmltype {
+  class type_to_cpp {
   public:
     /**
-     * Constructor of type float
+     * Constructor
      * */
-    cudaxmltypefloat() : cudaxmltype() {
-    }
+    type_to_cpp() { }
     /**
      * Destructor
      * */
-    virtual ~cudaxmltypefloat() {
-    }
+    ~type_to_cpp() { }
     /**
-     * It is a float
+     * Get the type we want
      * */
-    virtual bool isFloat() const final {
-      return true;
-    }
-    /**
-     * Returns the type we want to use in the header, it will
-     * append the new line
-     * */
-    virtual std::string header_type(const std::string& additiona_text, bool append_new_line = true) {
-      std::string retval =  "double ";
-      retval += m_name;
-      if(append_new_line) {
-        retval += ";\n";
-      } else {
-        retval += ";";
+    std::string get_type(const std::string& val) {
+      std::string retval;
+      auto val_it = m_mapType.find(val);
+      if(val_it != m_mapType.end()) {
+        retval = val_it->second;
       }
       return retval;
     }
+  protected:
+    std::unordered_map <std::string, std::string> m_mapType{{"string",  "std::string"},
+                                                            {"integer", "long long int"},
+                                                            {"int32",   "int"},
+                                                            {"float",   "double"},
+                                                            {"boolean", "bool"}};
   };
 }
 
-#endif //CUDASON_CUDAXMLTYPEFLOAT_H
+#endif

@@ -23,34 +23,31 @@
  *	 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *	 POSSIBILITY OF SUCH DAMAGE.
  ****************************************************************************************/
-#ifndef CUDASON_CUDAXMLTYPEMAP_H_H
-#define CUDASON_CUDAXMLTYPEMAP_H_H
+#ifndef UMISON_UMIXMLTYPEFLOAT_H
+#define UMISON_UMIXMLTYPEFLOAT_H
 
-#include "cudaxmltype.h"
+#include "umixmltype.h"
 
-namespace cuda {
+namespace umi {
   /**
-   * Map type of the xml template
-   *
-   * The first key will be an anonymous string and the second type can be anything
-   * basic or referenced type
+   * Type float of the xml template
    * */
-  class cudaxmltypemap : public cudaxmltype {
+  class umixmltypefloat : public umixmltype {
   public:
     /**
-     * Constructor
+     * Constructor of type float
      * */
-    cudaxmltypemap() : cudaxmltype() {
+    umixmltypefloat() : umixmltype() {
     }
     /**
      * Destructor
      * */
-    virtual ~cudaxmltypemap() {
+    virtual ~umixmltypefloat() {
     }
     /**
-     * It is an integer
+     * It is a float
      * */
-    virtual bool isMap() const final {
+    virtual bool isFloat() const final {
       return true;
     }
     /**
@@ -58,27 +55,16 @@ namespace cuda {
      * append the new line
      * */
     virtual std::string header_type(const std::string& additiona_text, bool append_new_line = true) {
-      cuda::type_to_cpp tcpp;
-      std::string retval =  "std::multimap<std::string,";
-      std::string cpp_type = tcpp.get_type(m_refclass);
-      if(cpp_type.empty()) {
-        retval += "__internal__cudason";
-        if(!additiona_text.empty()) {
-          retval += additiona_text;
-        }
-        retval += "::";
-        retval += m_refclass;
-      } else {
-        retval += cpp_type;
-      }
-      retval += "> ";
+      std::string retval =  "double ";
       retval += m_name;
       if(append_new_line) {
         retval += ";\n";
+      } else {
+        retval += ";";
       }
       return retval;
     }
   };
 }
 
-#endif //CUDASON_CUDAXMLTYPEMAP_H_H
+#endif

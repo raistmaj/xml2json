@@ -23,17 +23,48 @@
  *	 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *	 POSSIBILITY OF SUCH DAMAGE.
  ****************************************************************************************/
-#ifndef CUDASON_CUDAXMLTYPES_H
-#define CUDASON_CUDAXMLTYPES_H
+#ifndef UMISON_UMIXMLTYPEINTEGER_H
+#define UMISON_UMIXMLTYPEINTEGER_H
 
-#include "cudaxmltype.h"
-#include "cudaxmltypeboolean.h"
-#include "cudaxmltypeinteger.h"
-#include "cudaxmltypeinteger32.h"
-#include "cudaxmltypefloat.h"
-#include "cudaxmltypelist.h"
-#include "cudaxmltypeclass.h"
-#include "cudaxmltyperefclass.h"
-#include "cudaxmltypemap.h"
+#include "umixmltype.h"
+#include <cstdint>
 
-#endif //CUDASON_CUDAXMLTYPES_H
+namespace umi {
+  /**
+   * Integer type of the xml template
+   * */
+  class umixmltypeinteger : public umixmltype {
+  public:
+    /**
+     * Constructor
+     * */
+    umixmltypeinteger() : umixmltype() {
+    }
+    /**
+     * Destructor
+     * */
+    virtual ~umixmltypeinteger() {
+    }
+    /**
+     * It is an integer
+     * */
+    virtual bool isInteger() const final {
+      return true;
+    }
+    /**
+     * Returns the type we want to use in the header, it will
+     * append the new line
+     * */
+    virtual std::string header_type(const std::string& additiona_text, bool append_new_line = true) {
+      std::string retval =  "long long int ";
+      retval += m_name;
+      if(append_new_line) {
+        retval += ";\n";
+      } else {
+        retval += ";";
+      }
+      return retval;
+    }
+  };
+}
+#endif

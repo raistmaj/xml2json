@@ -23,14 +23,14 @@
  *	 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *	 POSSIBILITY OF SUCH DAMAGE.
  ****************************************************************************************/
-#ifndef CUDASON_CUDASON_H
-#define CUDASON_CUDASON_H
+#ifndef UMISON_UMISON_H
+#define UMISON_UMISON_H
 
 #include <fstream>
 #include <string>
 #include <sstream>
 
-namespace cuda {
+namespace umi {
   /**
    * Main class of the application. Cudason will be used to
    * encapsulate the initialization logic.
@@ -43,7 +43,7 @@ namespace cuda {
    * the header and the implementation in different files
    * we can use different parameters
    *
-   * cudason allowed options:
+   * umison allowed options:
      * -h [ --help ]               produce this help message
      * -e [ --write-file-h ] arg   The .h output will be written to this file
      * -p [ --write-file-cpp ] arg The .cpp output will be written to this file
@@ -51,7 +51,7 @@ namespace cuda {
      * -a [ --apped-string ] arg   String to be appended in the internal namespace
      *                             to avoid collisions with existing code
    * */
-  class cudason {
+  class umison {
   public:
     /**
      * Default constructor of the class, will accept a standar
@@ -60,11 +60,11 @@ namespace cuda {
      * \argc number of arguments
      * \argv arguments
      * */
-    cudason(int argc, char **argv);
+    umison(int argc, char **argv);
     /**
      * Releases the resources used by the instance
      * */
-    ~cudason();
+    ~umison();
     /**
      * Run the program, in this case we will read the input stream
      * and output in the outputs stream
@@ -114,4 +114,4 @@ namespace cuda {
   };
 }
 
-#endif //CUDASON_CUDASON_H
+#endif

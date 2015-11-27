@@ -23,31 +23,31 @@
  *	 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *	 POSSIBILITY OF SUCH DAMAGE.
  ****************************************************************************************/
-#ifndef CUDASON_CUDAXMLTAGS_H
-#define CUDASON_CUDAXMLTAGS_H
+#ifndef UMISON_UMIXMLTAGS_H
+#define UMISON_UMIXMLTAGS_H
 
 // Tags used in the xml parsing process
 
-#define CUDA_XMLTAGS_CUDASON "cudason"
-#define CUDA_XMLTAGS_CLASS "class"
-#define CUDA_XMLTAGS_STRING "string"
-#define CUDA_XMLTAGS_INTEGER "integer"
-#define CUDA_XMLTAGS_INTEGER32 "int32"
-#define CUDA_XMLTAGS_FLOAT "float"
-#define CUDA_XMLTAGS_BOOLEAN "boolean"
-#define CUDA_XMLTAGS_LIST "list"
-#define CUDA_XMLTAGS_REFCLASS "refclass"
-#define CUDA_XMLTAGS_MAP "map"
-#define CUDA_XMLTAGS_JSON "json"
+#define UMI_XMLTAGS_UMISON "umison"
+#define UMI_XMLTAGS_CLASS "class"
+#define UMI_XMLTAGS_STRING "string"
+#define UMI_XMLTAGS_INTEGER "integer"
+#define UMI_XMLTAGS_INTEGER32 "int32"
+#define UMI_XMLTAGS_FLOAT "float"
+#define UMI_XMLTAGS_BOOLEAN "boolean"
+#define UMI_XMLTAGS_LIST "list"
+#define UMI_XMLTAGS_REFCLASS "refclass"
+#define UMI_XMLTAGS_MAP "map"
+#define UMI_XMLTAGS_JSON "json"
 
 
 // Attributes used in the xml parsing process
 
-#define CUDA_XMLATTR_NAME "name"
-#define CUDA_XMLATTR_OPTIONAL "optional"
-#define CUDA_XMLATTR_REFCLASS "refclass"
-#define CUDA_XMLATTR_CONDITION "condition"
-#define CUDA_XMLATTR_VALUE "value"
+#define UMI_XMLATTR_NAME "name"
+#define UMI_XMLATTR_OPTIONAL "optional"
+#define UMI_XMLATTR_REFCLASS "refclass"
+#define UMI_XMLATTR_CONDITION "condition"
+#define UMI_XMLATTR_VALUE "value"
 
 /**
  * Macro used to store the amount of space we want to use as tabulations
@@ -75,4 +75,4 @@
  * download it for free from https://github.com/raistmaj/xml2json\n\
  * */\n"
 
-#endif //CUDASON_CUDAXMLTAGS_H
+#endif

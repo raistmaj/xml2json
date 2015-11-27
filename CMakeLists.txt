@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-project(cudason)
+project(umison)
 
 include_directories(pugixml)
 include_directories(pugixml/src)
@@ -18,16 +18,16 @@ endif (EXISTS "${PROJECT_SOURCE_DIR}/pugixml/pugixml.hpp")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
 set(SOURCE_FILES main.cpp
-        cudason.cpp cudason.h
-        cudaxml.cpp cudaxml.h
-        cudaxmltype.h cudaxmltypestring.h
-        cudaxmltypeinteger.h cudaxmltypefloat.h
-        cudaxmltypelist.h cudaxmltypeclass.h
-        cudaxmltypeboolean.h cudaxmltypes.h
-        cudasonoutputengine.h
-        cudaxmltags.h cudaxmltyperefclass.h
+        umison.cpp umison.h
+        umixml.cpp umixml.h
+        umixmltype.h umixmltypestring.h
+        umixmltypeinteger.h umixmltypefloat.h
+        umixmltypelist.h umixmltypeclass.h
+        umixmltypeboolean.h umixmltypes.h
+        umisonoutputengine.h
+        umixmltags.h umixmltyperefclass.h
         ${PUGIFILES}
-        cudaxmltypeinteger32.h cudaxmltypemap.h)
-add_executable(cudason ${SOURCE_FILES})
+        umixmltypeinteger32.h umixmltypemap.h)
+add_executable(umison ${SOURCE_FILES})
 
-target_link_libraries(cudason boost_program_options)
+target_link_libraries(umison boost_program_options)

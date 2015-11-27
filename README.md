@@ -43,8 +43,8 @@ $ cmake ../
 In order to make use of this program I recommend first take a look at the help output
 
 ```sh
-$ ./cudason -h
-cudason allowed options:
+$ ./umison -h
+umison allowed options:
   -h [ --help ]               produce this help message
   -e [ --write-file-h ] arg   The .h output will be written to this file
   -p [ --write-file-cpp ] arg The .cpp output will be written to this file
@@ -56,7 +56,7 @@ cudason allowed options:
 By default the program uses the standard input so you can redirect it like in the following case
 
 ```sh
-$ cat test.xml | ./cudason
+$ cat test.xml | ./umison
 ```
 
 To produce an output.
@@ -64,7 +64,7 @@ To produce an output.
 By default the program will use the standard output but you can specify different files for the generated code
 
 ```sh
-$ cat test.xml | ./cudason
+$ cat test.xml | ./umison
 ```
 
 ```cpp
@@ -82,14 +82,14 @@ $ cat test.xml | ./cudason
  * If you want to report any bug, please contact me at jpalma at barracuda dot com
  *
  * If you didn't get a copy of the code used to create these templates, you can always
- * download it for free from https://github.com/raistmaj/cudason
+ * download it for free from https://github.com/raistmaj/xml2json
  * */
 
 #include <string>
 #include <vector>
 
 // Internal namespace declaration
-namespace __internal__cudason {
+namespace __internal__umison {
 
     // Forward declaration
 ```
@@ -98,7 +98,7 @@ You can specify a file as input template and files to print the output, remember
 the other will use the standard output.
 
 ```sh
-$ ./cudason -i test.xml -e test.h -p test.cpp
+$ ./umison -i test.xml -e test.h -p test.cpp
 XML parsing complete.
 XML checking minimum requirements.
 Done.
@@ -106,7 +106,7 @@ Checking references on Classes and Jsons.
 Parsing complete.
 Starting to build output.
 $ ls
-cudason  test.cpp  test.h
+umison  test.cpp  test.h
 ```
 
 ### Template format
@@ -114,18 +114,18 @@ cudason  test.cpp  test.h
 As mentioned before we use XML. XML was used as the structure is pretty close to json and additionally we can include
 attributes allowing us to specify names, conditions, etc...
 
-The document must start with the root tag *cudason*
+The document must start with the root tag *umison*
 
 ```xml
-<cudason>
-</cudason>
+<umison>
+</umison>
 ```
 
 At this level you can specify two possible entities, *class* and *json*, the first one is used to reference data structures
 by the rest, the second one is the parsers we want to generate and will be exposed on the header file.
 
 ```xml
-<cudason>
+<umison>
     <class>
         ...
     </class>
@@ -133,7 +133,7 @@ by the rest, the second one is the parsers we want to generate and will be expos
     <json>
         ...
     </json>
-</cudason>
+</umison>
 ```
 
 One important note about classes and references is that the code will be created in the same order you specify on your

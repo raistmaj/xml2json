@@ -23,34 +23,31 @@
  *	 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *	 POSSIBILITY OF SUCH DAMAGE.
  ****************************************************************************************/
-#ifndef CUDASON_CUDAXMLTYPELIST_H
-#define CUDASON_CUDAXMLTYPELIST_H
+#ifndef UMISON_UMIXMLTYPEREFCLASS_H
+#define UMISON_UMIXMLTYPEREFCLASS_H
 
-#include "cudaxmltype.h"
-#include "cudasontypetocpp.h"
-#include <vector>
-#include <memory>
+#include "umixmltype.h"
 
-namespace cuda {
+namespace umi {
   /**
-   * List type on the xml template, reference array json object
+   * Referenced class xml type, is an object on the json
    * */
-  class cudaxmltypelist : public cudaxmltype {
+  class umixmltyperefclass : public umi::umixmltype {
   public:
     /**
      * Constructor
      * */
-    cudaxmltypelist() : cudaxmltype() {
+    umixmltyperefclass() : umixmltype() {
     }
     /**
      * Destructor
      * */
-    virtual ~cudaxmltypelist() {
+    virtual ~umixmltyperefclass() {
     }
     /**
-     * It is a list
+     * Is a referenced class
      * */
-    virtual bool isList() const final {
+    virtual bool isRefClass() const final {
       return true;
     }
     /**
@@ -58,11 +55,11 @@ namespace cuda {
      * append the new line
      * */
     virtual std::string header_type(const std::string& additiona_text, bool append_new_line = true) {
-      cuda::type_to_cpp tcpp;
-      std::string retval =  "std::vector<";
-      std::string cpp_type = tcpp.get_type(m_refclass);
+      umi::type_to_cpp tcpp;
+      std::string retval;
+      std::string cpp_type = tcpp.get_type(m_refclass); // Suport for reference of basic types
       if(cpp_type.empty()) {
-        retval += "__internal__cudason";
+        retval += "__internal__umison";
         if(!additiona_text.empty()) {
           retval += additiona_text;
         }
@@ -71,16 +68,14 @@ namespace cuda {
       } else {
         retval += cpp_type;
       }
-      retval += "> ";
+      retval += " ";
       retval += m_name;
       if(append_new_line) {
         retval += ";\n";
-      } else {
-        retval += ";";
       }
       return retval;
     }
   };
 }
 
-#endif //CUDASON_CUDAXMLTYPELIST_H
+#endif

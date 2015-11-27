@@ -1,4 +1,4 @@
-<cudason>
+<umison>
     <class name="data_get_results_reports">
         <string name="report_uuid"/>
         <integer name="relevance"/>
@@ -52,4 +52,4 @@
         <string condition="success == 0" name="error"/>
         <refclass condition="success == 1" name="data" refclass="data_get_results"/>
     </json>
-</cudason>
+</umison>

@@ -23,67 +23,64 @@
  *	 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *	 POSSIBILITY OF SUCH DAMAGE.
  ****************************************************************************************/
-#ifndef CUDASON_CUDAXMLTYPECLASS_H
-#define CUDASON_CUDAXMLTYPECLASS_H
+#ifndef UMISON_UMIXMLTYPELIST_H
+#define UMISON_UMIXMLTYPELIST_H
 
-#include "cudaxmltype.h"
-#include <memory>
+#include "umixmltype.h"
+#include "umisontypetocpp.h"
 #include <vector>
+#include <memory>
 
-namespace cuda {
+namespace umi {
   /**
-   * This class is used to store multiple children of one node
-   *
-   * Don't get confused as we will never have a possible "class",
-   * only refclass on the json, this is used to store the templates
-   * of possible referenced classes
+   * List type on the xml template, reference array json object
    * */
-  class cudaxmltypeclass : public cudaxmltype {
+  class umixmltypelist : public umixmltype {
   public:
     /**
-     * Constructor of the class
+     * Constructor
      * */
-    cudaxmltypeclass() : cudaxmltype() {
+    umixmltypelist() : umixmltype() {
     }
     /**
      * Destructor
      * */
-    virtual ~cudaxmltypeclass() {
+    virtual ~umixmltypelist() {
     }
     /**
-     * It is a class
+     * It is a list
      * */
-    virtual bool isClass() const final {
+    virtual bool isList() const final {
       return true;
-    }
-    /**
-     * Adds one children to the list
-     * */
-    template<typename T>
-    inline void addChildren(T &&val) {
-      m_children.push_back(val);
-    }
-    /**
-     * Gets the list of children we have in the class
-     * */
-    const std::vector<std::shared_ptr<cudaxmltype>> &getChildren() const {
-      return m_children;
     }
     /**
      * Returns the type we want to use in the header, it will
      * append the new line
      * */
     virtual std::string header_type(const std::string& additiona_text, bool append_new_line = true) {
-      std::string retval;
+      umi::type_to_cpp tcpp;
+      std::string retval =  "std::vector<";
+      std::string cpp_type = tcpp.get_type(m_refclass);
+      if(cpp_type.empty()) {
+        retval += "__internal__umison";
+        if(!additiona_text.empty()) {
+          retval += additiona_text;
+        }
+        retval += "::";
+        retval += m_refclass;
+      } else {
+        retval += cpp_type;
+      }
+      retval += "> ";
+      retval += m_name;
+      if(append_new_line) {
+        retval += ";\n";
+      } else {
+        retval += ";";
+      }
       return retval;
     }
-  protected:
-    /**
-     * Array of children are included within the class. It is a vector as we
-     * want to keep the order
-     * */
-    std::vector<std::shared_ptr<cudaxmltype>> m_children;
   };
 }
 
-#endif //CUDASON_CUDAXMLTYPECLASS_H
+#endif

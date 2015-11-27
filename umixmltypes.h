@@ -23,48 +23,17 @@
  *	 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *	 POSSIBILITY OF SUCH DAMAGE.
  ****************************************************************************************/
-#ifndef CUDASON_CUDAXMLTYPEINTEGER32_H
-#define CUDASON_CUDAXMLTYPEINTEGER32_H
+#ifndef UMISON_UMIXMLTYPES_H
+#define UMISON_UMIXMLTYPES_H
 
-#include "cudaxmltype.h"
+#include "umixmltype.h"
+#include "umixmltypeboolean.h"
+#include "umixmltypeinteger.h"
+#include "umixmltypeinteger32.h"
+#include "umixmltypefloat.h"
+#include "umixmltypelist.h"
+#include "umixmltypeclass.h"
+#include "umixmltyperefclass.h"
+#include "umixmltypemap.h"
 
-namespace cuda {
-  /**
-   * Integer type of the xml template
-   * */
-  class cudaxmltypeinteger32 : public cudaxmltype {
-  public:
-    /**
-     * Constructor
-     * */
-    cudaxmltypeinteger32() : cudaxmltype() {
-    }
-    /**
-     * Destructor
-     * */
-    virtual ~cudaxmltypeinteger32() {
-    }
-    /**
-     * It is an integer
-     * */
-    virtual bool isInteger32() const final {
-      return true;
-    }
-    /**
-     * Returns the type we want to use in the header, it will
-     * append the new line
-     * */
-    virtual std::string header_type(const std::string& additiona_text, bool append_new_line = true) {
-      std::string retval =  "int ";
-      retval += m_name;
-      if(append_new_line) {
-        retval += ";\n";
-      } else {
-        retval += ";";
-      }
-      return retval;
-    }
-  };
-}
-
-#endif //CUDASON_CUDAXMLTYPEINTEGER32_H
+#endif

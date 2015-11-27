@@ -23,31 +23,31 @@
  *	 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *	 POSSIBILITY OF SUCH DAMAGE.
  ****************************************************************************************/
-#ifndef CUDASON_CUDAXMLTYPESTRING_H
-#define CUDASON_CUDAXMLTYPESTRING_H
+#ifndef UMISON_UMIXMLTYPEBOOLEAN_H
+#define UMISON_UMIXMLTYPEBOOLEAN_H
 
-#include "cudaxmltype.h"
+#include "umixmltype.h"
 
-namespace cuda {
+namespace umi {
   /**
-   * String type on the xml template
+   * xml type to reference a boolean
    * */
-  class cudaxmltypestring : public cudaxmltype {
+  class umixmltypeboolean : public umixmltype {
   public:
     /**
-     * Constructor
+     * Constructor of the boolean
      * */
-    cudaxmltypestring() : cudaxmltype() {
+    umixmltypeboolean() : umixmltype() {
     }
     /**
-     * Destructor
+     * Destructor of the boolean
      * */
-    virtual ~cudaxmltypestring() {
+    virtual ~umixmltypeboolean() {
     }
     /**
-     * It is a string
+     * Is true for this class
      * */
-    virtual bool isString() const final {
+    virtual bool isBoolean() const final {
       return true;
     }
     /**
@@ -55,7 +55,7 @@ namespace cuda {
      * append the new line
      * */
     virtual std::string header_type(const std::string& additiona_text, bool append_new_line = true) {
-      std::string retval =  "std::string ";
+      std::string retval =  "bool ";
       retval += m_name;
       if(append_new_line) {
         retval += ";\n";
@@ -67,4 +67,4 @@ namespace cuda {
   };
 }
 
-#endif //CUDASON_CUDAXMLTYPESTRING_H
+#endif

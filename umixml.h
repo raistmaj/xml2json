@@ -23,43 +23,63 @@
  *	 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *	 POSSIBILITY OF SUCH DAMAGE.
  ****************************************************************************************/
-#ifndef CUDASON_CUDASONTYPETOCPP_H
-#define CUDASON_CUDASONTYPETOCPP_H
+#ifndef UMISON_UMIXML_H
+#define UMISON_UMIXML_H
 
+#include "umixmltypes.h"
+
+#include <vector>
 #include <unordered_map>
+#include <unordered_set>
+#include <string>
 
-namespace cuda {
+namespace umi {
   /**
-   * Class used to transform from one type to a cpp type only basic types
+   * Class used to store our XML tree with its properties
+   * and transform it afterwards to json
    * */
-  class type_to_cpp {
+  class umixml {
   public:
     /**
-     * Constructor
+     * Creates a full xml tree ready to be written
+     * on disk based on the content string
      * */
-    type_to_cpp() { }
+    explicit umixml(const std::string &content);
     /**
-     * Destructor
+     * Forbid copy
      * */
-    ~type_to_cpp() { }
+    umixml(const umixml &) = delete;
     /**
-     * Get the type we want
+     * Clean the resources
      * */
-    std::string get_type(const std::string& val) {
-      std::string retval;
-      auto val_it = m_mapType.find(val);
-      if(val_it != m_mapType.end()) {
-        retval = val_it->second;
-      }
-      return retval;
+    ~umixml();
+    /**
+     * Forbid assignement
+     * */
+    umixml &operator=(const umixml &) = delete;
+    /**
+     * Gets the class map
+     * */
+    inline const std::vector<std::pair<std::string, std::shared_ptr<umi::umixmltypeclass>>> &getClassMap() const {
+      return m_classMap;
+    }
+    /**
+     * Gets the json array map
+     * */
+    inline const std::vector<std::shared_ptr<umi::umixmltypeclass>> &getJsonArray() const {
+      return m_jsonArray;
     }
   protected:
-    std::unordered_map <std::string, std::string> m_mapType{{"string",  "std::string"},
-                                                            {"integer", "long long int"},
-                                                            {"int32",   "int"},
-                                                            {"float",   "double"},
-                                                            {"boolean", "bool"}};
+    /**
+     * List of classes we will use in the creation of the json, we use a vector of pairs as we need to keep
+     * the dependencies declared on the input template, anyway the intention is to use it as a map
+     * */
+    std::vector<std::pair<std::string, std::shared_ptr<umi::umixmltypeclass>>> m_classMap;
+    /**
+     * List of json documents we will output
+     * */
+    std::vector<std::shared_ptr<umi::umixmltypeclass>> m_jsonArray;
   };
 }
 
-#endif //CUDASON_CUDASONTYPETOCPP_H
+#endif

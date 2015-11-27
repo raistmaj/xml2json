@@ -23,10 +23,10 @@
  *	 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *	 POSSIBILITY OF SUCH DAMAGE.
  ****************************************************************************************/
-#ifndef CUDASON_CUDASONOUTPUTENGINES_H_H
-#define CUDASON_CUDASONOUTPUTENGINES_H_H
+#ifndef UMISON_UMISONOUTPUTENGINES_H_H
+#define UMISON_UMISONOUTPUTENGINES_H_H
 
-#include "cudasonoutputengine.h"
-#include "cudasonoutenginerapidjson.h"
+#include "umisonoutputengine.h"
+#include "umisonoutenginerapidjson.h"
 
-#endif //CUDASON_CUDASONOUTPUTENGINES_H_H
+#endif 

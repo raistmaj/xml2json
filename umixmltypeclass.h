@@ -23,48 +23,67 @@
  *	 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *	 POSSIBILITY OF SUCH DAMAGE.
  ****************************************************************************************/
-#ifndef CUDASON_CUDAXMLTYPEBOOLEAN_H
-#define CUDASON_CUDAXMLTYPEBOOLEAN_H
+#ifndef UMISON_UMIXMLTYPECLASS_H
+#define UMISON_UMIXMLTYPECLASS_H
 
-#include "cudaxmltype.h"
+#include "umixmltype.h"
+#include <memory>
+#include <vector>
 
-namespace cuda {
+namespace umi {
   /**
-   * xml type to reference a boolean
+   * This class is used to store multiple children of one node
+   *
+   * Don't get confused as we will never have a possible "class",
+   * only refclass on the json, this is used to store the templates
+   * of possible referenced classes
    * */
-  class cudaxmltypeboolean : public cudaxmltype {
+  class umixmltypeclass : public umixmltype {
   public:
     /**
-     * Constructor of the boolean
+     * Constructor of the class
      * */
-    cudaxmltypeboolean() : cudaxmltype() {
+    umixmltypeclass() : umixmltype() {
     }
     /**
-     * Destructor of the boolean
+     * Destructor
      * */
-    virtual ~cudaxmltypeboolean() {
+    virtual ~umixmltypeclass() {
     }
     /**
-     * Is true for this class
+     * It is a class
      * */
-    virtual bool isBoolean() const final {
+    virtual bool isClass() const final {
       return true;
+    }
+    /**
+     * Adds one children to the list
+     * */
+    template<typename T>
+    inline void addChildren(T &&val) {
+      m_children.push_back(val);
+    }
+    /**
+     * Gets the list of children we have in the class
+     * */
+    const std::vector<std::shared_ptr<umixmltype>> &getChildren() const {
+      return m_children;
     }
     /**
      * Returns the type we want to use in the header, it will
      * append the new line
      * */
     virtual std::string header_type(const std::string& additiona_text, bool append_new_line = true) {
-      std::string retval =  "bool ";
-      retval += m_name;
-      if(append_new_line) {
-        retval += ";\n";
-      } else {
-        retval += ";";
-      }
+      std::string retval;
       return retval;
     }
+  protected:
+    /**
+     * Array of children are included within the class. It is a vector as we
+     * want to keep the order
+     * */
+    std::vector<std::shared_ptr<umixmltype>> m_children;
   };
 }
 
-#endif //CUDASON_CUDAXMLTYPEBOOLEAN_H
+#endif

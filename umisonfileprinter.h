@@ -23,15 +23,15 @@
  *	 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *	 POSSIBILITY OF SUCH DAMAGE.
  ****************************************************************************************/
-#ifndef CUDASON_CUDASONFILEPRINTER_H
-#define CUDASON_CUDASONFILEPRINTER_H
+#ifndef UMISON_UMISONFILEPRINTER_H
+#define UMISON_UMISONFILEPRINTER_H
 
-#include "cudaxml.h"
-#include "cudaxmltags.h"
+#include "umixml.h"
+#include "umixmltags.h"
 #include <string>
 #include <unordered_map>
 
-namespace cuda {
+namespace umi {
   /**
    * Class used by the output engine common to all subengines-
    * It will create the basic .h template
@@ -53,16 +53,16 @@ namespace cuda {
     /**
      * Prints the .h file
      *
-     * \param ff pointer to the cudaxml instance we want to write within stream
+     * \param ff pointer to the umixml instance we want to write within stream
      * \param stream used to output the json representation
      * */
     template<typename streamer>
-    void print(std::shared_ptr<cuda::cudaxml> &ff, streamer &&stream) {
+    void print(std::shared_ptr<umi::umixml> &ff, streamer &&stream) {
       stream << DISCLAIMER
       << "\n#include <string>\n#include <vector>\n#include <map>\n\n";
 
       if (!ff->getClassMap().empty()) {
-        stream << "// Internal namespace declaration\nnamespace __internal__cudason"
+        stream << "// Internal namespace declaration\nnamespace __internal__umison"
         << m_additional_string << " {\n\n"
         << TABS << "// Forward declaration\n";
         auto classMap = ff->getClassMap();
@@ -83,7 +83,7 @@ namespace cuda {
         stream << "}\n\n"; // For the internal namespace
       }
 
-      stream << "// Namespace where we store our final jsons\nnamespace cudason {\n\n"
+      stream << "// Namespace where we store our final jsons\nnamespace umison {\n\n"
       << TABS << "// Forward declaration\n";
       auto jsonArray = ff->getJsonArray();
       for (auto &&jsonArrayIt : jsonArray) {
@@ -102,7 +102,7 @@ namespace cuda {
         << TABS << TABS << "bool read_data(const std::string& input_text);\n";
         stream << TABS << "};\n\n";
       }
-      stream << "}\n"; // For the cudason namespace
+      stream << "}\n"; // For the umison namespace
     }
     /**
      * String to append in namespace and class
@@ -111,4 +111,4 @@ namespace cuda {
   };
 }
 
-#endif //CUDASON_CUDASONFILEPRINTER_H
+#endif

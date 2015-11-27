@@ -23,26 +23,26 @@
  *	 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *	 POSSIBILITY OF SUCH DAMAGE.
  ****************************************************************************************/
-#ifndef CUDASON_CUDAXMLTYPE_H
-#define CUDASON_CUDAXMLTYPE_H
+#ifndef UMISON_UMIXMLTYPE_H
+#define UMISON_UMIXMLTYPE_H
 
 #include <string>
 
-namespace cuda {
+namespace umi {
   /**
    * Parent class for the whole xml types supported in the program
    * */
-  class cudaxmltype {
+  class umixmltype {
   public:
     /**
      * Basic constructor
      * */
-    cudaxmltype() {
+    umixmltype() {
     }
     /**
      * Destructor
      * */
-    virtual ~cudaxmltype() {
+    virtual ~umixmltype() {
     }
     /**
      * Will inform if the type is a boolean or not
@@ -174,4 +174,4 @@ namespace cuda {
   };
 }
 
-#endif //CUDASON_CUDAXMLTYPE_H
+#endif

@@ -23,10 +23,10 @@
  *	 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *	 POSSIBILITY OF SUCH DAMAGE.
  ****************************************************************************************/
-#include "cudason.h"
+#include "umison.h"
 
 int main(int argc, char **argv) {
-  cuda::cudason program(argc, argv);
+  umi::umison program(argc, argv);
   program.run();
   return 0;
 }

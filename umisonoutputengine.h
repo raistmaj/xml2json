@@ -23,57 +23,57 @@
  *	 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *	 POSSIBILITY OF SUCH DAMAGE.
  ****************************************************************************************/
-#ifndef CUDASON_CUDASONOUTPUTENGINE_H
-#define CUDASON_CUDASONOUTPUTENGINE_H
+#ifndef UMISON_UMISONOUTPUTENGINE_H
+#define UMISON_UMISONOUTPUTENGINE_H
 
-#include "cudasonfileprinter.h"
-#include "cudaxml.h"
-#include "cudaxmltags.h"
+#include "umisonfileprinter.h"
+#include "umixml.h"
+#include "umixmltags.h"
 #include <cstdlib>
 #include <string>
 #include <iostream>
 #include <memory>
 
-namespace cuda {
-  // Forward declaration of the cudaxml
-  class cudaxml;
+namespace umi {
+  // Forward declaration of the umixml
+  class umixml;
 
   /**
      * Checks if the type is an internal type
      * */
   static bool is_internal(const std::string &val) {
-    if (val == CUDA_XMLTAGS_INTEGER) {
+    if (val == UMI_XMLTAGS_INTEGER) {
       return true;
     }
-    if (val == CUDA_XMLTAGS_BOOLEAN) {
+    if (val == UMI_XMLTAGS_BOOLEAN) {
       return true;
     }
-    if (val == CUDA_XMLTAGS_FLOAT) {
+    if (val == UMI_XMLTAGS_FLOAT) {
       return true;
     }
-    if (val == CUDA_XMLTAGS_STRING) {
+    if (val == UMI_XMLTAGS_STRING) {
       return true;
     }
-    if (val == CUDA_XMLTAGS_INTEGER32) {
+    if (val == UMI_XMLTAGS_INTEGER32) {
       return true;
     }
     return false;
   }
 
   static std::string internal_to_rapidjson(const std::string &val) {
-    if (val == CUDA_XMLTAGS_INTEGER) {
+    if (val == UMI_XMLTAGS_INTEGER) {
       return "Int64";
     }
-    if (val == CUDA_XMLTAGS_BOOLEAN) {
+    if (val == UMI_XMLTAGS_BOOLEAN) {
       return "Bool";
     }
-    if (val == CUDA_XMLTAGS_FLOAT) {
+    if (val == UMI_XMLTAGS_FLOAT) {
       return "Double";
     }
-    if (val == CUDA_XMLTAGS_STRING) {
+    if (val == UMI_XMLTAGS_STRING) {
       return "String";
     }
-    if (val == CUDA_XMLTAGS_INTEGER32) {
+    if (val == UMI_XMLTAGS_INTEGER32) {
       return "Int";
     }
     return "Object";
@@ -98,7 +98,7 @@ namespace cuda {
      * Writes one xml into json. The additional options must be set in
      * other place like the constructor etc.
      * */
-    bool write(std::shared_ptr<cuda::cudaxml> &ff) {
+    bool write(std::shared_ptr<umi::umixml> &ff) {
       file_printer printer;
       printer.print(ff, m_h_streamer);
       return this->internal_write(ff);
@@ -134,7 +134,7 @@ namespace cuda {
      *
      * \param ff is pointer with the xml template already parsed
      * */
-    virtual bool internal_write(std::shared_ptr<cuda::cudaxml> &ff) {
+    virtual bool internal_write(std::shared_ptr<umi::umixml> &ff) {
       return true;
     }
 
@@ -157,4 +157,4 @@ namespace cuda {
   };
 }
 
-#endif //CUDASON_CUDASONOUTPUTENGINE_H
+#endif

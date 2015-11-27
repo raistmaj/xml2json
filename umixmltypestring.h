@@ -23,63 +23,48 @@
  *	 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *	 POSSIBILITY OF SUCH DAMAGE.
  ****************************************************************************************/
-#ifndef CUDASON_CUDAXML_H
-#define CUDASON_CUDAXML_H
+#ifndef UMISON_UMIXMLTYPESTRING_H
+#define UMISON_UMIXMLTYPESTRING_H
 
-#include "cudaxmltypes.h"
+#include "umixmltype.h"
 
-#include <vector>
-#include <unordered_map>
-#include <unordered_set>
-#include <string>
-
-namespace cuda {
+namespace umi {
   /**
-   * Class used to store our XML tree with its properties
-   * and transform it afterwards to json
+   * String type on the xml template
    * */
-  class cudaxml {
+  class umixmltypestring : public umixmltype {
   public:
     /**
-     * Creates a full xml tree ready to be written
-     * on disk based on the content string
+     * Constructor
      * */
-    explicit cudaxml(const std::string &content);
-    /**
-     * Forbid copy
-     * */
-    cudaxml(const cudaxml &) = delete;
-    /**
-     * Clean the resources
-     * */
-    ~cudaxml();
-    /**
-     * Forbid assignement
-     * */
-    cudaxml &operator=(const cudaxml &) = delete;
-    /**
-     * Gets the class map
-     * */
-    inline const std::vector<std::pair<std::string, std::shared_ptr<cuda::cudaxmltypeclass>>> &getClassMap() const {
-      return m_classMap;
+    umixmltypestring() : umixmltype() {
     }
     /**
-     * Gets the json array map
+     * Destructor
      * */
-    inline const std::vector<std::shared_ptr<cuda::cudaxmltypeclass>> &getJsonArray() const {
-      return m_jsonArray;
+    virtual ~umixmltypestring() {
     }
-  protected:
     /**
-     * List of classes we will use in the creation of the json, we use a vector of pairs as we need to keep
-     * the dependencies declared on the input template, anyway the intention is to use it as a map
+     * It is a string
      * */
-    std::vector<std::pair<std::string, std::shared_ptr<cuda::cudaxmltypeclass>>> m_classMap;
+    virtual bool isString() const final {
+      return true;
+    }
     /**
-     * List of json documents we will output
+     * Returns the type we want to use in the header, it will
+     * append the new line
      * */
-    std::vector<std::shared_ptr<cuda::cudaxmltypeclass>> m_jsonArray;
+    virtual std::string header_type(const std::string& additiona_text, bool append_new_line = true) {
+      std::string retval =  "std::string ";
+      retval += m_name;
+      if(append_new_line) {
+        retval += ";\n";
+      } else {
+        retval += ";";
+      }
+      return retval;
+    }
   };
 }
 
-#endif //CUDASON_CUDAXML_H
+#endif

@@ -23,31 +23,34 @@
  *	 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *	 POSSIBILITY OF SUCH DAMAGE.
  ****************************************************************************************/
-#ifndef CUDASON_CUDAXMLTYPEREFCLASS_H
-#define CUDASON_CUDAXMLTYPEREFCLASS_H
+#ifndef UMISON_UMIXMLTYPEMAP_H_H
+#define UMISON_UMIXMLTYPEMAP_H_H
 
-#include "cudaxmltype.h"
+#include "umixmltype.h"
 
-namespace cuda {
+namespace umi {
   /**
-   * Referenced class xml type, is an object on the json
+   * Map type of the xml template
+   *
+   * The first key will be an anonymous string and the second type can be anything
+   * basic or referenced type
    * */
-  class cudaxmltyperefclass : public cuda::cudaxmltype {
+  class umixmltypemap : public umixmltype {
   public:
     /**
      * Constructor
      * */
-    cudaxmltyperefclass() : cudaxmltype() {
+    umixmltypemap() : umixmltype() {
     }
     /**
      * Destructor
      * */
-    virtual ~cudaxmltyperefclass() {
+    virtual ~umixmltypemap() {
     }
     /**
-     * Is a referenced class
+     * It is an integer
      * */
-    virtual bool isRefClass() const final {
+    virtual bool isMap() const final {
       return true;
     }
     /**
@@ -55,11 +58,11 @@ namespace cuda {
      * append the new line
      * */
     virtual std::string header_type(const std::string& additiona_text, bool append_new_line = true) {
-      cuda::type_to_cpp tcpp;
-      std::string retval;
-      std::string cpp_type = tcpp.get_type(m_refclass); // Suport for reference of basic types
+      umi::type_to_cpp tcpp;
+      std::string retval =  "std::multimap<std::string,";
+      std::string cpp_type = tcpp.get_type(m_refclass);
       if(cpp_type.empty()) {
-        retval += "__internal__cudason";
+        retval += "__internal__umison";
         if(!additiona_text.empty()) {
           retval += additiona_text;
         }
@@ -68,7 +71,7 @@ namespace cuda {
       } else {
         retval += cpp_type;
       }
-      retval += " ";
+      retval += "> ";
       retval += m_name;
       if(append_new_line) {
         retval += ";\n";
@@ -78,4 +81,4 @@ namespace cuda {
   };
 }
 
-#endif //CUDASON_CUDAXMLTYPEREFCLASS_H
+#endif

@@ -23,12 +23,12 @@
  *	 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *	 POSSIBILITY OF SUCH DAMAGE.
  ****************************************************************************************/
-#ifndef CUDASON_CUDASONOUTENGINERAPIDJSON_H_H
-#define CUDASON_CUDASONOUTENGINERAPIDJSON_H_H
+#ifndef UMISON_UMISONOUTENGINERAPIDJSON_H_H
+#define UMISON_UMISONOUTENGINERAPIDJSON_H_H
 
-#include "cudasonoutputengine.h"
+#include "umisonoutputengine.h"
 
-namespace cuda {
+namespace umi {
   /**
    * rapid json output engine will be used to write the .cpp file using rapid json
    *
@@ -53,11 +53,11 @@ namespace cuda {
      *
      * \param ff with the XML template already built
      * */
-    virtual bool internal_write(std::shared_ptr<cuda::cudaxml> &ff) {
+    virtual bool internal_write(std::shared_ptr<umi::umixml> &ff) {
       create_disclaimer();
       create_includes();
       // Create the internal namespace
-      output_engine<T1, T2>::m_cpp_streamer << "namespace __internal__cudason"
+      output_engine<T1, T2>::m_cpp_streamer << "namespace __internal__umison"
       << output_engine<T1, T2>::m_additional_string << " {\n\n";
 
       // Create forward data
@@ -99,7 +99,7 @@ namespace cuda {
      * Create the forward declaration if we want to use any of the elements
      * afterwards
      * */
-    void create_forward_declarations(std::shared_ptr<cuda::cudaxml> &ff) {
+    void create_forward_declarations(std::shared_ptr<umi::umixml> &ff) {
       output_engine<T1, T2>::m_cpp_streamer << TABS << "// Forward declaration of parse functions\n";
       create_forward_declaration_basic_types();
       create_forward_declaration_classes(ff);
@@ -126,11 +126,11 @@ namespace cuda {
     /**
      * Create the forward declaration of the array of classes
      * */
-    void create_forward_declaration_classes(std::shared_ptr<cuda::cudaxml> &ff) {
+    void create_forward_declaration_classes(std::shared_ptr<umi::umixml> &ff) {
       auto class_map = ff->getClassMap();
       for (auto &&class_map_it: class_map) {
         output_engine<T1, T2>::m_cpp_streamer << TABS << "template<typename T>\n"
-        << TABS << "bool _read_list(std::vector<__internal__cudason"
+        << TABS << "bool _read_list(std::vector<__internal__umison"
         << output_engine<T1, T2>::m_additional_string << "::" << class_map_it.first << "> &str, T &data);\n";
       }
     }
@@ -153,11 +153,11 @@ namespace cuda {
     /**
      * Creates the forward declaration of the parse method of the classes
      * */
-    void create_forward_declaration_map_classes(std::shared_ptr<cuda::cudaxml> &ff) {
+    void create_forward_declaration_map_classes(std::shared_ptr<umi::umixml> &ff) {
       auto class_map = ff->getClassMap();
       for (auto &&class_map_it: class_map) {
         output_engine<T1, T2>::m_cpp_streamer << TABS << "template<typename T>\n"
-        << TABS << "bool _read_list(std::multimap<std::string, __internal__cudason"
+        << TABS << "bool _read_list(std::multimap<std::string, __internal__umison"
         << output_engine<T1, T2>::m_additional_string << "::" << class_map_it.first << "> &str, T &data);\n";
       }
     }
@@ -165,7 +165,7 @@ namespace cuda {
     /**
      * Creates the forward declaration of the parse method of the classes
      * */
-    void create_forward_declaration_parse_classes(std::shared_ptr<cuda::cudaxml> &ff) {
+    void create_forward_declaration_parse_classes(std::shared_ptr<umi::umixml> &ff) {
       auto class_map = ff->getClassMap();
       for (auto &&class_map_it: class_map) {
         output_engine<T1, T2>::m_cpp_streamer << TABS << "template<typename T>\n"
@@ -178,7 +178,7 @@ namespace cuda {
     /**
      * Creates the different array readers
      * */
-    void create_array_readers(std::shared_ptr<cuda::cudaxml> &ff) {
+    void create_array_readers(std::shared_ptr<umi::umixml> &ff) {
       output_engine<T1, T2>::m_cpp_streamer << TABS << "// Json type array readers implementation\n";
       create_array_readers_basic_types();
       create_array_readers_class_types(ff);
@@ -188,7 +188,7 @@ namespace cuda {
     /**
      * Creates the different map readers
      * */
-    void create_map_readers(std::shared_ptr<cuda::cudaxml> &ff) {
+    void create_map_readers(std::shared_ptr<umi::umixml> &ff) {
       output_engine<T1, T2>::m_cpp_streamer << TABS << "// Json type map readers implementation\n";
       create_map_readers_basic_types();
       create_map_readers_class_types(ff);
@@ -262,14 +262,14 @@ namespace cuda {
 
 #define __READ_LIST_CLASS(STREAMER, SPACE, ADDITIONAL_STR, TYPE)\
         STREAMER << SPACE << "template<typename T>\n"\
-                 << SPACE << "bool _read_list(std::vector<__internal__cudason" << ADDITIONAL_STR << "::" << TYPE << "> &str, T &data)\n"\
+                 << SPACE << "bool _read_list(std::vector<__internal__umison" << ADDITIONAL_STR << "::" << TYPE << "> &str, T &data)\n"\
                  << SPACE << "{\n"\
                  << SPACE << SPACE << "if (!data.IsArray()) {\n"\
                  << SPACE << SPACE << SPACE << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error data is not an array\\n\";\n"\
                  << SPACE << SPACE << SPACE << "return false;\n"\
                  << SPACE << SPACE << "}\n\n"\
                  << SPACE << SPACE << "for (rapidjson::SizeType i = 0; i < data.Size(); ++i) {\n"\
-                 << SPACE << SPACE << SPACE << "__internal__cudason" << ADDITIONAL_STR << "::" << TYPE << " local_" << TYPE << ";\n"\
+                 << SPACE << SPACE << SPACE << "__internal__umison" << ADDITIONAL_STR << "::" << TYPE << " local_" << TYPE << ";\n"\
                  << SPACE << SPACE << SPACE << "if (" << TYPE << "__input_parse(local_" << TYPE << ", data[i])) {\n"\
                  << SPACE << SPACE << SPACE << SPACE << "str.push_back(local_" << TYPE << ");\n"\
                  << SPACE << SPACE << SPACE << "} else {\n"\
@@ -283,7 +283,7 @@ namespace cuda {
     /**
      * Create the readers for the different class types
      * */
-    void create_array_readers_class_types(std::shared_ptr<cuda::cudaxml> &ff) {
+    void create_array_readers_class_types(std::shared_ptr<umi::umixml> &ff) {
       auto class_map = ff->getClassMap();
       for (auto &&class_map_it : class_map) {
         __READ_LIST_CLASS((output_engine<T1, T2>::m_cpp_streamer), TABS,
@@ -294,7 +294,7 @@ namespace cuda {
 
 #define __READ_MAP_CLASS(STREAMER, SPACE, ADDITIONAL_STR, TYPE)\
      STREAMER    << SPACE << "template<typename T>\n"\
-                 << SPACE << "bool _read_map(std::multimap<std::string, __internal__cudason" << ADDITIONAL_STR << "::" << TYPE << "> &str, T &data)\n"\
+                 << SPACE << "bool _read_map(std::multimap<std::string, __internal__umison" << ADDITIONAL_STR << "::" << TYPE << "> &str, T &data)\n"\
                  << SPACE << "{\n"\
                  << SPACE << SPACE << "for (rapidjson::Document::MemberIterator i = data.MemberBegin();\n"\
                  << SPACE << SPACE << SPACE << "i != data.MemberEnd();\n"\
@@ -304,7 +304,7 @@ namespace cuda {
                  << SPACE << SPACE << SPACE << SPACE << "return false;\n"\
                  << SPACE << SPACE << SPACE << "}\n"\
                  << SPACE << SPACE << SPACE << "if (i->value.IsObject()) {\n"\
-                 << SPACE << SPACE << SPACE << SPACE << "__internal__cudason" << ADDITIONAL_STR << "::" << TYPE << " local_" << TYPE << ";\n"\
+                 << SPACE << SPACE << SPACE << SPACE << "__internal__umison" << ADDITIONAL_STR << "::" << TYPE << " local_" << TYPE << ";\n"\
                  << SPACE << SPACE << SPACE << SPACE << "if (" << TYPE << "__input_parse(local_" << TYPE << ", i->value)) {\n"\
                  << SPACE << SPACE << SPACE << SPACE << SPACE << "str.insert(std::make_pair(std::string(i->name.GetString()), local_" << TYPE << "));\n"\
                  << SPACE << SPACE << SPACE << SPACE << "} else {\n"\
@@ -312,7 +312,7 @@ namespace cuda {
                  << SPACE << SPACE << SPACE << SPACE << "}\n"\
                  << SPACE << SPACE << SPACE << "} else if (i->value.IsArray()){\n"\
                  << SPACE << SPACE << SPACE << SPACE << "for (rapidjson::SizeType j = 0; j < i->value.Size(); ++j){\n"\
-                 << SPACE << SPACE << SPACE << SPACE << SPACE << "__internal__cudason" << ADDITIONAL_STR << "::" << TYPE << " local_" << TYPE << ";\n"\
+                 << SPACE << SPACE << SPACE << SPACE << SPACE << "__internal__umison" << ADDITIONAL_STR << "::" << TYPE << " local_" << TYPE << ";\n"\
                  << SPACE << SPACE << SPACE << SPACE << SPACE << "if (" << TYPE << "__input_parse(local_" << TYPE << ", i->value[j])) {\n"\
                  << SPACE << SPACE << SPACE << SPACE << SPACE << SPACE << "str.insert(std::make_pair(std::string(i->name.GetString()), local_" << TYPE << "));\n"\
                  << SPACE << SPACE << SPACE << SPACE << SPACE << "} else {\n"\
@@ -326,7 +326,7 @@ namespace cuda {
     /**
      * Create the readers for the different maps types on classes
      * */
-    void create_map_readers_class_types(std::shared_ptr<cuda::cudaxml> &ff) {
+    void create_map_readers_class_types(std::shared_ptr<umi::umixml> &ff) {
       auto class_map = ff->getClassMap();
       for (auto &&class_map_it : class_map) {
         __READ_MAP_CLASS((output_engine<T1, T2>::m_cpp_streamer), TABS,
@@ -377,7 +377,7 @@ namespace cuda {
 
 #define _DATA_READER_LIST_ASSIGN(STREAMER, SPACE, ADDITIONAL_SPACE, ADDITIONAL_STRING, TYPE_NAME, INOUT, RDATA)\
         STREAMER << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
-        << "if (!__internal__cudason" << ADDITIONAL_STRING << "::_read_list("\
+        << "if (!__internal__umison" << ADDITIONAL_STRING << "::_read_list("\
         << ""#INOUT"" << TYPE_NAME << ", "#RDATA"[\"" << TYPE_NAME\
         << "\"])) {\n"\
         << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
@@ -401,7 +401,7 @@ namespace cuda {
 
 #define _DATA_READER_MAP_ASSIGN(STREAMER, SPACE, ADDITIONAL_SPACE, ADDITIONAL_STRING, TYPE_NAME, INOUT, RDATA)\
         STREAMER << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
-        << "if (!__internal__cudason" << ADDITIONAL_STRING << "::_read_map("#INOUT"" << TYPE_NAME << ", "#RDATA")) {\n"\
+        << "if (!__internal__umison" << ADDITIONAL_STRING << "::_read_map("#INOUT"" << TYPE_NAME << ", "#RDATA")) {\n"\
         << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error reading map\\n\";\n"\
         << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
@@ -450,7 +450,7 @@ namespace cuda {
 
 #define _DATA_READER_SECOND_IF_OPTIONAL_LIST(STREAMER, SPACE, ADDITIONAL_SPACE, ADDITIONAL_STRING, TYPE_NAME, RDATA)\
         STREAMER << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
-        << "if (!__internal__cudason" << ADDITIONAL_STRING << "::_read_list(inout."\
+        << "if (!__internal__umison" << ADDITIONAL_STRING << "::_read_list(inout."\
         << TYPE_NAME << ", "#RDATA"[\"" << TYPE_NAME << "\"])) {\n"\
         << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"") << "std::cerr << \"Error reading array\\n\";\n"\
         << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"") << "return false;\n"\
@@ -468,7 +468,7 @@ namespace cuda {
         STREAMER << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "if ("#RDATA".MemberCount() > 0) {\n"\
         << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
-        << "if (!__internal__cudason" << ADDITIONAL_STRING << "::_read_map(inout." << TYPE_NAME << ", "#RDATA")) {\n"\
+        << "if (!__internal__umison" << ADDITIONAL_STRING << "::_read_map(inout." << TYPE_NAME << ", "#RDATA")) {\n"\
         << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "std::cerr << \"Error reading map\\n\";\n"\
         << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
@@ -479,14 +479,14 @@ namespace cuda {
     /**
      * Create the readers for the different data structures
      * */
-    void create_data_readers(std::shared_ptr<cuda::cudaxml> &ff) {
+    void create_data_readers(std::shared_ptr<umi::umixml> &ff) {
       output_engine<T1, T2>::m_cpp_streamer << TABS << "// Data parsers\n";
       auto class_map = ff->getClassMap();
       for (auto &&class_map_it : class_map) {
         output_engine<T1, T2>::m_cpp_streamer << TABS << "template<typename T>\n" << TABS
         << "bool " << class_map_it.first << "__input_parse(" << class_map_it.first << " &inout, T &rData)\n"
         << TABS << "{\n";
-        const std::vector<std::shared_ptr<cudaxmltype>> &elements_class = class_map_it.second->getChildren();
+        const std::vector<std::shared_ptr<umixmltype>> &elements_class = class_map_it.second->getChildren();
         for (auto &&single_element: elements_class) {
           if (single_element->condition().empty()) {
             // if !condition
@@ -821,12 +821,12 @@ namespace cuda {
      * Create the full json readers for each of the json elements
      * in the input template
      * */
-    void create_json_readers(std::shared_ptr<cuda::cudaxml> &ff) {
+    void create_json_readers(std::shared_ptr<umi::umixml> &ff) {
       output_engine<T1, T2>::m_cpp_streamer << TABS << "// Json parsers\n";
       auto json_array = ff->getJsonArray();
       for (auto &&class_map_it : json_array) {
         output_engine<T1, T2>::m_cpp_streamer
-        << TABS << "bool cudason::" << class_map_it->name() << "::read_data(const std::string &input_text)\n"
+        << TABS << "bool umison::" << class_map_it->name() << "::read_data(const std::string &input_text)\n"
         << TABS << "{\n"
         << TABS << TABS << "rapidjson::Document _document;\n"
         << TABS << TABS << "if (_document.Parse(input_text.c_str()).HasParseError()) {\n"
@@ -834,7 +834,7 @@ namespace cuda {
         "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error parsing input text. Error: \" << _document.GetParseError() << \"\\n\";\n"
         << TABS << TABS << TABS << "return false;\n"
         << TABS << TABS << "}\n";
-        const std::vector<std::shared_ptr<cudaxmltype>> &elements_class = class_map_it->getChildren();
+        const std::vector<std::shared_ptr<umixmltype>> &elements_class = class_map_it->getChildren();
         for (auto &&single_element: elements_class) {
           if (single_element->condition().empty()) {
             // if !condition
@@ -1164,4 +1164,4 @@ namespace cuda {
   };
 }
 
-#endif //CUDASON_CUDASONOUTENGINERAPIDJSON_H_H
+#endif
