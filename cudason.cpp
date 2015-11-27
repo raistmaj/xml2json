@@ -25,10 +25,9 @@
  ****************************************************************************************/
 
 #include "cudason.h"
-#include "cudasonoutputengine.h"
+#include "cudasonoutputengines.h"
 #include <boost/algorithm/string.hpp>
 #include <boost/program_options.hpp>
-#include <iostream>
 
 cuda::cudason::cudason(int argc, char **argv) : m_inputStream(std::cin.rdbuf()),
                                                 m_cpp_stream(std::cout.rdbuf()),
