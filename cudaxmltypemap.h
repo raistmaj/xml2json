@@ -53,6 +53,31 @@ namespace cuda {
     virtual bool isMap() const final {
       return true;
     }
+    /**
+     * Returns the type we want to use in the header, it will
+     * append the new line
+     * */
+    virtual std::string header_type(const std::string& additiona_text, bool append_new_line = true) {
+      cuda::type_to_cpp tcpp;
+      std::string retval =  "std::multimap<std::string,";
+      std::string cpp_type = tcpp.get_type(m_refclass);
+      if(cpp_type.empty()) {
+        retval += "__internal__cudason";
+        if(!additiona_text.empty()) {
+          retval += additiona_text;
+        }
+        retval += "::";
+        retval += m_refclass;
+      } else {
+        retval += cpp_type;
+      }
+      retval += "> ";
+      retval += m_name;
+      if(append_new_line) {
+        retval += ";\n";
+      }
+      return retval;
+    }
   };
 }
 

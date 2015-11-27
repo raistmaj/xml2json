@@ -49,4 +49,30 @@
 #define CUDA_XMLATTR_CONDITION "condition"
 #define CUDA_XMLATTR_VALUE "value"
 
+/**
+ * Macro used to store the amount of space we want to use as tabulations
+ * No \t is used as that will create code that may be difficult to read
+ * depending on the enviroment configuration.
+ * */
+#define TABS "    "
+/**
+ * Disclaimer printed on the .h and .cpp files
+ * */
+#define DISCLAIMER "/**\n\
+ * This file has been created automatically. Any change will be lost\n\
+ * Please modify your input template to create a different output\n\
+ * instead of modifying this file.\n\
+ *\n\
+ * Author: José Gerardo Palma Durán\n\
+ *\n\
+ * Disclaimer: The author of this software is not responsible of any\n\
+ * possible damage/problem caused by the usage of this software. This\n\
+ * code is provided as is, without any warranty.\n\
+ *\n\
+ * If you want to report any bug, please contact me at jpalma at barracuda dot com\n\
+ * \n\
+ * If you didn't get a copy of the code used to create these templates, you can always\n\
+ * download it for free from https://github.com/raistmaj/xml2json\n\
+ * */\n"
+
 #endif //CUDASON_CUDAXMLTAGS_H

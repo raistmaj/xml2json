@@ -69,6 +69,14 @@ namespace cuda {
     const std::vector<std::shared_ptr<cudaxmltype>> &getChildren() const {
       return m_children;
     }
+    /**
+     * Returns the type we want to use in the header, it will
+     * append the new line
+     * */
+    virtual std::string header_type(const std::string& additiona_text, bool append_new_line = true) {
+      std::string retval;
+      return retval;
+    }
   protected:
     /**
      * Array of children are included within the class. It is a vector as we

@@ -51,6 +51,20 @@ namespace cuda {
     virtual bool isInteger() const final {
       return true;
     }
+    /**
+     * Returns the type we want to use in the header, it will
+     * append the new line
+     * */
+    virtual std::string header_type(const std::string& additiona_text, bool append_new_line = true) {
+      std::string retval =  "long long int ";
+      retval += m_name;
+      if(append_new_line) {
+        retval += ";\n";
+      } else {
+        retval += ";";
+      }
+      return retval;
+    }
   };
 }
 #endif //CUDASON_CUDAXMLTYPEINTEGER_H

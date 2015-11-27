@@ -26,6 +26,7 @@
 #ifndef CUDASON_CUDASONOUTPUTENGINE_H
 #define CUDASON_CUDASONOUTPUTENGINE_H
 
+#include "cudasonfileprinter.h"
 #include "cudaxml.h"
 #include "cudaxmltags.h"
 #include <cstdlib>
@@ -35,32 +36,7 @@
 
 namespace cuda {
 
-/**
- * Disclaimer printed on the .h and .cpp files
- * */
-#define DISCLAIMER "/**\n\
- * This file has been created automatically. Any change will be lost\n\
- * Please modify your input template to create a different output\n\
- * instead of modifying this file.\n\
- *\n\
- * Author: José Gerardo Palma Durán\n\
- *\n\
- * Disclaimer: The author of this software is not responsible of any\n\
- * possible damage/problem caused by the usage of this software. This\n\
- * code is provided as is, without any warranty.\n\
- *\n\
- * If you want to report any bug, please contact me at jpalma at barracuda dot com\n\
- * \n\
- * If you didn't get a copy of the code used to create these templates, you can always\n\
- * download it for free from https://github.com/raistmaj/xml2json\n\
- * */\n"
 
-/**
- * Macro used to store the amount of space we want to use as tabulations
- * No \t is used as that will create code that may be difficult to read
- * depending on the enviroment configuration.
- * */
-#define TABS "    "
 
   // Forward declaration of the cudaxml
   class cudaxml;
@@ -105,178 +81,6 @@ namespace cuda {
     }
     return "Object";
   }
-
-  /**
-   * Class used by the output engine common to all subengines-
-   * It will create the basic .h template
-   *
-   * The idea behind this is to use always the same .h and the internals
-   * engine will write the .cpp following those name conventions.
-   *
-   * Thanks to this approach we can abstract the output subengine
-   * as all must be independant, may produce some problems in the future
-   * but as first decission looks correct.
-   * */
-  class file_printer {
-  public:
-    /**
-     * Basic constructor, this class uses pure RAII
-     * */
-    file_printer() {
-    }
-    /**
-     * Prints the .h file
-     *
-     * \param ff pointer to the cudaxml instance we want to write within stream
-     * \param stream used to output the json representation
-     * */
-    template<typename streamer>
-    void print(std::shared_ptr<cuda::cudaxml> &ff, streamer &&stream) {
-      stream << DISCLAIMER
-      << "\n#include <string>\n#include <vector>\n#include <map>\n\n";
-
-      if (!ff->getClassMap().empty()) {
-        stream << "// Internal namespace declaration\nnamespace __internal__cudason"
-        << m_additional_string << " {\n\n"
-        << TABS << "// Forward declaration\n";
-        auto classMap = ff->getClassMap();
-        for (auto &&classMapIt : classMap) {
-          stream << TABS << "struct " << classMapIt.first << ";\n";
-        }
-        stream << "\n";
-        for (auto &&classMapIt : classMap) {
-          stream << TABS << "// struct " << classMapIt.first << "\n";
-          stream << TABS << "struct " << classMapIt.first << " {\n";
-          auto classChildren = classMapIt.second->getChildren();
-          for (auto &&childrenIt : classChildren) {
-            stream << TABS << TABS;
-            if (childrenIt->isString()) {
-              stream << "std::string " << childrenIt->name() << ";\n";
-            } else if (childrenIt->isFloat()) {
-              stream << "double " << childrenIt->name() << ";\n";
-            } else if (childrenIt->isBoolean()) {
-              stream << "bool " << childrenIt->name() << ";\n";
-            } else if (childrenIt->isInteger()) {
-              stream << "long long int " << childrenIt->name() << ";\n";
-            } else if (childrenIt->isInteger32()) {
-              stream << "int " << childrenIt->name() << ";\n";
-            } else if (childrenIt->isList()) {
-              stream << "std::vector<";
-              if (childrenIt->refclass() == "integer") {
-                stream << "long long int";
-              } else if (childrenIt->refclass() == "int32") {
-                stream << "int";
-              } else if (childrenIt->refclass() == "boolean") {
-                stream << "bool";
-              } else if (childrenIt->refclass() == "float") {
-                stream << "double";
-              } else if (childrenIt->refclass() == "string") {
-                stream << "std::string";
-              } else {
-                stream << "__internal__cudason" << m_additional_string << "::"
-                << childrenIt->refclass();
-              }
-              stream << "> " << childrenIt->name() << ";\n";
-            } else if (childrenIt->isRefClass()) {
-              stream << "__internal__cudason" << m_additional_string << "::"
-              << childrenIt->refclass() << " " << childrenIt->name() << ";\n";
-            } else if (childrenIt->isMap()) {
-              stream << "std::multimap<std::string,";
-              if (childrenIt->refclass() == "integer") {
-                stream << "long long int";
-              } else if (childrenIt->refclass() == "int32") {
-                stream << "int";
-              } else if (childrenIt->refclass() == "boolean") {
-                stream << "bool";
-              } else if (childrenIt->refclass() == "float") {
-                stream << "double";
-              } else if (childrenIt->refclass() == "string") {
-                stream << "std::string";
-              } else {
-                stream << "__internal__cudason" << m_additional_string << "::"
-                << childrenIt->refclass();
-              }
-              stream << "> " << childrenIt->name() << ";\n";
-            }
-          }
-          stream << TABS << "};\n\n";
-        }
-        stream << "}\n\n"; // For the internal namespace
-      }
-
-      stream << "// Namespace where we store our final jsons\nnamespace cudason {\n\n"
-      << TABS << "// Forward declaration\n";
-      auto jsonArray = ff->getJsonArray();
-      for (auto &&jsonArrayIt : jsonArray) {
-        stream << TABS << "struct " << jsonArrayIt->name() << ";\n";
-      }
-      stream << "\n";
-      for (auto &&jsonArrayIt : jsonArray) {
-        stream << TABS << "// struct " << jsonArrayIt->name() << "\n"
-        << TABS << "struct " << jsonArrayIt->name() << " {\n";
-        auto classChildren = jsonArrayIt->getChildren();
-        for (auto &&childrenIt : classChildren) {
-          stream << TABS << TABS;
-          if (childrenIt->isString()) {
-            stream << "std::string " << childrenIt->name() << ";\n";
-          } else if (childrenIt->isFloat()) {
-            stream << "double " << childrenIt->name() << ";\n";
-          } else if (childrenIt->isBoolean()) {
-            stream << "bool " << childrenIt->name() << ";\n";
-          } else if (childrenIt->isInteger()) {
-            stream << "long long int " << childrenIt->name() << ";\n";
-          } else if (childrenIt->isInteger32()) {
-            stream << "int " << childrenIt->name() << ";\n";
-          } else if (childrenIt->isList()) {
-            stream << "std::vector<";
-            if (childrenIt->refclass() == "integer") {
-              stream << "long long int";
-            } else if (childrenIt->refclass() == "int32") {
-              stream << "int";
-            } else if (childrenIt->refclass() == "boolean") {
-              stream << "bool";
-            } else if (childrenIt->refclass() == "float") {
-              stream << "double";
-            } else if (childrenIt->refclass() == "string") {
-              stream << "std::string";
-            } else {
-              stream << "__internal__cudason" << m_additional_string << "::"
-              << childrenIt->refclass();
-            }
-            stream << "> " << childrenIt->name() << ";\n";
-          } else if (childrenIt->isRefClass()) {
-            stream << "__internal__cudason" << m_additional_string << "::"
-            << childrenIt->refclass() << " " << childrenIt->name() << ";\n";
-          } else if (childrenIt->isMap()) {
-            stream << "std::multimap<std::string,";
-            if (childrenIt->refclass() == "integer") {
-              stream << "long long int";
-            } else if (childrenIt->refclass() == "int32") {
-              stream << "int";
-            } else if (childrenIt->refclass() == "boolean") {
-              stream << "bool";
-            } else if (childrenIt->refclass() == "float") {
-              stream << "double";
-            } else if (childrenIt->refclass() == "string") {
-              stream << "std::string";
-            } else {
-              stream << "__internal__cudason" << m_additional_string << "::"
-              << childrenIt->refclass();
-            }
-            stream << "> " << childrenIt->name() << ";\n";
-          }
-        }
-        stream << "\n" << TABS << TABS << "// read one input string and fill the data\n"
-        << TABS << TABS << "bool read_data(const std::string& input_text);\n";
-        stream << TABS << "};\n\n";
-      }
-      stream << "}\n"; // For the cudason namespace
-    }
-    /**
-     * String to append in namespace and class
-     * */
-    std::string m_additional_string;
-  };
 
   /**
    * Output engine parent class used as interface for the rest

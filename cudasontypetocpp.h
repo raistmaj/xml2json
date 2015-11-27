@@ -23,59 +23,43 @@
  *	 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *	 POSSIBILITY OF SUCH DAMAGE.
  ****************************************************************************************/
-#ifndef CUDASON_CUDAXMLTYPEREFCLASS_H
-#define CUDASON_CUDAXMLTYPEREFCLASS_H
+#ifndef CUDASON_CUDASONTYPETOCPP_H
+#define CUDASON_CUDASONTYPETOCPP_H
 
-#include "cudaxmltype.h"
+#include <unordered_map>
 
 namespace cuda {
   /**
-   * Referenced class xml type, is an object on the json
+   * Class used to transform from one type to a cpp type only basic types
    * */
-  class cudaxmltyperefclass : public cuda::cudaxmltype {
+  class type_to_cpp {
   public:
     /**
      * Constructor
      * */
-    cudaxmltyperefclass() : cudaxmltype() {
-    }
+    type_to_cpp() { }
     /**
      * Destructor
      * */
-    virtual ~cudaxmltyperefclass() {
-    }
+    ~type_to_cpp() { }
     /**
-     * Is a referenced class
+     * Get the type we want
      * */
-    virtual bool isRefClass() const final {
-      return true;
-    }
-    /**
-     * Returns the type we want to use in the header, it will
-     * append the new line
-     * */
-    virtual std::string header_type(const std::string& additiona_text, bool append_new_line = true) {
-      cuda::type_to_cpp tcpp;
+    std::string get_type(const std::string& val) {
       std::string retval;
-      std::string cpp_type = tcpp.get_type(m_refclass); // Suport for reference of basic types
-      if(cpp_type.empty()) {
-        retval += "__internal__cudason";
-        if(!additiona_text.empty()) {
-          retval += additiona_text;
-        }
-        retval += "::";
-        retval += m_refclass;
-      } else {
-        retval += cpp_type;
-      }
-      retval += " ";
-      retval += m_name;
-      if(append_new_line) {
-        retval += ";\n";
+      auto val_it = m_mapType.find(val);
+      if(val_it != m_mapType.end()) {
+        retval = val_it->second;
       }
       return retval;
     }
+  protected:
+    std::unordered_map <std::string, std::string> m_mapType{{"string",  "std::string"},
+                                                            {"integer", "long long int"},
+                                                            {"int32",   "int"},
+                                                            {"float",   "double"},
+                                                            {"boolean", "bool"}};
   };
 }
 
-#endif //CUDASON_CUDAXMLTYPEREFCLASS_H
+#endif //CUDASON_CUDASONTYPETOCPP_H
