@@ -48,7 +48,7 @@ namespace umi {
      * -e [ --write-file-h ] arg   The .h output will be written to this file
      * -p [ --write-file-cpp ] arg The .cpp output will be written to this file
      * -i [ --read-file ] arg      Use this file as input xml template
-     * -a [ --apped-string ] arg   String to be appended in the internal namespace
+     * -a [ --append-string ] arg  String to be appended in the internal namespace
      *                             to avoid collisions with existing code
    * */
   class umison {
