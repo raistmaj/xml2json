@@ -842,10 +842,10 @@ namespace umi {
               // First if checking the data contains that element
               if (!single_element->isMap()) {
                 output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
-                << "if (!_document.HasMember(\"" << single_element->name() << "\")) {\n"
+                << "if (!_document.IsObject() || !_document.HasMember(\"" << single_element->name() << "\")) {\n"
                 << TABS << TABS << TABS
                 << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error entity: "
-                << class_map_it->name() << " is missing mandatory entry " << single_element->name() <<
+                << class_map_it->name() << " is missing mandatory entry or entity is not an object" << single_element->name() <<
                 "\\n\";\n"
                 << TABS << TABS << TABS << "return false;\n"
                 << TABS << TABS << "}\n";
@@ -921,7 +921,7 @@ namespace umi {
               // First if
               if (!single_element->isMap()) {
                 output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
-                << "if (_document.HasMember(\"" << single_element->name() << "\")) {\n";
+                << "if (_documnet.IsObject() && _document.HasMember(\"" << single_element->name() << "\")) {\n";
               }
               // Second if
               if (single_element->isBoolean()) {
@@ -1000,10 +1000,10 @@ namespace umi {
               // First if checking the data contains that element
               if (!single_element->isMap()) {
                 output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << TABS
-                << "if (!_document.HasMember(\"" << single_element->name() << "\")) {\n"
+                << "if (!_document.IsObject() || !_document.HasMember(\"" << single_element->name() << "\")) {\n"
                 << TABS << TABS << TABS << TABS
                 << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error entity: "
-                << class_map_it->name() << " is missing mandatory entry " << single_element->name() <<
+                << class_map_it->name() << " is missing mandatory entry or entity is not an object" << single_element->name() <<
                 "\\n\";\n"
                 << TABS << TABS << TABS << TABS << "return false;\n"
                 << TABS << TABS << TABS << "}\n";
@@ -1079,7 +1079,7 @@ namespace umi {
               // The data is optional
               if (!single_element->isMap()) {
                 output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << TABS
-                << "if (_document.HasMember(\"" << single_element->name() << "\")) {\n";
+                << "if (_documnet.IsObject() && _document.HasMember(\"" << single_element->name() << "\")) {\n";
               }
               // Second if
               if (single_element->isBoolean()) {
