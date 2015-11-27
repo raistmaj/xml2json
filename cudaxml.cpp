@@ -107,6 +107,7 @@ namespace cuda {
         }
         retval = true;
       }
+      return retval;
     }
     /**
      * Reads one node from rapid xml and fills the referenced class stored in it
