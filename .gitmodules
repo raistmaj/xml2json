@@ -1,3 +1,6 @@
 [submodule "rapidjson"]
 	path = rapidjson
 	url = https://github.com/miloyip/rapidjson.git
+[submodule "pugixml"]
+	path = pugixml
+	url = https://github.com/zeux/pugixml

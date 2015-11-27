@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
       while(fi.getline(buf,1024)){
         input_text += buf;
       }
-      cudason::champion champ;
+      umison::champion champ;
       if(!champ.read_data(input_text)) {
         std::cout << "Failed\n";
       } else {
@@ -33,7 +33,7 @@ int main(int argc, char** argv) {
       while(fi.getline(buf,1024)){
         input_text += buf;
       }
-      cudason::getSpectatorGameInfo spect;
+      umison::getSpectatorGameInfo spect;
       if(!spect.read_data(input_text)) {
         std::cout << "Failed\n";
       } else {
@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
       while(fi.getline(buf,1024)){
         input_text += buf;
       }
-      cudason::featuredGames fea;
+      umison::featuredGames fea;
       if(!fea.read_data(input_text)) {
         std::cout << "Failed\n";
       } else {
@@ -73,7 +73,7 @@ int main(int argc, char** argv) {
       while(fi.getline(buf,1024)){
         input_text += buf;
       }
-      cudason::recent_game_by_summoner_id fea;
+      umison::recent_game_by_summoner_id fea;
       if(!fea.read_data(input_text)) {
         std::cout << "Failed\n";
       } else {
@@ -93,7 +93,7 @@ int main(int argc, char** argv) {
       while(fi.getline(buf,1024)){
         input_text += buf;
       }
-      cudason::get_leagues_by_summoner_ids fea;
+      umison::get_leagues_by_summoner_ids fea;
       if(!fea.read_data(input_text)) {
         std::cout << "Failed\n";
       } else {
