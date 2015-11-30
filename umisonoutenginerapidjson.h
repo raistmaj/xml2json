@@ -373,14 +373,22 @@ namespace umi {
       }
     }
 
-#define _DATA_READER_SINGLE(STREAMER, SPACE, ADDITIONAL_SPACE, TYPE_NAME, CLASS_NAME, RAPID_JSON_TYPE, RDATA)\
-        STREAMER << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
-        << "if (!"#RDATA"[\"" << TYPE_NAME << "\"].Is"#RAPID_JSON_TYPE"()) {\n"\
-        << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
-        << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error entity: "\
-        << CLASS_NAME << " is wrong type " << TYPE_NAME << "\\n\";\n"\
-        << SPACE << SPACE << SPACE <<  ((ADDITIONAL_SPACE == true)?SPACE:"") << "return false;\n"\
-        << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"") <<  "}\n"
+
+    void _data_reader_single(T2 &streamer, const std::string &space, const std::string &type,
+                             const std::string &class_name, const std::string rapid_json_type,
+                             const std::string &rdata, int level) {
+      std::string def_indentation(build_indentation(space, level));
+      std::string def_1p_indentation(def_indentation + space);
+      std::string def_2p_indentation(def_1p_indentation + space);
+      std::string def_3p_indentation(def_2p_indentation + space);
+      std::string def_4p_indentation(def_3p_indentation + space);
+      std::string def_5p_indentation(def_4p_indentation + space);
+      streamer << def_indentation << "if (!" << rdata << "[\"" << type << "\"].Is" << rapid_json_type << "()) {\n"
+      << def_1p_indentation << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error entity: "
+      << class_name << " is wrong type " << type << "\\n\";\n"\
+ << def_1p_indentation << "return false;\n"\
+ << def_indentation << "}\n";
+    }
 
 #define _DATA_READER_SINGLE_MAP(STREAMER, SPACE, ADDITIONAL_SPACE, TYPE_NAME, CLASS_NAME, RAPID_JSON_TYPE, RDATA)\
         STREAMER << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
@@ -512,6 +520,8 @@ namespace umi {
         << SPACE << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "return false;\n"\
         << SPACE << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
+        << "}\n"\
+        << SPACE << SPACE << ((ADDITIONAL_SPACE == true)?SPACE:"")\
         << "}\n"
 
     /**
@@ -543,26 +553,26 @@ namespace umi {
               }
               // Second if Check the type is the valid value
               if (single_element->isBoolean()) {
-                _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
-                                    single_element->name(), class_map_it.first, Bool, rData);
+                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
+                                    class_map_it.first, "Bool", "rData", 2);
               } else if (single_element->isInteger()) {
-                _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
-                                    single_element->name(), class_map_it.first, Int64, rData);
+                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
+                                    class_map_it.first, "Int64", "rData", 2);
               } else if (single_element->isInteger32()) {
-                _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
-                                    single_element->name(), class_map_it.first, Int, rData);
+                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
+                                    class_map_it.first, "Int", "rData", 2);
               } else if (single_element->isFloat()) {
-                _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
-                                    single_element->name(), class_map_it.first, Double, rData);
+                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
+                                    class_map_it.first, "Double", "rData", 2);
               } else if (single_element->isString()) {
-                _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
-                                    single_element->name(), class_map_it.first, String, rData);
+                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
+                                    class_map_it.first, "String", "rData", 2);
               } else if (single_element->isRefClass()) {
-                _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
-                                    single_element->name(), class_map_it.first, Object, rData);
+                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
+                                    class_map_it.first, "Object", "rData", 2);
               } else if (single_element->isList()) {
-                _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
-                                    single_element->name(), class_map_it.first, Array, rData);
+                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
+                                    class_map_it.first, "Array", "rData", 2);
               } else if (single_element->isMap()) {
                 if (elements_class.size() > 1) {
                   std::cerr << "Error: More than one element on the same level within a map\n";
@@ -707,26 +717,26 @@ namespace umi {
               }
               // Second if Check the type is the valid value
               if (single_element->isBoolean()) {
-                _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
-                                    single_element->name(), class_map_it.first, Bool, rData);
+                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
+                                    class_map_it.first, "Bool", "rData", 3);
               } else if (single_element->isInteger()) {
-                _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
-                                    single_element->name(), class_map_it.first, Int64, rData);
+                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
+                                    class_map_it.first, "Int64", "rData", 3);
               } else if (single_element->isInteger32()) {
-                _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
-                                    single_element->name(), class_map_it.first, Int, rData);
+                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
+                                    class_map_it.first, "Int", "rData", 3);
               } else if (single_element->isFloat()) {
-                _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
-                                    single_element->name(), class_map_it.first, Double, rData);
+                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
+                                    class_map_it.first, "Double", "rData", 3);
               } else if (single_element->isString()) {
-                _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
-                                    single_element->name(), class_map_it.first, String, rData);
+                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
+                                    class_map_it.first, "String", "rData", 3);
               } else if (single_element->isRefClass()) {
-                _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
-                                    single_element->name(), class_map_it.first, Object, rData);
+                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
+                                    class_map_it.first, "Object", "rData", 3);
               } else if (single_element->isList()) {
-                _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
-                                    single_element->name(), class_map_it.first, Array, rData);
+                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
+                                    class_map_it.first, "Array", "rData", 3);
               } else if (single_element->isMap()) {
                 if (elements_class.size() > 1) {
                   std::cerr << "Error: More than one element on the same level within a map\n";
@@ -896,26 +906,26 @@ namespace umi {
               }
               // Second if Check the type is the valid value
               if (single_element->isBoolean()) {
-                _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
-                                    single_element->name(), class_map_it->name(), Bool, _document);
+                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
+                                    class_map_it->name(), "Bool", "_document", 2);
               } else if (single_element->isInteger()) {
-                _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
-                                    single_element->name(), class_map_it->name(), Int64, _document);
+                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
+                                    class_map_it->name(), "Int64", "_document", 2);
               } else if (single_element->isInteger32()) {
-                _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
-                                    single_element->name(), class_map_it->name(), Int, _document);
+                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
+                                    class_map_it->name(), "Int", "_document", 2);
               } else if (single_element->isFloat()) {
-                _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
-                                    single_element->name(), class_map_it->name(), Double, _document);
+                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
+                                    class_map_it->name(), "Double", "_document", 2);
               } else if (single_element->isString()) {
-                _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
-                                    single_element->name(), class_map_it->name(), String, _document);
+                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
+                                    class_map_it->name(), "String", "_document", 2);
               } else if (single_element->isRefClass()) {
-                _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
-                                    single_element->name(), class_map_it->name(), Object, _document);
+                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
+                                    class_map_it->name(), "Object", "_document", 2);
               } else if (single_element->isList()) {
-                _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, false,
-                                    single_element->name(), class_map_it->name(), Array, _document);
+                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
+                                    class_map_it->name(), "Array", "_document", 2);
               } else if (single_element->isMap()) {
                 if (elements_class.size() > 1) {
                   std::cerr << "Error: More than one element on the same level within a map\n";
@@ -1059,26 +1069,26 @@ namespace umi {
               }
               // Second if Check the type is the valid value
               if (single_element->isBoolean()) {
-                _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
-                                    single_element->name(), class_map_it->name(), Bool, _document);
+                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
+                                    class_map_it->name(), "Bool", "_document", 3);
               } else if (single_element->isInteger()) {
-                _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
-                                    single_element->name(), class_map_it->name(), Int64, _document);
+                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
+                                    class_map_it->name(), "Int64", "_document", 3);
               } else if (single_element->isInteger32()) {
-                _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
-                                    single_element->name(), class_map_it->name(), Int, _document);
+                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
+                                    class_map_it->name(), "Int", "_document", 3);
               } else if (single_element->isFloat()) {
-                _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
-                                    single_element->name(), class_map_it->name(), Double, _document);
+                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
+                                    class_map_it->name(), "Double", "_document", 3);
               } else if (single_element->isString()) {
-                _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
-                                    single_element->name(), class_map_it->name(), String, _document);
+                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
+                                    class_map_it->name(), "String", "_document", 3);
               } else if (single_element->isRefClass()) {
-                _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
-                                    single_element->name(), class_map_it->name(), Object, _document);
+                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
+                                    class_map_it->name(), "Object", "_document", 3);
               } else if (single_element->isList()) {
-                _DATA_READER_SINGLE((output_engine<T1, T2>::m_cpp_streamer), TABS, true,
-                                    single_element->name(), class_map_it->name(), Array, _document);
+                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
+                                    class_map_it->name(), "Array", "_document", 3);
               } else if (single_element->isMap()) {
                 if (elements_class.size() > 1) {
                   std::cerr << "Error: More than one element on the same level within a map\n";
