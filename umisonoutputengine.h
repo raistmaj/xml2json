@@ -99,7 +99,7 @@ namespace umi {
      * other place like the constructor etc.
      * */
     bool write(std::shared_ptr<umi::umixml> &ff) {
-      file_printer printer;
+      file_printer<T1> printer;
       printer.print(ff, m_h_streamer);
       return this->internal_write(ff);
     };

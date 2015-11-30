@@ -84,6 +84,9 @@ namespace umi {
         while (node_attribute != node.attributes_end()) {
           if (strncmp(UMI_XMLATTR_NAME, node_attribute->name(), strlen(UMI_XMLATTR_NAME)) == 0) {
             map_node->name(node_attribute->value());
+          } else if (strncmp(UMI_XMLATTR_OPTIONAL_NAME, node_attribute->name(), strlen(UMI_XMLATTR_OPTIONAL_NAME)) ==
+                     0) {
+            map_node->optional_name(node_attribute->value());
           } else if (strncmp(UMI_XMLATTR_OPTIONAL, node_attribute->name(), strlen(UMI_XMLATTR_OPTIONAL)) ==
                      0) {
             try {
@@ -105,6 +108,13 @@ namespace umi {
           }
           node_attribute++;
         }
+        if (map_node->name().empty()) {
+          std::cerr << "Map node with empty name is not supported\n";
+          return retval;
+        }
+        if (map_node->optional() && map_node->optional_name().empty()) {
+          map_node->optional_name(map_node->name() + "_umi_optional");
+        }
         retval = true;
       }
       return retval;
@@ -122,6 +132,9 @@ namespace umi {
         while (node_attribute != node.attributes_end()) {
           if (strncmp(UMI_XMLATTR_NAME, node_attribute->name(), strlen(UMI_XMLATTR_NAME)) == 0) {
             refclass_node->name(node_attribute->value());
+          } else if (strncmp(UMI_XMLATTR_OPTIONAL_NAME, node_attribute->name(), strlen(UMI_XMLATTR_OPTIONAL_NAME)) ==
+                     0) {
+            refclass_node->optional_name(node_attribute->value());
           } else if (strncmp(UMI_XMLATTR_OPTIONAL, node_attribute->name(), strlen(UMI_XMLATTR_OPTIONAL)) ==
                      0) {
             try {
@@ -143,6 +156,13 @@ namespace umi {
           }
           node_attribute++;
         }
+        if (refclass_node->name().empty()) {
+          std::cerr << "Refclass node with empty name is not supported\n";
+          return retval;
+        }
+        if (refclass_node->optional() && refclass_node->optional_name().empty()) {
+          refclass_node->optional_name(refclass_node->name() + "_umi_optional");
+        }
         retval = true;
       }
       return retval;
@@ -160,6 +180,9 @@ namespace umi {
         while (node_attribute != node.attributes_end()) {
           if (strncmp(UMI_XMLATTR_NAME, node_attribute->name(), strlen(UMI_XMLATTR_NAME)) == 0) {
             list_node->name(node_attribute->value());
+          } else if (strncmp(UMI_XMLATTR_OPTIONAL_NAME, node_attribute->name(), strlen(UMI_XMLATTR_OPTIONAL_NAME)) ==
+                     0) {
+            list_node->optional_name(node_attribute->value());
           } else if (strncmp(UMI_XMLATTR_OPTIONAL, node_attribute->name(), strlen(UMI_XMLATTR_OPTIONAL)) ==
                      0) {
             try {
@@ -181,6 +204,13 @@ namespace umi {
           }
           node_attribute++;
         }
+        if (list_node->name().empty()) {
+          std::cerr << "List node with empty name is not supported\n";
+          return retval;
+        }
+        if (list_node->optional() && list_node->optional_name().empty()) {
+          list_node->optional_name(list_node->name() + "_umi_optional");
+        }
         retval = true;
       }
       return retval;
@@ -198,6 +228,9 @@ namespace umi {
         while (node_attribute != node.attributes_end()) {
           if (strncmp(UMI_XMLATTR_NAME, node_attribute->name(), strlen(UMI_XMLATTR_NAME)) == 0) {
             boolean_node->name(node_attribute->value());
+          } else if (strncmp(UMI_XMLATTR_OPTIONAL_NAME, node_attribute->name(), strlen(UMI_XMLATTR_OPTIONAL_NAME)) ==
+                     0) {
+            boolean_node->optional_name(node_attribute->value());
           } else if (strncmp(UMI_XMLATTR_OPTIONAL, node_attribute->name(), strlen(UMI_XMLATTR_OPTIONAL)) ==
                      0) {
             try {
@@ -216,6 +249,13 @@ namespace umi {
           }
           node_attribute++;
         }
+        if (boolean_node->name().empty()) {
+          std::cerr << "Boolean node with empty name is not supported\n";
+          return retval;
+        }
+        if (boolean_node->optional() && boolean_node->optional_name().empty()) {
+          boolean_node->optional_name(boolean_node->name() + "_umi_optional");
+        }
         retval = true;
       }
       return retval;
@@ -233,6 +273,9 @@ namespace umi {
         while (node_attribute != node.attributes_end()) {
           if (strncmp(UMI_XMLATTR_NAME, node_attribute->name(), strlen(UMI_XMLATTR_NAME)) == 0) {
             float_node->name(node_attribute->value());
+          } else if (strncmp(UMI_XMLATTR_OPTIONAL_NAME, node_attribute->name(), strlen(UMI_XMLATTR_OPTIONAL_NAME)) ==
+                     0) {
+            float_node->optional_name(node_attribute->value());
           } else if (strncmp(UMI_XMLATTR_OPTIONAL, node_attribute->name(), strlen(UMI_XMLATTR_OPTIONAL)) ==
                      0) {
             try {
@@ -251,6 +294,13 @@ namespace umi {
           }
           node_attribute++;
         }
+        if (float_node->name().empty()) {
+          std::cerr << "Float node with empty name is not supported\n";
+          return retval;
+        }
+        if (float_node->optional() && float_node->optional_name().empty()) {
+          float_node->optional_name(float_node->name() + "_umi_optional");
+        }
         retval = true;
       }
       return retval;
@@ -268,6 +318,9 @@ namespace umi {
         while (node_attribute != node.attributes_end()) {
           if (strncmp(UMI_XMLATTR_NAME, node_attribute->name(), strlen(UMI_XMLATTR_NAME)) == 0) {
             string_node->name(node_attribute->value());
+          } else if (strncmp(UMI_XMLATTR_OPTIONAL_NAME, node_attribute->name(), strlen(UMI_XMLATTR_OPTIONAL_NAME)) ==
+                     0) {
+            string_node->optional_name(node_attribute->value());
           } else if (strncmp(UMI_XMLATTR_OPTIONAL, node_attribute->name(), strlen(UMI_XMLATTR_OPTIONAL)) ==
                      0) {
             try {
@@ -286,6 +339,13 @@ namespace umi {
           }
           node_attribute++;
         }
+        if (string_node->name().empty()) {
+          std::cerr << "String node with empty name is not supported\n";
+          return retval;
+        }
+        if (string_node->optional() && string_node->optional_name().empty()) {
+          string_node->optional_name(string_node->name() + "_umi_optional");
+        }
         retval = true;
       }
       return retval;
@@ -303,6 +363,9 @@ namespace umi {
         while (node_attribute != node.attributes_end()) {
           if (strncmp(UMI_XMLATTR_NAME, node_attribute->name(), strlen(UMI_XMLATTR_NAME)) == 0) {
             integer_node->name(node_attribute->value());
+          } else if (strncmp(UMI_XMLATTR_OPTIONAL_NAME, node_attribute->name(), strlen(UMI_XMLATTR_OPTIONAL_NAME)) ==
+                     0) {
+            integer_node->optional_name(node_attribute->value());
           } else if (strncmp(UMI_XMLATTR_OPTIONAL, node_attribute->name(), strlen(UMI_XMLATTR_OPTIONAL)) ==
                      0) {
             try {
@@ -321,6 +384,13 @@ namespace umi {
           }
           node_attribute++;
         }
+        if (integer_node->name().empty()) {
+          std::cerr << "Integer node with empty name is not supported\n";
+          return retval;
+        }
+        if (integer_node->optional() && integer_node->optional_name().empty()) {
+          integer_node->optional_name(integer_node->name() + "_umi_optional");
+        }
         retval = true;
       }
       return retval;
@@ -338,6 +408,9 @@ namespace umi {
         while (node_attribute != node.attributes_end()) {
           if (strncmp(UMI_XMLATTR_NAME, node_attribute->name(), strlen(UMI_XMLATTR_NAME)) == 0) {
             integer_node->name(node_attribute->value());
+          } else if (strncmp(UMI_XMLATTR_OPTIONAL_NAME, node_attribute->name(), strlen(UMI_XMLATTR_OPTIONAL_NAME)) ==
+                     0) {
+            integer_node->optional_name(node_attribute->value());
           } else if (strncmp(UMI_XMLATTR_OPTIONAL, node_attribute->name(), strlen(UMI_XMLATTR_OPTIONAL)) ==
                      0) {
             try {
@@ -356,6 +429,13 @@ namespace umi {
           }
           node_attribute++;
         }
+        if (integer_node->name().empty()) {
+          std::cerr << "Integer 32 node with empty name is not supported\n";
+          return retval;
+        }
+        if (integer_node->optional() && integer_node->optional_name().empty()) {
+          integer_node->optional_name(integer_node->name() + "_umi_optional");
+        }
         retval = true;
       }
       return retval;
@@ -373,6 +453,9 @@ namespace umi {
         while (node_attribute != node.attributes_end()) {
           if (strncmp(UMI_XMLATTR_NAME, node_attribute->name(), strlen(UMI_XMLATTR_NAME)) == 0) {
             class_node->name(node_attribute->value());
+          } else if (strncmp(UMI_XMLATTR_OPTIONAL_NAME, node_attribute->name(), strlen(UMI_XMLATTR_OPTIONAL_NAME)) ==
+                     0) {
+            class_node->optional_name(node_attribute->value());
           } else if (strncmp(UMI_XMLATTR_OPTIONAL, node_attribute->name(), strlen(UMI_XMLATTR_OPTIONAL)) ==
                      0) {
             try {
@@ -390,6 +473,13 @@ namespace umi {
             << " ignoring it.\n";
           }
           node_attribute++;
+        }
+        if (class_node->name().empty()) {
+          std::cerr << "Class node with empty name is not supported\n";
+          return retval;
+        }
+        if (class_node->optional() && class_node->optional_name().empty()) {
+          class_node->optional_name(class_node->name() + "_umi_optional");
         }
         // Go over each of the children filling them
         pugi::xml_node child_node(node.first_child());

@@ -182,21 +182,25 @@ In that fragment 22039182 is the user ID but we don't have something like this
 
 Inside *class* and *json* we can use the following table to guide us on wich attributes are supported by each tag
 
-| Data type / Attribute | optional | condition | name | refclass | value |
-|-----------------------|----------|-----------|------|----------|-------|
-| integer               | X        | X         | X    |          |       |
-| int32                 | X        | X         | X    |          |       |
-| float                 | X        | X         | X    |          |       |
-| string                | X        | X         | X    |          |       |
-| list                  | X        | X         | X    | X        |       |
-| refclass              | X        | X         | X    | X        |       |
-| map                   | X        | X         | X    |          | X     |
+| Data type / Attribute | optional | optional_name | condition | name | refclass | value |
+|-----------------------|----------|---------------|-----------|------|----------|-------|
+| integer               | X        | X             | X         | X    |          |       |
+| int32                 | X        | X             | X         | X    |          |       |
+| float                 | X        | X             | X         | X    |          |       |
+| string                | X        | X             | X         | X    |          |       |
+| list                  | X        | X             | X         | X    | X        |       |
+| refclass              | X        | X             | X         | X    | X        |       |
+| map                   | X        | X             | X         | X    |          | X     |
 
 Each attribute will have a different default value, and in the case of name, if we leave it empty, the behavior is undefined.
 On list and refclass if we left empty refclass attribute the behavior is undefined too.
 
 * optional: False by default, will mark if the node can be skipped in the parsing. An error will be reported if the node
 exists and the type is wrong.
+* optional_name: By default, optional values creates an additional bool field representing if the field was readed or not,
+as for elements different of arrays there is no way to detect if there was a value, and even for arrays we may be interested
+on empty arrays. The default behavior is to append _umi_optional to the name, but in some cases maybe a collision may
+happen. For that reason, we supply an optional name for you.
 * condition: Empty by default, C/C++ code to be evaluate within an if condition to consider if we must read that node
 * name: Name we want to use to identify the element in our data structure and in the json, is 1-1
 * refclass: Class to be used in the referenced elements.

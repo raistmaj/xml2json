@@ -43,6 +43,7 @@ namespace umi {
    * as all must be independant, may produce some problems in the future
    * but as first decission looks correct.
    * */
+  template<typename streamer>
   class file_printer {
   public:
     /**
@@ -56,8 +57,7 @@ namespace umi {
      * \param ff pointer to the umixml instance we want to write within stream
      * \param stream used to output the json representation
      * */
-    template<typename streamer>
-    void print(std::shared_ptr<umi::umixml> &ff, streamer &&stream) {
+    void print(std::shared_ptr<umi::umixml> &ff, streamer &stream) {
       stream << DISCLAIMER
       << "\n#include <string>\n#include <vector>\n#include <map>\n\n";
 
@@ -70,13 +70,18 @@ namespace umi {
           stream << TABS << "struct " << classMapIt.first << ";\n";
         }
         stream << "\n";
-        for (auto &&classMapIt : classMap) {
-          stream << TABS << "// struct " << classMapIt.first << "\n";
-          stream << TABS << "struct " << classMapIt.first << " {\n";
+        for (auto &classMapIt : classMap) {
+          stream << TABS << "// struct " << classMapIt.first << "\n"
+          << TABS << "struct " << classMapIt.first << " {\n";
+          create_constructors(classMapIt.second, stream);
           auto classChildren = classMapIt.second->getChildren();
           for (auto &&childrenIt : classChildren) {
-            stream << TABS << TABS;
-            stream << childrenIt->header_type(m_additional_string,true);
+            stream << TABS << TABS
+            << childrenIt->header_type(m_additional_string, true);
+            if (childrenIt->optional()) {
+              stream << TABS << TABS
+              << childrenIt->optional_name_type(m_additional_string, true);
+            }
           }
           stream << TABS << "};\n\n";
         }
@@ -90,13 +95,18 @@ namespace umi {
         stream << TABS << "struct " << jsonArrayIt->name() << ";\n";
       }
       stream << "\n";
-      for (auto &&jsonArrayIt : jsonArray) {
+      for (auto &jsonArrayIt : jsonArray) {
         stream << TABS << "// struct " << jsonArrayIt->name() << "\n"
         << TABS << "struct " << jsonArrayIt->name() << " {\n";
+        create_constructors(jsonArrayIt, stream);
         auto classChildren = jsonArrayIt->getChildren();
         for (auto &&childrenIt : classChildren) {
-          stream << TABS << TABS;
-          stream << childrenIt->header_type(m_additional_string,true);
+          stream << TABS << TABS
+          << childrenIt->header_type(m_additional_string, true);
+          if (childrenIt->optional()) {
+            stream << TABS << TABS
+            << childrenIt->optional_name_type(m_additional_string, true);
+          }
         }
         stream << "\n" << TABS << TABS << "// read one input string and fill the data\n"
         << TABS << TABS << "bool read_data(const std::string& input_text);\n";
@@ -108,6 +118,29 @@ namespace umi {
      * String to append in namespace and class
      * */
     std::string m_additional_string;
+  protected:
+    void create_constructors(const
+    std::shared_ptr<umi::umixmltypeclass> &elem, streamer
+    &stream) {
+      stream << TABS << TABS << "// Default constructor\n"
+      << TABS << TABS << elem->name() << "()";
+      auto classChildren = elem->getChildren();
+      if (!classChildren.empty()) {
+        stream << " : ";
+        for (std::size_t i = 0; i < classChildren.size(); ++i) {
+          std::string childText(classChildren[i]->constructor_initializer());
+          if (!childText.empty()) {
+            stream << childText;
+          }
+          if (i + 1 < classChildren.size()) {
+            stream << ",\n" << TABS << TABS << TABS;
+          }
+        }
+        stream << " {}\n";
+      } else {
+        stream << " {}\n";
+      }
+    }
   };
 }
 

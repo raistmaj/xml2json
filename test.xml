@@ -21,7 +21,7 @@
         <string name="task_uuid"/>
         <integer name="score"/>
         <string name="submission"/>
-        <refclass name="analysis_subject" refclass="data_get_results_report_analysis_subject"/>
+        <refclass name="analysis_subject" refclass="data_get_results_report_analysis_subject" optional="true"/>
         <list name="malicious_activity" refclass="string" optional="true"/>
         <string name="threat" optional="true"/>
         <string name="threat_class" optional="true"/>
@@ -34,7 +34,7 @@
         <string name="malicious_activity" optional="true"/>
         <list name="errors" refclass="string" optional="true"/>
         <string name="threat" optional="true"/>
-        <string name="threat_class" optional="true"/>
+        <string name="threat_class" optional="true" optional_name="cacacacaca"/>
         <refclass name="report" optional="true" refclass="data_get_results_report"/>
         <refclass name="reports" optional="true" refclass="data_get_results_reports"/>
     </class>

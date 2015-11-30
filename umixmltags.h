@@ -45,6 +45,7 @@
 
 #define UMI_XMLATTR_NAME "name"
 #define UMI_XMLATTR_OPTIONAL "optional"
+#define UMI_XMLATTR_OPTIONAL_NAME "optional_name"
 #define UMI_XMLATTR_REFCLASS "refclass"
 #define UMI_XMLATTR_CONDITION "condition"
 #define UMI_XMLATTR_VALUE "value"

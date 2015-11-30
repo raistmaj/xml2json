@@ -147,10 +147,34 @@ namespace umi {
       m_optional = value;
     }
     /**
+     * Gets the entry optional name
+     * */
+    inline const std::string &optional_name() const {
+      return m_optional_name;
+    }
+    /**
+     * Sets the entry optional name
+     * */
+    inline void optional_name(const std::string& val) {
+      m_optional_name = val;
+    }
+    /**
      * Returns the type we want to use in the header, it will
      * append the new line
      * */
     virtual std::string header_type(const std::string& additiona_text, bool append_new_line = true) {
+      return std::string();
+    }
+    /**
+     * Returns the optional header we want to use
+     * */
+    virtual std::string optional_name_type(const std::string& additional_text, bool append_new_line = true) {
+      return std::string();
+    }
+    /**
+     * Returns the initialization element in the constructor
+     * */
+    virtual std::string constructor_initializer() {
       return std::string();
     }
   protected:
@@ -171,6 +195,10 @@ namespace umi {
      * Is this element optional
      * */
     bool m_optional = false;
+    /**
+     * Name for the optional element
+     * */
+    std::string m_optional_name;
   };
 }
 
