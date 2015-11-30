@@ -494,8 +494,9 @@ namespace umi {
               // First if checking the data contains that element but
               // Don't check the member if we have a map
               if (!single_element->isMap()) {
+                // If it is not an object we will fail the parsing
                 output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
-                << "if (!rData.HasMember(\"" << single_element->name() << "\")) {\n"
+                << "if (!rData.IsObject() || !rData.HasMember(\"" << single_element->name() << "\")) {\n"
                 << TABS << TABS << TABS
                 << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error entity: "
                 << class_map_it.first << " is missing mandatory entry " << single_element->name() << "\\n\";\n"
@@ -572,7 +573,7 @@ namespace umi {
               // First if
               if (!single_element->isMap()) {
                 output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
-                << "if (rData.HasMember(\"" << single_element->name() << "\")) {\n";
+                << "if (rData.IsObject() && rData.HasMember(\"" << single_element->name() << "\")) {\n";
               }
               // Second if
               if (single_element->isBoolean()) {
@@ -657,7 +658,7 @@ namespace umi {
               // First if checking the data contains that element
               if (!single_element->isMap()) {
                 output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << TABS
-                << "if (!rData.HasMember(\"" << single_element->name() << "\")) {\n"
+                << "if (!rData.IsObject() || !rData.HasMember(\"" << single_element->name() << "\")) {\n"
                 << TABS << TABS << TABS << TABS
                 << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error entity: "
                 << class_map_it.first << " is missing mandatory entry " << single_element->name() << "\\n\";\n"
@@ -734,7 +735,7 @@ namespace umi {
               // The data is optional
               if (!single_element->isMap()) {
                 output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << TABS
-                << "if (rData.HasMember(\"" << single_element->name() << "\")) {\n";
+                << "if (rData.IsObject() && rData.HasMember(\"" << single_element->name() << "\")) {\n";
               }
               // Second if
               if (single_element->isBoolean()) {
