@@ -538,6 +538,7 @@ namespace umi {
         << "bool " << class_map_it.first << "__input_parse(" << class_map_it.first << " &inout, T &rData)\n"
         << TABS << "{\n";
         const std::vector<std::shared_ptr<umixmltype>> &elements_class = class_map_it.second->getChildren();
+        bool printedIsObject = false;
         for (auto &&single_element: elements_class) {
           if (single_element->condition().empty()) {
             // if !condition
@@ -547,9 +548,17 @@ namespace umi {
               int actual_level = 1;
               if (!single_element->isMap()) {
                 actual_level ++;
+                if(!printedIsObject) {
+                  output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
+                  << "if (!rData.IsObject()) {\n" << TABS << TABS << TABS
+                  << "std::cerr << __FILE__ <<  \":\" << __LINE__ << \" Element is not an object\\n\";\n"
+                  << TABS << TABS << TABS << "return false;\n"
+                  << TABS << TABS << "}\n";
+                  printedIsObject = true;
+                }
                 // If it is not an object we will fail the parsing
                 output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
-                << "if (!rData.IsObject() || !rData.HasMember(\"" << single_element->name() << "\")) {\n"
+                << "if (!rData.HasMember(\"" << single_element->name() << "\")) {\n"
                 << TABS << TABS << TABS
                 << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error entity: "
                 << class_map_it.first << " is missing mandatory entry " << single_element->name() << "\\n\";\n"
@@ -625,8 +634,16 @@ namespace umi {
               int actual_level = 2;
               if (!single_element->isMap()) {
                 actual_level++;
+                if(!printedIsObject) {
+                  output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
+                  << "if (!rData.IsObject()) {\n" << TABS << TABS << TABS
+                  << "std::cerr << __FILE__ <<  \":\" << __LINE__ << \" Element is not an object\\n\";\n"
+                  << TABS << TABS << TABS << "return false;\n"
+                  << TABS << TABS << "}\n";
+                  printedIsObject = true;
+                }
                 output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
-                << "if (rData.IsObject() && rData.HasMember(\"" << single_element->name() << "\")) {\n";
+                << "if (rData.HasMember(\"" << single_element->name() << "\")) {\n";
               }
               // Second if
               if (single_element->isBoolean()) {
@@ -709,8 +726,16 @@ namespace umi {
             if (!single_element->optional()) {
               // First if checking the data contains that element
               if (!single_element->isMap()) {
+                if(!printedIsObject) {
+                  output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
+                  << "if (!rData.IsObject()) {\n" << TABS << TABS << TABS
+                  << "std::cerr << __FILE__ <<  \":\" << __LINE__ << \" Element is not an object\\n\";\n"
+                  << TABS << TABS << TABS << "return false;\n"
+                  << TABS << TABS << "}\n";
+                  printedIsObject = true;
+                }
                 output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << TABS
-                << "if (!rData.IsObject() || !rData.HasMember(\"" << single_element->name() << "\")) {\n"
+                << "if (!rData.HasMember(\"" << single_element->name() << "\")) {\n"
                 << TABS << TABS << TABS << TABS
                 << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error entity: "
                 << class_map_it.first << " is missing mandatory entry " << single_element->name() << "\\n\";\n"
@@ -786,8 +811,16 @@ namespace umi {
               int actual_level = 3;
               if (!single_element->isMap()) {
                 actual_level++;
+                if(!printedIsObject) {
+                  output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
+                  << "if (!rData.IsObject()) {\n" << TABS << TABS << TABS
+                  << "std::cerr << __FILE__ <<  \":\" << __LINE__ << \" Element is not an object\\n\";\n"
+                  << TABS << TABS << TABS << "return false;\n"
+                  << TABS << TABS << "}\n";
+                  printedIsObject = true;
+                }
                 output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << TABS
-                << "if (rData.IsObject() && rData.HasMember(\"" << single_element->name() << "\")) {\n";
+                << "if (rData.HasMember(\"" << single_element->name() << "\")) {\n";
               }
               // Second if
               if (single_element->isBoolean()) {
@@ -886,6 +919,7 @@ namespace umi {
         "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error parsing input text. Error: \" << _document.GetParseError() << \"\\n\";\n"
         << TABS << TABS << TABS << "return false;\n"
         << TABS << TABS << "}\n";
+        bool printedIsObject = false;
         const std::vector<std::shared_ptr<umixmltype>> &elements_class = class_map_it->getChildren();
         for (auto &&single_element: elements_class) {
           if (single_element->condition().empty()) {
@@ -893,8 +927,16 @@ namespace umi {
             if (!single_element->optional()) {
               // First if checking the data contains that element
               if (!single_element->isMap()) {
+                if(!printedIsObject) {
+                  output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
+                  << "if (!_document.IsObject()) {\n" << TABS << TABS << TABS
+                  << "std::cerr << __FILE__ <<  \":\" << __LINE__ << \" Element is not an object\\n\";\n"
+                  << TABS << TABS << TABS << "return false;\n"
+                  << TABS << TABS << "}\n";
+                  printedIsObject = true;
+                }
                 output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
-                << "if (!_document.IsObject() || !_document.HasMember(\"" << single_element->name() << "\")) {\n"
+                << "if (!_document.HasMember(\"" << single_element->name() << "\")) {\n"
                 << TABS << TABS << TABS
                 << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error entity: "
                 << class_map_it->name() << " is missing mandatory entry or entity is not an object" <<
@@ -973,8 +1015,16 @@ namespace umi {
               int actual_level = 2;
               if (!single_element->isMap()) {
                 actual_level++;
+                if(!printedIsObject) {
+                  output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
+                  << "if (!_document.IsObject()) {\n" << TABS << TABS << TABS
+                  << "std::cerr << __FILE__ <<  \":\" << __LINE__ << \" Element is not an object\\n\";\n"
+                  << TABS << TABS << TABS << "return false;\n"
+                  << TABS << TABS << "}\n";
+                  printedIsObject = true;
+                }
                 output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
-                << "if (_documnet.IsObject() && _document.HasMember(\"" << single_element->name() << "\")) {\n";
+                << "if (_document.HasMember(\"" << single_element->name() << "\")) {\n";
               }
               // Second if
               if (single_element->isBoolean()) {
@@ -1058,8 +1108,16 @@ namespace umi {
             if (!single_element->optional()) {
               // First if checking the data contains that element
               if (!single_element->isMap()) {
+                if(!printedIsObject) {
+                  output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
+                  << "if (!_document.IsObject()) {\n" << TABS << TABS << TABS
+                  << "std::cerr << __FILE__ <<  \":\" << __LINE__ << \" Element is not an object\\n\";\n"
+                  << TABS << TABS << TABS << "return false;\n"
+                  << TABS << TABS << "}\n";
+                  printedIsObject = true;
+                }
                 output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << TABS
-                << "if (!_document.IsObject() || !_document.HasMember(\"" << single_element->name() << "\")) {\n"
+                << "if (!_document.HasMember(\"" << single_element->name() << "\")) {\n"
                 << TABS << TABS << TABS << TABS
                 << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error entity: "
                 << class_map_it->name() << " is missing mandatory entry or entity is not an object" <<
@@ -1138,8 +1196,16 @@ namespace umi {
               // The data is optional
               if (!single_element->isMap()) {
                 actual_level++;
+                if(!printedIsObject) {
+                  output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
+                  << "if (!_document.IsObject()) {\n" << TABS << TABS << TABS
+                  << "std::cerr << __FILE__ <<  \":\" << __LINE__ << \" Element is not an object\\n\";\n"
+                  << TABS << TABS << TABS << "return false;\n"
+                  << TABS << TABS << "}\n";
+                  printedIsObject = true;
+                }
                 output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << TABS
-                << "if (_documnet.IsObject() && _document.HasMember(\"" << single_element->name() << "\")) {\n";
+                << "if (_document.HasMember(\"" << single_element->name() << "\")) {\n";
               }
               // Second if
               if (single_element->isBoolean()) {
