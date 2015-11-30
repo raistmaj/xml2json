@@ -1,17 +1,18 @@
 # xml2json
 
-xml2json is a tool to transform XML files under an specific format to C++ json parser.
+xml2json is a tool to transform XML files under an specific format to a C++ json parser.
 
-With the new Boom C++ is having at the moment thanks to C++11/C++14 and the upcoming C++17 I felt there was something
+With the new Boom C++ is having at the moment thanks to C++11/C++14 and the upcoming C++17, I felt there was something
 missing in this language. Working on cloud applications is not trivial, and usually involves several parts and components.
-REST APIs are the common mechanism to communicate against the servers, and the underlying content is JSON, so after creating
+REST APIs are the common mechanism to communicate against the servers, and the underlying content is usually JSON, so after creating
 your application model, data structures, etc... comes one big and annoying part, to parse the JSON message.
 
 JSON messages should not be difficult to read by humans, and pretty lightweight for computers, that makes them the perfect
-choice to transmit data, and thanks to its "tree" structure, allows developers express quite complex models in an easy way.
-That friendly and human like behavior of the JSON has a non-desired effect, we include a lot of fields.
+choice to transmit data, and thanks to its "tree" structure, allows developers design quite complex models in an easily.
+That friendly and human like behavior of the JSON has a non-desired effect, we include a lot of fields, attributes, recursive
+methods, and the parsing even though is trivial is pretty time consuming.
 
-So this library is as NHibernate is for SQL, but for JSON. We will create an xml model of our data, that will create
+So this library is as NHibernate is for SQL, or Google Protobuf but for JSON. We will create an xml model of our data, that will create
 and parse automatically the data we want to read.
 
 ### Version
@@ -27,7 +28,7 @@ To be able to compile the project you need a version of [boost][1] that supports
 To install the tool you just need clone the repository on a local folder
 
 ```sh
-$ git clone [git-repo-url] [folder-you-want]
+$ git clone --recursive [git-repo-url] [folder-you-want]
 ```
 
 Create a bin folder and call cmake
@@ -40,7 +41,7 @@ $ cmake ../
 
 ### Usage
 
-In order to make use of this program I recommend first take a look at the help output
+In order to make use of this program I recommend first to take a look at the help output
 
 ```sh
 $ ./umison -h
@@ -243,12 +244,13 @@ The software and resulting files have been tested on Linux but should work on Wi
 
 The main binary is kinda fragile and will abort under some scenarios.
 
-The resulting json parser MUST be pretty solid and avoid
+The resulting json parser MUST be pretty solid and avoid things like segmentation faults. I'm continuously working to improve
+the quality and readability of the generated code, so please, any suggestion/pull request is always welcome.
 
 LICENSE
 ----
 
-See LICENSE.txt for a copy of the license
+See LICENSE.txt for a copy of the license, but well 2 terms standard BSD so you have to read it if you don't want.
 
 
 
