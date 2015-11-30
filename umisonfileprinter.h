@@ -40,8 +40,8 @@ namespace umi {
    * engine will write the .cpp following those name conventions.
    *
    * Thanks to this approach we can abstract the output subengine
-   * as all must be independant, may produce some problems in the future
-   * but as first decission looks correct.
+   * as all must be independent, may produce some problems in the future
+   * but as first decision looks correct.
    * */
   template<typename streamer>
   class file_printer {

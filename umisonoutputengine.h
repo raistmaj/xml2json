@@ -39,8 +39,8 @@ namespace umi {
   class umixml;
 
   /**
-     * Checks if the type is an internal type
-     * */
+   * Checks if the type is an internal type
+   * */
   static bool is_internal(const std::string &val) {
     if (val == UMI_XMLTAGS_INTEGER) {
       return true;
@@ -122,7 +122,7 @@ namespace umi {
 
   protected:
     /**
-     * Basic constrcutor, it is used to store the references of the input streams
+     * Basic constructor, it is used to store the references of the input streams
      *
      * \param _H_streamer used to output the .h file
      * \param _CPP_streamer used to output the .cpp file

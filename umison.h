@@ -32,7 +32,7 @@
 
 namespace umi {
   /**
-   * Main class of the application. Cudason will be used to
+   * Main class of the application. umison will be used to
    * encapsulate the initialization logic.
    *
    * Depending on the input parameters the behavior will change.

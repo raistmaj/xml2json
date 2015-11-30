@@ -53,7 +53,7 @@
 /**
  * Macro used to store the amount of space we want to use as tabulations
  * No \t is used as that will create code that may be difficult to read
- * depending on the enviroment configuration.
+ * depending on the environment configuration.
  * */
 #define TABS "    "
 /**

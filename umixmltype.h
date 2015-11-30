@@ -123,7 +123,7 @@ namespace umi {
       m_condition = cnd;
     }
     /**
-     * Gets tje referenced class to be used(usefull for arrays)
+     * Gets tje referenced class to be used(useful for arrays)
      * */
     inline const std::string &refclass() const {
       return m_refclass;
