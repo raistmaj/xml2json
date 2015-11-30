@@ -74,6 +74,7 @@ namespace umi {
           stream << TABS << "// struct " << classMapIt.first << "\n"
           << TABS << "struct " << classMapIt.first << " {\n";
           create_constructors(classMapIt.second, stream);
+          stream << "\n" << TABS << TABS << "// Attributes declaration\n";
           auto classChildren = classMapIt.second->getChildren();
           for (auto &&childrenIt : classChildren) {
             stream << TABS << TABS
@@ -99,6 +100,7 @@ namespace umi {
         stream << TABS << "// struct " << jsonArrayIt->name() << "\n"
         << TABS << "struct " << jsonArrayIt->name() << " {\n";
         create_constructors(jsonArrayIt, stream);
+        stream << "\n" << TABS << TABS << "// Attributes declaration\n";
         auto classChildren = jsonArrayIt->getChildren();
         for (auto &&childrenIt : classChildren) {
           stream << TABS << TABS
