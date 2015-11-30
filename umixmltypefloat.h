@@ -86,7 +86,7 @@ namespace umi {
     virtual std::string constructor_initializer() {
       std::string retval;
       retval += m_name;
-      retval += "(0.f)";
+      retval += "(0.)";
       if (m_optional && !m_optional_name.empty()) {
         retval += ", ";
         retval += m_optional_name;

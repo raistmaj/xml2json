@@ -7,7 +7,7 @@
     </class>
     <class name="child_tasks">
         <string name="task_uuid"/>
-        <integer name="score"/>
+        <float name="score"/>
         <string name="tag"/>
     </class>
     <class name="data_get_results_report_analysis_subject">
