@@ -28,6 +28,10 @@
         <list name="child_tasks" optional="true" refclass="child_tasks"/>
     </class>
 
+    <class name="test_class">
+      <map name="tesoro" optional="true" value="string"/>
+    </class>
+
     <class name="data_get_results">
         <integer name="score"/>
         <integer name="submission"/>
@@ -38,6 +42,10 @@
         <refclass name="report" optional="true" refclass="data_get_results_report"/>
         <refclass name="reports" optional="true" refclass="data_get_results_reports"/>
     </class>
+
+    <json name="test4">
+        <refclass name="treasure" refclass="test_class"/>
+    </json>
 
     <json name="test3">
         <map name="mapilla" optional="true" value="data_get_results_report"/>
