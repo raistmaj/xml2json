@@ -197,22 +197,24 @@ On list and refclass if we left empty refclass attribute the behavior is undefin
 
 * optional: False by default, will mark if the node can be skipped in the parsing. An error will be reported if the node
 exists and the type is wrong.
-* optional_name: By default, optional values creates an additional bool field representing if the field was readed or not,
+* optional_name: By default, optional values creates an additional bool field representing if the field was read or not,
 as for elements different of arrays there is no way to detect if there was a value, and even for arrays we may be interested
 on empty arrays. The default behavior is to append _umi_optional to the name, but in some cases maybe a collision may
-happen. For that reason, we supply an optional name for you.
-* condition: Empty by default, C/C++ code to be evaluate within an if condition to consider if we must read that node
-* name: Name we want to use to identify the element in our data structure and in the json, is 1-1
+happen. For that reason, we give you the option to specify a custom name for that variable. Remember *THIS IS NOT TO INDICATE
+IF THE VARIABLE IS OPTIONAL OR NOT, THIS MEANS; THE VARIABLE IS OPTIONAL AND I WANT TO USE THIS ATTRIBUTE TO DETECT IF .
+WAS READ*.
+* condition: Empty by default, C/C++ code to be evaluate within an if condition to consider if we must read that node.
+* name: Name we want to use to identify the element in our data structure and in the json, is 1-1.
 * refclass: Class to be used in the referenced elements.
-* value: Type we want to use on the map
+* value: Type we want to use on the map.
 
 The next types are supported by the refclass attribute
 
-* integer: The array/class will be an integer of 64 bits
-* int32: The array/class will be an integer of 32 bits
-* float: The array/class will be a float
-* string: The array/class wll be a string
-* class name: The array/class will be a class already defined in your template
+* integer: The array/class will be an integer of 64 bits.
+* int32: The array/class will be an integer of 32 bits.
+* float: The array/class will be a float.
+* string: The array/class wll be a string.
+* class name: The array/class will be a class already defined in your template.
 
 For a complete example please see the file test.xml or the test folder.
 

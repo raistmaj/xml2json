@@ -644,6 +644,8 @@ namespace umi {
                 std::cerr << "Invalid element\n";
                 exit(-1);
               }
+              output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
+              << single_element->optional_name() << " = true;\n";
               if (!single_element->isMap()) {
                 output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << "}\n"; // Close first if
               }
@@ -806,6 +808,8 @@ namespace umi {
                 std::cerr << "Invalid element\n";
                 exit(-1);
               }
+              output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << TABS
+              << single_element->optional_name() << " = true;\n";
               if (!single_element->isMap()) {
                 output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << TABS << "}\n"; // Close first if
               }
@@ -988,7 +992,11 @@ namespace umi {
                 std::cerr << "Invalid element\n";
                 exit(-1);
               }
-              output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << "}\n"; // Close first if
+              output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
+              << single_element->optional_name() << " = true;\n";
+              if (!single_element->isMap()) {
+                output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << "}\n"; // Close first if
+              }
             }
           } else {
             // else condition not empty
@@ -1151,6 +1159,8 @@ namespace umi {
                 std::cerr << "Invalid element\n";
                 exit(-1);
               }
+              output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << TABS
+              << single_element->optional_name() << " = true;\n";
               if (!single_element->isMap()) {
                 output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << TABS << "}\n"; // Close first if
               }
