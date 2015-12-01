@@ -29,6 +29,14 @@
 #include "umisonoutputengine.h"
 
 namespace umi {
+  static std::string build_indentation(const std::string &space, int level) {
+    std::string retval;
+    for (int i = 0; i < level; ++i) {
+      retval += space;
+    }
+    return retval;
+  }
+
   /**
    * rapid json output engine will be used to write the .cpp file using rapid json
    *
@@ -67,12 +75,21 @@ namespace umi {
       // Create the map readers
       create_map_readers(ff);
       // Create the json parsers
-      create_data_readers(ff);
+      output_engine<T1, T2>::m_cpp_streamer << "// Data parsers\n";
+      auto &dataR = ff->getClassMap();
+      for(auto &class_it: dataR) {
+        create_single_reader(class_it.second,class_it.first,true);
+        output_engine<T1, T2>::m_cpp_streamer << "\n";
+      }
       // Close the namespace
-      output_engine<T1, T2>::m_cpp_streamer << "}\n";
-      // Create the final parser
-      create_json_readers(ff);
-
+      output_engine<T1, T2>::m_cpp_streamer << "}\n\n";
+      // Create the final parsers
+      output_engine<T1, T2>::m_cpp_streamer << "// Json parsers\n";
+      auto &classes = ff->getJsonArray();
+      for(auto &class_it: classes) {
+        create_single_reader(class_it,"",false);
+        output_engine<T1, T2>::m_cpp_streamer << "\n";
+      }
       return true;
     }
     /**
@@ -195,13 +212,6 @@ namespace umi {
       output_engine<T1, T2>::m_cpp_streamer << "\n";
     }
 
-    std::string build_indentation(const std::string &space, int level) {
-      std::string retval;
-      for (int i = 0; i < level; ++i) {
-        retval += space;
-      }
-      return retval;
-    }
     void _read_list(T2 &streamer, const std::string &space, const std::string &type,
                     const std::string &rapid_json_type, int level) {
       std::string def_indentation(build_indentation(space, level));
@@ -375,7 +385,7 @@ namespace umi {
 
 
     void _data_reader_single(T2 &streamer, const std::string &space, const std::string &type,
-                             const std::string &class_name, const std::string rapid_json_type,
+                             const std::string &class_name, const std::string &rapid_json_type,
                              const std::string &rdata, int level) {
       std::string def_indentation(build_indentation(space, level));
       std::string def_1p_indentation(def_indentation + space);
@@ -488,10 +498,11 @@ namespace umi {
 
     void _data_reader_second_if_optional_list(T2 &streamer, const std::string &space,
                                               const std::string &additional_string,
-                                              const std::string &type_name, const std::string &rdata, int level) {
+                                              const std::string &type_name, const std::string &inout,
+                                              const std::string &rdata, int level) {
       std::string def_indentation(build_indentation(space, level));
       std::string def_1p_indentation(def_indentation + space);
-      streamer << def_indentation << "if (!__internal__umison" << additional_string << "::_read_list(inout."
+      streamer << def_indentation << "if (!__internal__umison" << additional_string << "::_read_list(" << inout
       << type_name << ", " << rdata << "[\"" << type_name << "\"])) {\n"
       << def_1p_indentation << "std::cerr << \"Error reading array\\n\";\n"
       << def_1p_indentation << "return false;\n"
@@ -528,764 +539,201 @@ namespace umi {
     }
 
     /**
-     * Create the readers for the different data structures
+     * Method to create a reader based if we are a json reader or a input_parse reader. Creates one reader per element
+     * being an element a class or data_parser
      * */
-    void create_data_readers(std::shared_ptr<umi::umixml> &ff) {
-      output_engine<T1, T2>::m_cpp_streamer << TABS << "// Data parsers\n";
-      auto class_map = ff->getClassMap();
-      for (auto &&class_map_it : class_map) {
-        output_engine<T1, T2>::m_cpp_streamer << TABS << "template<typename T>\n" << TABS
-        << "bool " << class_map_it.first << "__input_parse(" << class_map_it.first << " &inout, T &rData)\n"
-        << TABS << "{\n";
-        const std::vector<std::shared_ptr<umixmltype>> &elements_class = class_map_it.second->getChildren();
-        bool printedIsObject = false;
-        for (auto &&single_element: elements_class) {
-          if (single_element->condition().empty()) {
-            // if !condition
-            if (!single_element->optional()) {
-              // First if checking the data contains that element but
-              // Don't check the member if we have a map
-              int actual_level = 1;
-              if (!single_element->isMap()) {
-                actual_level ++;
-                if(!printedIsObject) {
-                  output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
-                  << "if (!rData.IsObject()) {\n" << TABS << TABS << TABS
-                  << "std::cerr << __FILE__ <<  \":\" << __LINE__ << \" Element is not an object\\n\";\n"
-                  << TABS << TABS << TABS << "return false;\n"
-                  << TABS << TABS << "}\n";
-                  printedIsObject = true;
-                }
-                // If it is not an object we will fail the parsing
-                output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
-                << "if (!rData.HasMember(\"" << single_element->name() << "\")) {\n"
-                << TABS << TABS << TABS
-                << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error entity: "
-                << class_map_it.first << " is missing mandatory entry " << single_element->name() << "\\n\";\n"
-                << TABS << TABS << TABS << "return false;\n"
-                << TABS << TABS << "}\n";
-              }
-              // Second if Check the type is the valid value
-              if (single_element->isBoolean()) {
-                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
-                                    class_map_it.first, "Bool", "rData", 2);
-              } else if (single_element->isInteger()) {
-                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
-                                    class_map_it.first, "Int64", "rData", 2);
-              } else if (single_element->isInteger32()) {
-                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
-                                    class_map_it.first, "Int", "rData", 2);
-              } else if (single_element->isFloat()) {
-                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
-                                    class_map_it.first, "Double", "rData", 2);
-              } else if (single_element->isString()) {
-                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
-                                    class_map_it.first, "String", "rData", 2);
-              } else if (single_element->isRefClass()) {
-                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
-                                    class_map_it.first, "Object", "rData", 2);
-              } else if (single_element->isList()) {
-                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
-                                    class_map_it.first, "Array", "rData", 2);
-              } else if (single_element->isMap()) {
-                if (elements_class.size() > 1) {
-                  std::cerr << "Error: More than one element on the same level within a map\n";
-                  exit(-1);
-                }
-                _data_reader_single_map((output_engine<T1, T2>::m_cpp_streamer), TABS, "rData", 2);
-              } else {
-                std::cerr << "Invalid element\n";
-                exit(-1);
-              }
-              // Third line, read the element depending on the type
-              if (single_element->isBoolean()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "Bool", "inout.", "rData", 2);
-              } else if (single_element->isInteger()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "Int64", "inout.", "rData", 2);
-              } else if (single_element->isInteger32()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "Int", "inout.", "rData", 2);
-              } else if (single_element->isFloat()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "Double", "inout.", "rData", 2);
-              } else if (single_element->isString()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "String", "inout.", "rData", 2);
-              } else if (single_element->isList()) {
-                _data_reader_list_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                         (output_engine<T1, T2>::m_additional_string),
-                                         single_element->name(), "inout.", "rData", 2);
-              } else if (single_element->isRefClass()) {
-                _data_reader_refclass_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                             single_element->refclass(), single_element->name(), "inout.",
-                                             "rData", 2);
-              } else if (single_element->isMap()) {
-                _data_reader_map_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                        (output_engine<T1, T2>::m_additional_string),
-                                        single_element->name(), "inout.", "rData", 2);
-              } else {
-                std::cerr << "Invalid element\n";
-                exit(-1);
-              }
-            } else { // optional
-              // First if
-              int actual_level = 2;
-              if (!single_element->isMap()) {
-                actual_level++;
-                if(!printedIsObject) {
-                  output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
-                  << "if (!rData.IsObject()) {\n" << TABS << TABS << TABS
-                  << "std::cerr << __FILE__ <<  \":\" << __LINE__ << \" Element is not an object\\n\";\n"
-                  << TABS << TABS << TABS << "return false;\n"
-                  << TABS << TABS << "}\n";
-                  printedIsObject = true;
-                }
-                output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
-                << "if (rData.HasMember(\"" << single_element->name() << "\")) {\n";
-              }
-              // Second if
-              if (single_element->isBoolean()) {
-                _data_reader_second_if_optional((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                single_element->name(), "Bool", "rData", actual_level);
-              } else if (single_element->isInteger()) {
-                _data_reader_second_if_optional((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                single_element->name(), "Int64", "rData", actual_level);
-              } else if (single_element->isInteger32()) {
-                _data_reader_second_if_optional((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                single_element->name(), "Int", "rData", actual_level);
-              } else if (single_element->isFloat()) {
-                _data_reader_second_if_optional((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                single_element->name(), "Double", "rData", actual_level);
-              } else if (single_element->isString()) {
-                _data_reader_second_if_optional((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                single_element->name(), "String", "rData", actual_level);
-              } else if (single_element->isList()) {
-                _data_reader_second_if_optional((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                single_element->name(), "Array", "rData", actual_level);
-              } else if (single_element->isRefClass()) {
-                _data_reader_second_if_optional((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                single_element->name(), "Object", "rData", actual_level);
-              } else if (single_element->isMap()) {
-                if (elements_class.size() > 1) {
-                  std::cerr << "Error: More than one element on the same level within a map\n";
-                  exit(-1);
-                }
-                _data_reader_second_if_optional_member((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                       single_element->name(),
-                                                       internal_to_rapidjson(single_element->refclass()), "rData", actual_level);
-              } else {
-                std::cerr << "Invalid element\n";
-                exit(-1);
-              }
-              // Assign data
-              if (single_element->isBoolean()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "Bool", "inout.", "rData", actual_level);
-              } else if (single_element->isInteger()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "Int64", "inout.", "rData", actual_level);
-              } else if (single_element->isInteger32()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "Int", "inout.", "rData", actual_level);
-              } else if (single_element->isFloat()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "Double", "inout.", "rData", actual_level);
-              } else if (single_element->isString()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "String", "inout.", "rData", actual_level);
-              } else if (single_element->isList()) {
-                _data_reader_second_if_optional_list((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                     (output_engine<T1, T2>::m_additional_string),
-                                                     single_element->name(), "rData", actual_level);
-              } else if (single_element->isRefClass()) {
-                _data_reader_second_if_optional_refclass((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                         single_element->refclass(),
-                                                         single_element->name(), "inout.", "rData", actual_level);
-              } else if (single_element->isMap()) {
-                _data_reader_second_if_optional_map((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                    (output_engine<T1, T2>::m_additional_string),
-                                                    single_element->name(), "inout.", "rData", actual_level);
-              } else {
-                std::cerr << "Invalid element\n";
-                exit(-1);
-              }
-              output_engine<T1, T2>::m_cpp_streamer << build_indentation(TABS, actual_level)
-              << "inout." << single_element->optional_name() << " = true;\n";
-              if (!single_element->isMap()) {
-                output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << "}\n"; // Close first if
-              }
-            }
-          } else {
-            // else condition not empty
-            output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
-            << "if (" << single_element->condition() << ") {\n";
-            // Evaluate contidion
-            // Proceed as normal with one more indentation
-            if (!single_element->optional()) {
-              // First if checking the data contains that element
-              if (!single_element->isMap()) {
-                if(!printedIsObject) {
-                  output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
-                  << "if (!rData.IsObject()) {\n" << TABS << TABS << TABS
-                  << "std::cerr << __FILE__ <<  \":\" << __LINE__ << \" Element is not an object\\n\";\n"
-                  << TABS << TABS << TABS << "return false;\n"
-                  << TABS << TABS << "}\n";
-                  printedIsObject = true;
-                }
-                output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << TABS
-                << "if (!rData.HasMember(\"" << single_element->name() << "\")) {\n"
-                << TABS << TABS << TABS << TABS
-                << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error entity: "
-                << class_map_it.first << " is missing mandatory entry " << single_element->name() << "\\n\";\n"
-                << TABS << TABS << TABS << TABS << "return false;\n"
-                << TABS << TABS << TABS << "}\n";
-              }
-              // Second if Check the type is the valid value
-              if (single_element->isBoolean()) {
-                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
-                                    class_map_it.first, "Bool", "rData", 3);
-              } else if (single_element->isInteger()) {
-                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
-                                    class_map_it.first, "Int64", "rData", 3);
-              } else if (single_element->isInteger32()) {
-                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
-                                    class_map_it.first, "Int", "rData", 3);
-              } else if (single_element->isFloat()) {
-                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
-                                    class_map_it.first, "Double", "rData", 3);
-              } else if (single_element->isString()) {
-                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
-                                    class_map_it.first, "String", "rData", 3);
-              } else if (single_element->isRefClass()) {
-                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
-                                    class_map_it.first, "Object", "rData", 3);
-              } else if (single_element->isList()) {
-                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
-                                    class_map_it.first, "Array", "rData", 3);
-              } else if (single_element->isMap()) {
-                if (elements_class.size() > 1) {
-                  std::cerr << "Error: More than one element on the same level within a map\n";
-                  exit(-1);
-                }
-                _data_reader_single_map((output_engine<T1, T2>::m_cpp_streamer), TABS, "rData", 3);
-              } else {
-                std::cerr << "Invalid element\n";
-                exit(-1);
-              }
-              // Third line, read the element depending on the type
-              if (single_element->isBoolean()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "Bool", "inout.", "rData", 3);
-              } else if (single_element->isInteger()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "Int64", "inout.", "rData", 3);
-              } else if (single_element->isInteger32()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "Int", "inout.", "rData", 3);
-              } else if (single_element->isFloat()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "Double", "inout.", "rData", 3);
-              } else if (single_element->isString()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "String", "inout.", "rData", 3);
-              } else if (single_element->isList()) {
-                _data_reader_list_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                         (output_engine<T1, T2>::m_additional_string),
-                                         single_element->name(), "inout.", "rData", 3);
-              } else if (single_element->isRefClass()) {
-                _data_reader_refclass_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                             single_element->refclass(), single_element->name(), "inout.",
-                                             "rData", 3);
-              } else if (single_element->isMap()) {
-                _data_reader_map_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                        (output_engine<T1, T2>::m_additional_string),
-                                        single_element->name(), "inout.", "rData", 3);
-              } else {
-                std::cerr << "Invalid element\n";
-                exit(-1);
-              }
-            } else {
-              // The data is optional
-              int actual_level = 3;
-              if (!single_element->isMap()) {
-                actual_level++;
-                if(!printedIsObject) {
-                  output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
-                  << "if (!rData.IsObject()) {\n" << TABS << TABS << TABS
-                  << "std::cerr << __FILE__ <<  \":\" << __LINE__ << \" Element is not an object\\n\";\n"
-                  << TABS << TABS << TABS << "return false;\n"
-                  << TABS << TABS << "}\n";
-                  printedIsObject = true;
-                }
-                output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << TABS
-                << "if (rData.HasMember(\"" << single_element->name() << "\")) {\n";
-              }
-              // Second if
-              if (single_element->isBoolean()) {
-                _data_reader_second_if_optional((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                single_element->name(), "Bool", "rData", actual_level);
-              } else if (single_element->isInteger()) {
-                _data_reader_second_if_optional((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                single_element->name(), "Int64", "rData", actual_level);
-              } else if (single_element->isInteger32()) {
-                _data_reader_second_if_optional((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                single_element->name(), "Int", "rData", actual_level);
-              } else if (single_element->isFloat()) {
-                _data_reader_second_if_optional((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                single_element->name(), "Double", "rData", actual_level);
-              } else if (single_element->isString()) {
-                _data_reader_second_if_optional((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                single_element->name(), "String", "rData", actual_level);
-              } else if (single_element->isList()) {
-                _data_reader_second_if_optional((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                single_element->name(), "Array", "rData", actual_level);
-              } else if (single_element->isRefClass()) {
-                _data_reader_second_if_optional((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                single_element->name(), "Object", "rData", actual_level);
-              } else if (single_element->isMap()) {
-                if (elements_class.size() > 1) {
-                  std::cerr << "Error: More than one element on the same level within a map\n";
-                  exit(-1);
-                }
-                _data_reader_second_if_optional_member((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                       single_element->name(),
-                                                       internal_to_rapidjson(single_element->refclass()), "rData", actual_level);
-              } else {
-                std::cerr << "Invalid element\n";
-                exit(-1);
-              }
-              // Assign data
-              if (single_element->isBoolean()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "Bool", "inout.", "rData", actual_level);
-              } else if (single_element->isInteger()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "Int64", "inout.", "rData", actual_level);
-              } else if (single_element->isInteger32()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "Int", "inout.", "rData", actual_level);
-              } else if (single_element->isFloat()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "Double", "inout.", "rData", actual_level);
-              } else if (single_element->isString()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "String", "inout.", "rData", actual_level);
-              } else if (single_element->isList()) {
-                _data_reader_second_if_optional_list((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                     (output_engine<T1, T2>::m_additional_string),
-                                                     single_element->name(), "rData", actual_level);
-              } else if (single_element->isRefClass()) {
-                _data_reader_second_if_optional_refclass((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                         single_element->refclass(),
-                                                         single_element->name(), "inout.", "rData", actual_level);
-              } else if (single_element->isMap()) {
-                _data_reader_second_if_optional_map((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                    (output_engine<T1, T2>::m_additional_string),
-                                                    single_element->name(), "inout.", "rData", actual_level);
-              } else {
-                std::cerr << "Invalid element\n";
-                exit(-1);
-              }
-              output_engine<T1, T2>::m_cpp_streamer <<build_indentation(TABS, actual_level)
-              << "inout." << single_element->optional_name() << " = true;\n";
-              if (!single_element->isMap()) {
-                output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << TABS << "}\n"; // Close first if
-              }
-            }
-            output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << "}\n"; // Condition
-          }
-        }
-        output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << "return true;\n";
-        output_engine<T1, T2>::m_cpp_streamer << TABS << "}\n\n"; // End of the function
+    void create_single_reader(const std::shared_ptr<umixmltypeclass> &ff, const std::string &name, bool data_reader) {
+      int actual_level = 1;
+      std::string inout;
+      std::string inout_dot;
+      std::string rdata;
+      // Set variables depending on each mode
+      if (data_reader) {
+        inout = "inout";
+        inout_dot = "inout.";
+        rdata = "rdata";
+      } else {
+        actual_level--;
+        rdata = "_document";
       }
-    }
-
-    /**
-     * Create the full json readers for each of the json elements
-     * in the input template
-     * */
-    void create_json_readers(std::shared_ptr<umi::umixml> &ff) {
-      output_engine<T1, T2>::m_cpp_streamer << TABS << "// Json parsers\n";
-      auto json_array = ff->getJsonArray();
-      for (auto &&class_map_it : json_array) {
+      std::string def_indentation(build_indentation(TABS, actual_level));
+      std::string def_1p_indentation(def_indentation + TABS);
+      std::string def_2p_indentation(def_1p_indentation + TABS);
+      // Proceed with the header of the reader
+      if (data_reader) {
         output_engine<T1, T2>::m_cpp_streamer
-        << TABS << "bool umison::" << class_map_it->name() << "::read_data(const std::string &input_text)\n"
-        << TABS << "{\n"
-        << TABS << TABS << "rapidjson::Document _document;\n"
-        << TABS << TABS << "if (_document.Parse(input_text.c_str()).HasParseError()) {\n"
-        << TABS << TABS << TABS <<
-        "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error parsing input text. Error: \" << _document.GetParseError() << \"\\n\";\n"
-        << TABS << TABS << TABS << "return false;\n"
-        << TABS << TABS << "}\n";
-        bool printedIsObject = false;
-        const std::vector<std::shared_ptr<umixmltype>> &elements_class = class_map_it->getChildren();
-        for (auto &&single_element: elements_class) {
-          if (single_element->condition().empty()) {
-            // if !condition
-            if (!single_element->optional()) {
-              // First if checking the data contains that element
-              if (!single_element->isMap()) {
-                if(!printedIsObject) {
-                  output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
-                  << "if (!_document.IsObject()) {\n" << TABS << TABS << TABS
-                  << "std::cerr << __FILE__ <<  \":\" << __LINE__ << \" Element is not an object\\n\";\n"
-                  << TABS << TABS << TABS << "return false;\n"
-                  << TABS << TABS << "}\n";
-                  printedIsObject = true;
-                }
-                output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
-                << "if (!_document.HasMember(\"" << single_element->name() << "\")) {\n"
-                << TABS << TABS << TABS
-                << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error entity: "
-                << class_map_it->name() << " is missing mandatory entry or entity is not an object" <<
-                single_element->name() <<
-                "\\n\";\n"
-                << TABS << TABS << TABS << "return false;\n"
-                << TABS << TABS << "}\n";
-              }
-              // Second if Check the type is the valid value
-              if (single_element->isBoolean()) {
-                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
-                                    class_map_it->name(), "Bool", "_document", 2);
-              } else if (single_element->isInteger()) {
-                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
-                                    class_map_it->name(), "Int64", "_document", 2);
-              } else if (single_element->isInteger32()) {
-                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
-                                    class_map_it->name(), "Int", "_document", 2);
-              } else if (single_element->isFloat()) {
-                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
-                                    class_map_it->name(), "Double", "_document", 2);
-              } else if (single_element->isString()) {
-                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
-                                    class_map_it->name(), "String", "_document", 2);
-              } else if (single_element->isRefClass()) {
-                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
-                                    class_map_it->name(), "Object", "_document", 2);
-              } else if (single_element->isList()) {
-                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
-                                    class_map_it->name(), "Array", "_document", 2);
-              } else if (single_element->isMap()) {
-                if (elements_class.size() > 1) {
-                  std::cerr << "Error: More than one element on the same level within a map\n";
-                  exit(-1);
-                }
-                _data_reader_single_map((output_engine<T1, T2>::m_cpp_streamer), TABS, "_document", 2);
-              } else {
-                std::cerr << "Invalid element\n";
-                exit(-1);
-              }
-              // Third line, read the element depending on the type
-              if (single_element->isBoolean()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "Bool", "", "_document", 2);
-              } else if (single_element->isInteger()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "Int64", "", "_document", 2);
-              } else if (single_element->isInteger32()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "Int", "", "_document", 2);
-              } else if (single_element->isFloat()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "Double", "", "_document", 2);
-              } else if (single_element->isString()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "String", "", "_document", 2);
-              } else if (single_element->isList()) {
-                _data_reader_list_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                         (output_engine<T1, T2>::m_additional_string),
-                                         single_element->name(), "", "_document", 2);
-              } else if (single_element->isRefClass()) {
-                _data_reader_refclass_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                             single_element->refclass(), single_element->name(), "",
-                                             "_document", 2);
-              } else if (single_element->isMap()) {
-                _data_reader_map_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                        (output_engine<T1, T2>::m_additional_string),
-                                        single_element->name(), "", "_document", 2);
-              } else {
-                std::cerr << "Invalid element\n";
-                exit(-1);
-              }
-              output_engine<T1, T2>::m_cpp_streamer << "\n";
-            } else { // optional
-              // First if
-              int actual_level = 2;
-              if (!single_element->isMap()) {
-                actual_level++;
-                if(!printedIsObject) {
-                  output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
-                  << "if (!_document.IsObject()) {\n" << TABS << TABS << TABS
-                  << "std::cerr << __FILE__ <<  \":\" << __LINE__ << \" Element is not an object\\n\";\n"
-                  << TABS << TABS << TABS << "return false;\n"
-                  << TABS << TABS << "}\n";
-                  printedIsObject = true;
-                }
-                output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
-                << "if (_document.HasMember(\"" << single_element->name() << "\")) {\n";
-              }
-              // Second if
-              if (single_element->isBoolean()) {
-                _data_reader_second_if_optional((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                single_element->name(), "Bool", "_document", actual_level);
-              } else if (single_element->isInteger()) {
-                _data_reader_second_if_optional((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                single_element->name(), "Int64", "_document", actual_level);
-              } else if (single_element->isInteger32()) {
-                _data_reader_second_if_optional((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                single_element->name(), "Int", "_document", actual_level);
-              } else if (single_element->isFloat()) {
-                _data_reader_second_if_optional((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                single_element->name(), "Double", "_document", actual_level);
-              } else if (single_element->isString()) {
-                _data_reader_second_if_optional((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                single_element->name(), "String", "_document", actual_level);
-              } else if (single_element->isList()) {
-                _data_reader_second_if_optional((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                single_element->name(), "Array", "_document", actual_level);
-              } else if (single_element->isRefClass()) {
-                _data_reader_second_if_optional((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                single_element->name(), "Object", "_document", actual_level);
-              } else if (single_element->isMap()) {
-                if (elements_class.size() > 1) {
-                  std::cerr << "Error: More than one element on the same level within a map\n";
-                  exit(-1);
-                }
-                _data_reader_second_if_optional_member((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                       single_element->name(),
-                                                       internal_to_rapidjson(single_element->refclass()), "_document",
-                                                       actual_level);
-              } else {
-                std::cerr << "Invalid element\n";
-                exit(-1);
-              }
-              // Assign data
-              if (single_element->isBoolean()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "Bool", "", "_document", actual_level);
-              } else if (single_element->isInteger()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "Int64", "", "_document", actual_level);
-              } else if (single_element->isInteger32()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "Int", "", "_document", actual_level);
-              } else if (single_element->isFloat()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "Double", "", "_document", actual_level);
-              } else if (single_element->isString()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "String", "", "_document", actual_level);
-              } else if (single_element->isList()) {
-                _data_reader_second_if_optional_list((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                     (output_engine<T1, T2>::m_additional_string),
-                                                     single_element->name(), "_document", actual_level);
-              } else if (single_element->isRefClass()) {
-                _data_reader_second_if_optional_refclass((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                         single_element->refclass(),
-                                                         single_element->name(), "inout.", "rData", actual_level);
-              } else if (single_element->isMap()) {
-                _data_reader_second_if_optional_map((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                    (output_engine<T1, T2>::m_additional_string),
-                                                    single_element->name(), "", "_document", actual_level);
-              } else {
-                std::cerr << "Invalid element\n";
-                exit(-1);
-              }
-              output_engine<T1, T2>::m_cpp_streamer << build_indentation(TABS, actual_level) << single_element->optional_name() <<
-              " = true;\n";
-              if (!single_element->isMap()) {
-                output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << "}\n"; // Close first if
-              }
-            }
-          } else {
-            // else condition not empty
-            output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << "if (" <<
-            single_element->condition() << ") {\n";
-            // Evaluate contidion
-            // Proceed as normal with one more indentation
-            if (!single_element->optional()) {
-              // First if checking the data contains that element
-              if (!single_element->isMap()) {
-                if(!printedIsObject) {
-                  output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
-                  << "if (!_document.IsObject()) {\n" << TABS << TABS << TABS
-                  << "std::cerr << __FILE__ <<  \":\" << __LINE__ << \" Element is not an object\\n\";\n"
-                  << TABS << TABS << TABS << "return false;\n"
-                  << TABS << TABS << "}\n";
-                  printedIsObject = true;
-                }
-                output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << TABS
-                << "if (!_document.HasMember(\"" << single_element->name() << "\")) {\n"
-                << TABS << TABS << TABS << TABS
-                << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error entity: "
-                << class_map_it->name() << " is missing mandatory entry or entity is not an object" <<
-                single_element->name() <<
-                "\\n\";\n"
-                << TABS << TABS << TABS << TABS << "return false;\n"
-                << TABS << TABS << TABS << "}\n";
-              }
-              // Second if Check the type is the valid value
-              if (single_element->isBoolean()) {
-                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
-                                    class_map_it->name(), "Bool", "_document", 3);
-              } else if (single_element->isInteger()) {
-                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
-                                    class_map_it->name(), "Int64", "_document", 3);
-              } else if (single_element->isInteger32()) {
-                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
-                                    class_map_it->name(), "Int", "_document", 3);
-              } else if (single_element->isFloat()) {
-                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
-                                    class_map_it->name(), "Double", "_document", 3);
-              } else if (single_element->isString()) {
-                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
-                                    class_map_it->name(), "String", "_document", 3);
-              } else if (single_element->isRefClass()) {
-                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
-                                    class_map_it->name(), "Object", "_document", 3);
-              } else if (single_element->isList()) {
-                _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
-                                    class_map_it->name(), "Array", "_document", 3);
-              } else if (single_element->isMap()) {
-                if (elements_class.size() > 1) {
-                  std::cerr << "Error: More than one element on the same level within a map\n";
-                  exit(-1);
-                }
-                _data_reader_single_map((output_engine<T1, T2>::m_cpp_streamer), TABS, "_document", 3);
-              } else {
-                std::cerr << "Invalid element\n";
-                exit(-1);
-              }
-              // Third line, read the element depending on the type
-              if (single_element->isBoolean()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "Bool", "", "_document", 3);
-              } else if (single_element->isInteger()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "Int64", "", "_document", 3);
-              } else if (single_element->isInteger32()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "Int", "", "_document", 3);
-              } else if (single_element->isFloat()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "Double", "", "_document", 3);
-              } else if (single_element->isString()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "String", "", "_document", 3);
-              } else if (single_element->isList()) {
-                _data_reader_list_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                         (output_engine<T1, T2>::m_additional_string),
-                                         single_element->name(), "", "_document", 3);
-              } else if (single_element->isRefClass()) {
-                _data_reader_refclass_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                             single_element->refclass(), single_element->name(), "",
-                                             "_document", 3);
-              } else if (single_element->isMap()) {
-                _data_reader_map_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                        (output_engine<T1, T2>::m_additional_string),
-                                        single_element->name(), "", "_document", 3);
-              } else {
-                std::cerr << "Invalid element\n";
-                exit(-1);
-              }
-              output_engine<T1, T2>::m_cpp_streamer << "\n";
-            } else {
-              int actual_level = 2;
-              // The data is optional
-              if (!single_element->isMap()) {
-                actual_level++;
-                if(!printedIsObject) {
-                  output_engine<T1, T2>::m_cpp_streamer << TABS << TABS
-                  << "if (!_document.IsObject()) {\n" << TABS << TABS << TABS
-                  << "std::cerr << __FILE__ <<  \":\" << __LINE__ << \" Element is not an object\\n\";\n"
-                  << TABS << TABS << TABS << "return false;\n"
-                  << TABS << TABS << "}\n";
-                  printedIsObject = true;
-                }
-                output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << TABS
-                << "if (_document.HasMember(\"" << single_element->name() << "\")) {\n";
-              }
-              // Second if
-              if (single_element->isBoolean()) {
-                _data_reader_second_if_optional((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                single_element->name(), "Bool", "_document", actual_level);
-              } else if (single_element->isInteger()) {
-                _data_reader_second_if_optional((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                single_element->name(), "Int64", "_document", actual_level);
-              } else if (single_element->isInteger32()) {
-                _data_reader_second_if_optional((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                single_element->name(), "Int", "_document", actual_level);
-              } else if (single_element->isFloat()) {
-                _data_reader_second_if_optional((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                single_element->name(), "Double", "_document", actual_level);
-              } else if (single_element->isString()) {
-                _data_reader_second_if_optional((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                single_element->name(), "String", "_document", actual_level);
-              } else if (single_element->isList()) {
-                _data_reader_second_if_optional((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                single_element->name(), "Array", "_document", actual_level);
-              } else if (single_element->isRefClass()) {
-                _data_reader_second_if_optional((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                single_element->name(), "Object", "_document", actual_level);
-              } else if (single_element->isMap()) {
-                if (elements_class.size() > 1) {
-                  std::cerr << "Error: More than one element on the same level within a map\n";
-                  exit(-1);
-                }
-                _data_reader_second_if_optional_member((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                       single_element->name(),
-                                                       internal_to_rapidjson(single_element->refclass()), "_document",
-                                                       actual_level);
-              } else {
-                std::cerr << "Invalid element\n";
-                exit(-1);
-              }
-              // Assign data
-              if (single_element->isBoolean()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "Bool", "", "_document", actual_level);
-              } else if (single_element->isInteger()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "Int64", "", "_document", actual_level);
-              } else if (single_element->isInteger32()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "Int", "", "_document", actual_level);
-              } else if (single_element->isFloat()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "Double", "", "_document", actual_level);
-              } else if (single_element->isString()) {
-                _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                           single_element->name(), "String", "", "_document", actual_level);
-              } else if (single_element->isList()) {
-                _data_reader_second_if_optional_list((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                     (output_engine<T1, T2>::m_additional_string),
-                                                     single_element->name(), "_document", actual_level);
-              } else if (single_element->isRefClass()) {
-                _data_reader_second_if_optional_refclass((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                         single_element->refclass(),
-                                                         single_element->name(), "", "_document", actual_level);
-              } else if (single_element->isMap()) {
-                _data_reader_second_if_optional_map((output_engine<T1, T2>::m_cpp_streamer), TABS,
-                                                    (output_engine<T1, T2>::m_additional_string),
-                                                    single_element->name(), "", "_document", actual_level);
-              } else {
-                std::cerr << "Invalid element\n";
-                exit(-1);
-              }
-              output_engine<T1, T2>::m_cpp_streamer << build_indentation(TABS, actual_level)
-              << single_element->optional_name() << " = true;\n";
-              if (!single_element->isMap()) {
-                output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << TABS << "}\n"; // Close first if
-              }
-            }
-            output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << "}\n"; // Condition
+        << def_indentation << "template<typename T>\n"
+        << def_indentation << "bool " << name << "__input_parse(" << name << " &" << inout << ", T &" << rdata << ")\n"
+        << def_indentation << "{\n";
+      } else {
+        output_engine<T1, T2>::m_cpp_streamer
+        << def_indentation << "bool umison::" << ff->name() << "::read_data(const std::string &input_text)\n"
+        << def_indentation << "{\n"
+        << def_1p_indentation << "rapidjson::Document " << rdata << ";\n"
+        << def_1p_indentation << "if (" << rdata << ".Parse(input_text.c_str()).HasParseError()) {\n"
+        << def_2p_indentation <<
+        "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error parsing input text. Error: \" << "
+        << rdata << ".GetParseError() << \"\\n\";\n"
+        << def_2p_indentation << "return false;\n"
+        << def_1p_indentation << "}\n";
+      }
+      bool printedIsObject = false;
+      auto &elements = ff->getChildren();
+      ++actual_level;
+      for (auto &single_element : elements) {
+        // Check the condition and open conditional if necessary
+        if (!single_element->condition().empty()) {
+          output_engine<T1, T2>::m_cpp_streamer
+          << def_1p_indentation << "if (" << single_element->condition() << ") {\n";
+          // Increase indentation
+          ++actual_level;
+        }
+        // Check if the element is optional
+        if (single_element->optional()) {
+          if (!single_element->isMap()) {
+            output_engine<T1, T2>::m_cpp_streamer
+            << build_indentation(TABS, actual_level) << "if (" << rdata << ".HasMember(\""
+            << single_element->name() << "\")) {\n";
+            ++actual_level;
           }
         }
-        output_engine<T1, T2>::m_cpp_streamer << TABS << TABS << "return true;\n";
-        output_engine<T1, T2>::m_cpp_streamer << TABS << "}\n\n"; // End of the function
+        // Check if the object checking has been already printed
+        // So we avoid problems checking the rest of elements
+        if (!single_element->isMap()) {
+          if (!printedIsObject) {
+            output_engine<T1, T2>::m_cpp_streamer
+            << build_indentation(TABS, actual_level) << "if (!" << rdata << ".IsObject()) {\n"
+            << build_indentation(TABS, actual_level + 1) <<
+            "std::cerr << __FILE__ <<  \":\" << __LINE__ << \" Element is not an object\\n\";\n"
+            << build_indentation(TABS, actual_level + 1) << "return false;\n"
+            << build_indentation(TABS, actual_level) << "}\n";
+            printedIsObject = true;
+          }
+          // Get if the type is valid
+          output_engine<T1, T2>::m_cpp_streamer
+          << build_indentation(TABS, actual_level) << "if (!" << rdata << ".HasMember(\"" << single_element->name()
+          << "\")) {\n"
+          << build_indentation(TABS, actual_level + 1) <<
+          "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error entity: "
+          << name << " is missing mandatory entry or entity is not an object" << single_element->name()
+          << "\\n\";\n"
+          << build_indentation(TABS, actual_level + 1) << "return false;\n"
+          << build_indentation(TABS, actual_level) << "}\n";
+        }
+        // Create the if depending on the optionality of the elements 2º IF
+        if (single_element->isMap()) {
+          if (elements.size() > 1) {
+            std::cerr << "Error: More than one element on the same level within a map\n";
+            exit(-1);
+          }
+          if (!single_element->optional()) {
+            _data_reader_single_map((output_engine<T1, T2>::m_cpp_streamer), TABS, rdata, actual_level);
+          } else {
+            _data_reader_second_if_optional_member((output_engine<T1, T2>::m_cpp_streamer), TABS,
+                                                   single_element->name(),
+                                                   internal_to_rapidjson(single_element->refclass()), rdata,
+                                                   actual_level);
+          }
+        } else {
+          std::string base_element;
+          if (single_element->isBoolean()) {
+            base_element = "Bool";
+          } else if (single_element->isInteger32()) {
+            base_element = "Int";
+          } else if (single_element->isInteger()) {
+            base_element = "Int64";
+          } else if (single_element->isFloat()) {
+            base_element = "Double";
+          } else if (single_element->isString()) {
+            base_element = "String";
+          } else if (single_element->isList()) {
+            base_element = "Array";
+          } else if (single_element->isRefClass()) {
+            base_element = "Object";
+          } else {
+            std::cerr << "Invalid element\n";
+            exit(-1);
+          }
+          if (!single_element->optional()) {
+            _data_reader_single((output_engine<T1, T2>::m_cpp_streamer), TABS, single_element->name(),
+                                name, base_element, rdata, actual_level);
+          } else {
+            _data_reader_second_if_optional((output_engine<T1, T2>::m_cpp_streamer), TABS,
+                                            single_element->name(), base_element, rdata, actual_level);
+          }
+        }
+
+        // Last part is assignement of elements, 3º IF
+        if (single_element->isMap()) {
+          if (!single_element->optional()) {
+            _data_reader_map_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
+                                    (output_engine<T1, T2>::m_additional_string),
+                                    single_element->name(), inout_dot, rdata, actual_level);
+          } else {
+            _data_reader_second_if_optional_map((output_engine<T1, T2>::m_cpp_streamer), TABS,
+                                                (output_engine<T1, T2>::m_additional_string),
+                                                single_element->name(), inout_dot, rdata, actual_level);
+          }
+        } else if (single_element->isRefClass()) {
+          if (!single_element->optional()) {
+            _data_reader_refclass_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
+                                         single_element->refclass(), single_element->name(), inout_dot, rdata,
+                                         actual_level);
+          } else {
+            _data_reader_second_if_optional_refclass((output_engine<T1, T2>::m_cpp_streamer), TABS,
+                                                     single_element->refclass(),
+                                                     single_element->name(), inout_dot, rdata, actual_level);
+          }
+        } else if (single_element->isList()) {
+          if (!single_element->optional()) {
+            _data_reader_list_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
+                                     (output_engine<T1, T2>::m_additional_string),
+                                     single_element->name(), inout_dot, rdata, actual_level);
+          } else {
+            _data_reader_second_if_optional_list((output_engine<T1, T2>::m_cpp_streamer), TABS,
+                                                 (output_engine<T1, T2>::m_additional_string),
+                                                 single_element->name(), inout_dot, rdata, actual_level);
+          }
+        } else {
+          std::string base_element;
+          if (single_element->isBoolean()) {
+            base_element = "Bool";
+          } else if (single_element->isInteger()) {
+            base_element = "Int64";
+          } else if (single_element->isInteger32()) {
+            base_element = "Int";
+          } else if (single_element->isFloat()) {
+            base_element = "Double";
+          } else if (single_element->isString()) {
+            base_element = "String";
+          } else {
+            std::cerr << "Invalid element\n";
+            exit(-1);
+          }
+          _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
+                                     single_element->name(), base_element, inout_dot, rdata, actual_level);
+        }
+        // New Line
+        output_engine<T1, T2>::m_cpp_streamer << "\n";
+        // Close the if conditional
+        if (single_element->optional()) {
+          if (!single_element->isMap()) {
+            --actual_level;
+            output_engine<T1, T2>::m_cpp_streamer
+            << build_indentation(TABS, actual_level) << "}\n";
+          }
+        }
+        // Close the if condition
+        if (!single_element->condition().empty()) {
+          --actual_level;
+          output_engine<T1, T2>::m_cpp_streamer
+          << def_1p_indentation << "}\n";
+        }
       }
+      output_engine<T1, T2>::m_cpp_streamer << def_1p_indentation << "return true;\n";
+      // Close the method
+      output_engine<T1, T2>::m_cpp_streamer
+      << def_indentation << "}\n";
     }
   };
 }
