@@ -59,7 +59,7 @@ namespace umi {
      * */
     void print(std::shared_ptr<umi::umixml> &ff, streamer &stream) {
       stream << DISCLAIMER
-      << "\n#include <string>\n#include <vector>\n#include <map>\n\n";
+      << "\n#include <iostream>\n#include <string>\n#include <vector>\n#include <map>\n\n";
 
       if (!ff->getClassMap().empty()) {
         stream << "// Internal namespace declaration\nnamespace __internal__umison"
@@ -113,8 +113,7 @@ namespace umi {
         stream << "\n" << TABS << TABS << "// read one input string and fill the data, errors are reported on stderr\n"
         << TABS << TABS << "bool read_data(const std::string& input_text);\n";
         stream << "\n" << TABS << TABS << "// read one input string and fill the data, errors are reported on out_stream\n"
-        << TABS << TABS << "template<typename Stream>\n"
-        << TABS << TABS << "bool read_data(const std::string &input_text, Stream &out_stream);\n";
+        << TABS << TABS << "bool read_data(const std::string &input_text, std::iostream &out_stream);\n";
         stream << TABS << "};\n\n";
       }
       stream << "}\n"; // For the umison namespace
