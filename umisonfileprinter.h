@@ -110,8 +110,11 @@ namespace umi {
             << childrenIt->optional_name_type(m_additional_string, true);
           }
         }
-        stream << "\n" << TABS << TABS << "// read one input string and fill the data\n"
+        stream << "\n" << TABS << TABS << "// read one input string and fill the data, errors are reported on stderr\n"
         << TABS << TABS << "bool read_data(const std::string& input_text);\n";
+        stream << "\n" << TABS << TABS << "// read one input string and fill the data, errors are reported on out_stream\n"
+        << TABS << TABS << "template<typename Stream>\n"
+        << TABS << TABS << "bool read_data(const std::string &input_text, Stream &out_stream);\n";
         stream << TABS << "};\n\n";
       }
       stream << "}\n"; // For the umison namespace

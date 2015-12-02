@@ -77,8 +77,8 @@ namespace umi {
       // Create the json parsers
       output_engine<T1, T2>::m_cpp_streamer << "// Data parsers\n";
       auto &dataR = ff->getClassMap();
-      for(auto &class_it: dataR) {
-        create_single_reader(class_it.second,class_it.first,true);
+      for (auto &class_it: dataR) {
+        create_single_reader(class_it.second, class_it.first, true);
         output_engine<T1, T2>::m_cpp_streamer << "\n";
       }
       // Close the namespace
@@ -86,8 +86,9 @@ namespace umi {
       // Create the final parsers
       output_engine<T1, T2>::m_cpp_streamer << "// Json parsers\n";
       auto &classes = ff->getJsonArray();
-      for(auto &class_it: classes) {
-        create_single_reader(class_it,"",false);
+      for (auto &class_it: classes) {
+        create_default_method_read(class_it);
+        create_single_reader(class_it, "", false);
         output_engine<T1, T2>::m_cpp_streamer << "\n";
       }
       return true;
@@ -129,16 +130,16 @@ namespace umi {
      * Create the forward declaration of the basic types
      * */
     void create_forward_declaration_basic_types() {
-      output_engine<T1, T2>::m_cpp_streamer << TABS << "template<typename T>\n"
-      << TABS << "bool _read_list(std::vector<int> &str, T &data);\n"
-      << TABS << "template<typename T>\n"
-      << TABS << "bool _read_list(std::vector<long long int> &str, T &data);\n"
-      << TABS << "template<typename T>\n"
-      << TABS << "bool _read_list(std::vector<double> &str, T &data);\n"
-      << TABS << "template<typename T>\n"
-      << TABS << "bool _read_list(std::vector<bool> &str, T &data);\n"
-      << TABS << "template<typename T>\n"
-      << TABS << "bool _read_list(std::vector<std::string> &str, T &data);\n";
+      output_engine<T1, T2>::m_cpp_streamer << TABS << "template<typename T, typename Stream>\n"
+      << TABS << "bool _read_list(std::vector<int> &str, T &data, Stream &ss);\n"
+      << TABS << "template<typename T, typename Stream>\n"
+      << TABS << "bool _read_list(std::vector<long long int> &str, T &data, Stream &ss);\n"
+      << TABS << "template<typename T, typename Stream>\n"
+      << TABS << "bool _read_list(std::vector<double> &str, T &data, Stream &ss);\n"
+      << TABS << "template<typename T, typename Stream>\n"
+      << TABS << "bool _read_list(std::vector<bool> &str, T &data, Stream &ss);\n"
+      << TABS << "template<typename T, typename Stream>\n"
+      << TABS << "bool _read_list(std::vector<std::string> &str, T &data, Stream &ss);\n";
     }
     /**
      * Create the forward declaration of the array of classes
@@ -146,25 +147,27 @@ namespace umi {
     void create_forward_declaration_classes(std::shared_ptr<umi::umixml> &ff) {
       auto class_map = ff->getClassMap();
       for (auto &&class_map_it: class_map) {
-        output_engine<T1, T2>::m_cpp_streamer << TABS << "template<typename T>\n"
+        output_engine<T1, T2>::m_cpp_streamer << TABS << "template<typename T, typename Stream>\n"
         << TABS << "bool _read_list(std::vector<__internal__umison"
-        << output_engine<T1, T2>::m_additional_string << "::" << class_map_it.first << "> &str, T &data);\n";
+        << output_engine<T1, T2>::m_additional_string << "::" << class_map_it.first <<
+        "> &str, T &data, Stream &ss);\n";
       }
     }
     /**
      * Create the forward declaration of the maps with basic types
      * */
     void create_forward_declaration_map_basic_types() {
-      output_engine<T1, T2>::m_cpp_streamer << TABS << "template<typename T>\n"
-      << TABS << "bool _read_map(std::multimap<std::string, int> &str, T &data);\n"
-      << TABS << "template<typename T>\n"
-      << TABS << "bool _read_map(std::multimap<std::string, long long int> &str, T &data);\n"
-      << TABS << "template<typename T>\n"
-      << TABS << "bool _read_map(std::multimap<std::string, double> &str, T &data);\n"
-      << TABS << "template<typename T>\n"
-      << TABS << "bool _read_map(std::multimap<std::string, bool> &str, T &data);\n"
-      << TABS << "template<typename T>\n"
-      << TABS << "bool _read_map(std::multimap<std::string, std::string> &str, T &data);\n";
+      output_engine<T1, T2>::m_cpp_streamer
+      << TABS << "template<typename T, typename Stream>\n"
+      << TABS << "bool _read_map(std::multimap<std::string, int> &str, T &data, Stream &ss);\n"
+      << TABS << "template<typename T, typename Stream>\n"
+      << TABS << "bool _read_map(std::multimap<std::string, long long int> &str, T &data, Stream &ss);\n"
+      << TABS << "template<typename T, typename Stream>\n"
+      << TABS << "bool _read_map(std::multimap<std::string, double> &str, T &data, Stream &ss);\n"
+      << TABS << "template<typename T, typename Stream>\n"
+      << TABS << "bool _read_map(std::multimap<std::string, bool> &str, T &data, Stream &ss);\n"
+      << TABS << "template<typename T, typename Stream>\n"
+      << TABS << "bool _read_map(std::multimap<std::string, std::string> &str, T &data, Stream &ss);\n";
     }
 
     /**
@@ -173,9 +176,10 @@ namespace umi {
     void create_forward_declaration_map_classes(std::shared_ptr<umi::umixml> &ff) {
       auto class_map = ff->getClassMap();
       for (auto &&class_map_it: class_map) {
-        output_engine<T1, T2>::m_cpp_streamer << TABS << "template<typename T>\n"
+        output_engine<T1, T2>::m_cpp_streamer << TABS << "template<typename T, typename Stream>\n"
         << TABS << "bool _read_list(std::multimap<std::string, __internal__umison"
-        << output_engine<T1, T2>::m_additional_string << "::" << class_map_it.first << "> &str, T &data);\n";
+        << output_engine<T1, T2>::m_additional_string << "::" << class_map_it.first <<
+        "> &str, T &data, Stream &ss);\n";
       }
     }
 
@@ -185,9 +189,9 @@ namespace umi {
     void create_forward_declaration_parse_classes(std::shared_ptr<umi::umixml> &ff) {
       auto class_map = ff->getClassMap();
       for (auto &&class_map_it: class_map) {
-        output_engine<T1, T2>::m_cpp_streamer << TABS << "template<typename T>\n"
+        output_engine<T1, T2>::m_cpp_streamer << TABS << "template<typename T, typename Stream>\n"
         << TABS << "bool " << class_map_it.first << "__input_parse(" << class_map_it.first <<
-        " &inout, T &rData);\n";
+        " &inout, T &rData, Stream &ss);\n";
       }
     }
 
@@ -218,18 +222,18 @@ namespace umi {
       std::string def_1p_indentation(def_indentation + space);
       std::string def_2p_indentation(def_1p_indentation + space);
       std::string def_3p_indentation(def_2p_indentation + space);
-      streamer << def_indentation << "template<typename T>\n"
-      << def_indentation << "bool _read_list(std::vector<" << type << "> &str, T &data)\n"
+      streamer << def_indentation << "template<typename T, typename Stream>\n"
+      << def_indentation << "bool _read_list(std::vector<" << type << "> &str, T &data, Stream &ss)\n"
       << def_indentation << "{\n"
       << def_1p_indentation << "if (!data.IsArray()) {\n"
-      << def_2p_indentation << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error data is not an array\\n\";\n"
+      << def_2p_indentation << "ss << __FILE__ << \":\" << __LINE__ << \"Error data is not an array\\n\";\n"
       << def_2p_indentation << "return false;\n"
       << def_1p_indentation << "}\n\n"
       << def_1p_indentation << "for (rapidjson::SizeType i = 0; i < data.Size(); ++i) {\n"
       << def_2p_indentation << "if (data[i].Is" << rapid_json_type << "()) {\n"
       << def_3p_indentation << "str.push_back(data[i].Get" << rapid_json_type << "());\n"
       << def_2p_indentation << "} else {\n"
-      << def_3p_indentation << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error data is not an " <<
+      << def_3p_indentation << "ss << __FILE__ << \":\" << __LINE__ << \"Error data is not an " <<
       rapid_json_type << "\\n\";\n"
       << def_3p_indentation << "return false;\n"
       << def_2p_indentation << "}\n"
@@ -244,18 +248,18 @@ namespace umi {
       std::string def_1p_indentation(def_indentation + space);
       std::string def_2p_indentation(def_1p_indentation + space);
       std::string def_3p_indentation(def_2p_indentation + space);
-      streamer << def_indentation << "template<typename T>\n"
-      << def_indentation << "bool _read_map(std::multimap<std::string, " << type << "> &str, T &data)\n"
+      streamer << def_indentation << "template<typename T, typename Stream>\n"
+      << def_indentation << "bool _read_map(std::multimap<std::string, " << type << "> &str, T &data, Stream &ss)\n"
       << def_indentation << "{\n"
       << def_1p_indentation << "for (rapidjson::Document::MemberIterator i = data.MemberBegin();\n"
       << def_2p_indentation << "i != data.MemberEnd();\n"
       << def_2p_indentation << "++i) {\n"
       << def_2p_indentation << "if (!i->name.IsString()) {\n"
-      << def_3p_indentation << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error map name is not a string\\n\";\n"
+      << def_3p_indentation << "ss << __FILE__ << \":\" << __LINE__ << \"Error map name is not a string\\n\";\n"
       << def_3p_indentation << "return false;\n"
       << def_2p_indentation << "}\n"
       << def_2p_indentation << "if (!i->value.Is" << rapid_json_type << "()) {\n"
-      << def_3p_indentation << "std::cerr << __FILE__ << \":\" << __LINE__ << \"Error map value is not a " <<
+      << def_3p_indentation << "ss << __FILE__ << \":\" << __LINE__ << \"Error map value is not a " <<
       rapid_json_type << "\\n\";\n"
       << def_3p_indentation << "return false;\n"
       << def_2p_indentation << "}\n"
@@ -272,20 +276,20 @@ namespace umi {
       std::string def_1p_indentation(def_indentation + space);
       std::string def_2p_indentation(def_1p_indentation + space);
       std::string def_3p_indentation(def_2p_indentation + space);
-      streamer << def_indentation << "template<typename T>\n"
+      streamer << def_indentation << "template<typename T, typename Stream>\n"
       << def_indentation << "bool _read_list(std::vector<__internal__umison" << additional_str << "::" << type <<
-      "> &str, T &data)\n"
+      "> &str, T &data, Stream &ss)\n"
       << def_indentation << "{\n"
       << def_1p_indentation << "if (!data.IsArray()) {\n"
-      << def_2p_indentation << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error data is not an array\\n\";\n"
+      << def_2p_indentation << "ss << __FILE__ << \":\" << __LINE__ << \" Error data is not an array\\n\";\n"
       << def_2p_indentation << "return false;\n"
       << def_1p_indentation << "}\n\n"
       << def_1p_indentation << "for (rapidjson::SizeType i = 0; i < data.Size(); ++i) {\n"
       << def_2p_indentation << "__internal__umison" << additional_str << "::" << type << " local_" << type << ";\n"
-      << def_2p_indentation << "if (" << type << "__input_parse(local_" << type << ", data[i])) {\n"
+      << def_2p_indentation << "if (" << type << "__input_parse(local_" << type << ", data[i], ss)) {\n"
       << def_3p_indentation << "str.push_back(local_" << type << ");\n"
       << def_2p_indentation << "} else {\n"
-      << def_3p_indentation << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error data is not an " << type <<
+      << def_3p_indentation << "ss << __FILE__ << \":\" << __LINE__ << \" Error data is not an " << type <<
       "\\n\";\n"
       << def_3p_indentation << "return false;\n"
       << def_2p_indentation << "}\n"
@@ -302,32 +306,32 @@ namespace umi {
       std::string def_3p_indentation(def_2p_indentation + space);
       std::string def_4p_indentation(def_3p_indentation + space);
       std::string def_5p_indentation(def_4p_indentation + space);
-      streamer << def_indentation << "template<typename T>\n"
+      streamer << def_indentation << "template<typename T, typename Stream>\n"
       << def_indentation << "bool _read_map(std::multimap<std::string, __internal__umison" << additional_str << "::" <<
-      type << "> &str, T &data)\n"
+      type << "> &str, T &data, Stream &ss)\n"
       << def_indentation << "{\n"
       << def_1p_indentation << "for (rapidjson::Document::MemberIterator i = data.MemberBegin();\n"
       << def_2p_indentation << "i != data.MemberEnd();\n"
       << def_2p_indentation << "++i) {\n"
       << def_2p_indentation << "if (!i->name.IsString()) {\n"
-      << def_3p_indentation << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error map name is not a string\\n\";\n"
+      << def_3p_indentation << "ss << __FILE__ << \":\" << __LINE__ << \" Error map name is not a string\\n\";\n"
       << def_3p_indentation << "return false;\n"
       << def_2p_indentation << "}\n"
       << def_2p_indentation << "if (i->value.IsObject()) {\n"
       << def_3p_indentation << "__internal__umison" << additional_str << "::" << type << " local_" << type << ";\n"
-      << def_3p_indentation << "if (" << type << "__input_parse(local_" << type << ", i->value)) {\n"
+      << def_3p_indentation << "if (" << type << "__input_parse(local_" << type << ", i->value, ss)) {\n"
       << def_4p_indentation << "str.insert(std::make_pair(std::string(i->name.GetString()), local_" << type << "));\n"
       << def_3p_indentation << "} else {\n"
-      << def_4p_indentation << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error data is not an " << type <<
+      << def_4p_indentation << "ss << __FILE__ << \":\" << __LINE__ << \" Error data is not an " << type <<
       "\\n\";\n"
       << def_3p_indentation << "}\n"
       << def_2p_indentation << "} else if (i->value.IsArray()){\n"
       << def_3p_indentation << "for (rapidjson::SizeType j = 0; j < i->value.Size(); ++j){\n"
       << def_4p_indentation << "__internal__umison" << additional_str << "::" << type << " local_" << type << ";\n"
-      << def_4p_indentation << "if (" << type << "__input_parse(local_" << type << ", i->value[j])) {\n"
+      << def_4p_indentation << "if (" << type << "__input_parse(local_" << type << ", i->value[j], ss)) {\n"
       << def_5p_indentation << "str.insert(std::make_pair(std::string(i->name.GetString()), local_" << type << "));\n"
       << def_4p_indentation << "} else {\n"
-      << def_5p_indentation << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error data is not an " << type <<
+      << def_5p_indentation << "ss << __FILE__ << \":\" << __LINE__ << \" Error data is not an " << type <<
       "\\n\";\n"
       << def_4p_indentation << "}\n"
       << def_3p_indentation << "}\n"
@@ -390,7 +394,7 @@ namespace umi {
       std::string def_indentation(build_indentation(space, level));
       std::string def_1p_indentation(def_indentation + space);
       streamer << def_indentation << "if (!" << rdata << "[\"" << type << "\"].Is" << rapid_json_type << "()) {\n"
-      << def_1p_indentation << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error entity: "
+      << def_1p_indentation << "ss << __FILE__ << \":\" << __LINE__ << \" Error entity: "
       << class_name << " is wrong type " << type << "\\n\";\n"
       << def_1p_indentation << "return false;\n"
       << def_indentation << "}\n";
@@ -401,15 +405,14 @@ namespace umi {
       std::string def_1p_indentation(def_indentation + space);
       std::string def_2p_indentation(def_1p_indentation + space);
       streamer << def_indentation << "if (" << rdata << ".MemberCount() == 0) {\n"
-      << def_1p_indentation <<
-      "std::cerr << __FILE__ <<  \":\" << __LINE__ << \" Error mandatory map with 0 elements\\n\";\n"
+      << def_1p_indentation << "ss << __FILE__ <<  \":\" << __LINE__ << \" Error mandatory map with 0 elements\\n\";\n"
       << def_1p_indentation << "return false;\n"
       << def_indentation << "}\n"
       << def_indentation << "for (rapidjson::Document::MemberIterator i = " << rdata << ".MemberBegin();\n"
       << def_1p_indentation << "i != " << rdata << ".MemberEnd();\n"
       << def_1p_indentation << "++i) {\n"
       << def_1p_indentation << "if (!i->name.IsString()) {\n"
-      << def_2p_indentation << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error map key is not string\\n\";\n"
+      << def_2p_indentation << "ss << __FILE__ << \":\" << __LINE__ << \" Error map key is not string\\n\";\n"
       << def_2p_indentation << "return false;\n"
       << def_1p_indentation << "}\n"
       << def_indentation << "}\n";
@@ -430,8 +433,8 @@ namespace umi {
       std::string def_1p_indentation(def_indentation + space);
       streamer << def_indentation
       << "if (!__internal__umison" << additional_string << "::_read_list(" << inout << type_name << ", " << rdata <<
-      "[\"" << type_name << "\"])) {\n"
-      << def_1p_indentation << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error reading list\\n\";\n"
+      "[\"" << type_name << "\"], ss)) {\n"
+      << def_1p_indentation << "ss << __FILE__ << \":\" << __LINE__ << \" Error reading list\\n\";\n"
       << def_1p_indentation << "return false;\n"
       << def_indentation << "}\n\n";
     }
@@ -442,8 +445,8 @@ namespace umi {
       std::string def_indentation(build_indentation(space, level));
       std::string def_1p_indentation(def_indentation + space);
       streamer << def_indentation << "if (!" << refclass << "__input_parse(" << inout << type_name << ", " << rdata <<
-      "[\"" << type_name << "\"])) {\n"
-      << def_1p_indentation << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error reading refclass\\n\";\n"
+      "[\"" << type_name << "\"], ss)) {\n"
+      << def_1p_indentation << "ss << __FILE__ << \":\" << __LINE__ << \" Error reading refclass\\n\";\n"
       << def_1p_indentation << "return false;\n"
       << def_indentation << "}\n\n";
     }
@@ -454,8 +457,8 @@ namespace umi {
       std::string def_indentation(build_indentation(space, level));
       std::string def_1p_indentation(def_indentation + space);
       streamer << def_indentation << "if (!__internal__umison" << additional_string << "::_read_map(" << inout <<
-      type_name << ", " << rdata << ")) {\n"
-      << def_1p_indentation << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error reading map\\n\";\n"
+      type_name << ", " << rdata << ", ss)) {\n"
+      << def_1p_indentation << "ss << __FILE__ << \":\" << __LINE__ << \" Error reading map\\n\";\n"
       << def_1p_indentation << "return false;\n"
       << def_indentation << "}\n\n";
     }
@@ -467,7 +470,7 @@ namespace umi {
       std::string def_indentation(build_indentation(space, level));
       std::string def_1p_indentation(def_indentation + space);
       streamer << def_indentation << "if (!" << rdata << "[\"" << type_name << "\"].Is" << rapid_json_type << "()) {\n"
-      << def_1p_indentation << "std::cerr << \"Error wrong type\" << __LINE__ << \":\" << __FILE__ << \"\\n\";\n"
+      << def_1p_indentation << "ss << \"Error wrong type\" << __LINE__ << \":\" << __FILE__ << \"\\n\";\n"
       << def_1p_indentation << "return false;\n"
       << def_indentation << "}\n";
     }
@@ -484,11 +487,11 @@ namespace umi {
       << def_2p_indentation << "i != " << rdata << ".MemberEnd();\n"
       << def_2p_indentation << "++i) {\n"
       << def_2p_indentation << "if (!i->name.IsString()) {\n"
-      << def_3p_indentation << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error map key is not string\\n\";\n"
+      << def_3p_indentation << "ss << __FILE__ << \":\" << __LINE__ << \" Error map key is not string\\n\";\n"
       << def_3p_indentation << "return false;\n"
       << def_2p_indentation << "}\n"
       << def_2p_indentation << "if (!i->value.Is" << rapid_json_type << "()) {\n"
-      << def_3p_indentation << "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error map value is not " <<
+      << def_3p_indentation << "ss << __FILE__ << \":\" << __LINE__ << \" Error map value is not " <<
       rapid_json_type << " Actual type - \" << i->value.GetType() << \"\\n\";\n"
       << def_3p_indentation << "return false;\n"
       << def_2p_indentation << "}\n"
@@ -503,8 +506,8 @@ namespace umi {
       std::string def_indentation(build_indentation(space, level));
       std::string def_1p_indentation(def_indentation + space);
       streamer << def_indentation << "if (!__internal__umison" << additional_string << "::_read_list(" << inout
-      << type_name << ", " << rdata << "[\"" << type_name << "\"])) {\n"
-      << def_1p_indentation << "std::cerr << \"Error reading array\\n\";\n"
+      << type_name << ", " << rdata << "[\"" << type_name << "\"], ss)) {\n"
+      << def_1p_indentation << "ss << \"Error reading array\\n\";\n"
       << def_1p_indentation << "return false;\n"
       << def_indentation << "}\n";
     }
@@ -515,8 +518,8 @@ namespace umi {
       std::string def_indentation(build_indentation(space, level));
       std::string def_1p_indentation(def_indentation + space);
       streamer << def_indentation << "if (!" << refclass << "__input_parse(" << inout << type_name << ", " << rdata <<
-      "[\"" << type_name << "\"])) {\n"
-      << def_1p_indentation << "std::cerr << \"Error reading refclass\\n\";\n"
+      "[\"" << type_name << "\"], ss)) {\n"
+      << def_1p_indentation << "ss << \"Error reading refclass\\n\";\n"
       << def_1p_indentation << "return false;\n"
       << def_indentation << "}\n";
     }
@@ -531,11 +534,21 @@ namespace umi {
       std::string def_2p_indentation(def_1p_indentation + space);
       streamer << def_indentation << "if (" << rdata << ".MemberCount() > 0) {\n"
       << def_1p_indentation << "if (!__internal__umison" << additional_string << "::_read_map(" << inout << type_name <<
-      ", " << rdata << ")) {\n"
-      << def_2p_indentation << "std::cerr << \"Error reading map\\n\";\n"
+      ", " << rdata << ", ss)) {\n"
+      << def_2p_indentation << "ss << \"Error reading map\\n\";\n"
       << def_2p_indentation << "return false;\n"
       << def_1p_indentation << "}\n"
       << def_indentation << "}\n";
+    }
+
+    void create_default_method_read(const std::shared_ptr<umixmltypeclass> &ff) {
+      std::string def_indentation(build_indentation(TABS, 0));
+      std::string def_1p_indentation(def_indentation + TABS);
+      output_engine<T1, T2>::m_cpp_streamer
+      << def_indentation << "bool umison::" << ff->name() << "::read_data(const std::string &input_text)\n"
+      << def_indentation << "{\n"
+      << def_1p_indentation << "return this->read_data(input_text, std::cerr);\n"
+      << def_indentation << "}\n\n";
     }
 
     /**
@@ -562,17 +575,20 @@ namespace umi {
       // Proceed with the header of the reader
       if (data_reader) {
         output_engine<T1, T2>::m_cpp_streamer
-        << def_indentation << "template<typename T>\n"
-        << def_indentation << "bool " << name << "__input_parse(" << name << " &" << inout << ", T &" << rdata << ")\n"
+        << def_indentation << "template<typename T, typename Stream>\n"
+        << def_indentation << "bool " << name << "__input_parse(" << name << " &" << inout << ", T &" << rdata <<
+        ", Stream &ss)\n"
         << def_indentation << "{\n";
       } else {
         output_engine<T1, T2>::m_cpp_streamer
-        << def_indentation << "bool umison::" << ff->name() << "::read_data(const std::string &input_text)\n"
+        << def_indentation << "template<typename Stream>\n"
+        << def_indentation << "bool umison::" << ff->name() <<
+        "::read_data(const std::string &input_text, Stream &ss)\n"
         << def_indentation << "{\n"
         << def_1p_indentation << "rapidjson::Document " << rdata << ";\n"
         << def_1p_indentation << "if (" << rdata << ".Parse(input_text.c_str()).HasParseError()) {\n"
         << def_2p_indentation <<
-        "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error parsing input text. Error: \" << "
+        "ss << __FILE__ << \":\" << __LINE__ << \" Error parsing input text. Error: \" << "
         << rdata << ".GetParseError() << \"\\n\";\n"
         << def_2p_indentation << "return false;\n"
         << def_1p_indentation << "}\n";
@@ -604,7 +620,7 @@ namespace umi {
             output_engine<T1, T2>::m_cpp_streamer
             << build_indentation(TABS, actual_level) << "if (!" << rdata << ".IsObject()) {\n"
             << build_indentation(TABS, actual_level + 1) <<
-            "std::cerr << __FILE__ <<  \":\" << __LINE__ << \" Element is not an object\\n\";\n"
+            "ss << __FILE__ <<  \":\" << __LINE__ << \" Element is not an object\\n\";\n"
             << build_indentation(TABS, actual_level + 1) << "return false;\n"
             << build_indentation(TABS, actual_level) << "}\n";
             printedIsObject = true;
@@ -614,7 +630,7 @@ namespace umi {
           << build_indentation(TABS, actual_level) << "if (!" << rdata << ".HasMember(\"" << single_element->name()
           << "\")) {\n"
           << build_indentation(TABS, actual_level + 1) <<
-          "std::cerr << __FILE__ << \":\" << __LINE__ << \" Error entity: "
+          "ss << __FILE__ << \":\" << __LINE__ << \" Error entity: "
           << name << " is missing mandatory entry or entity is not an object" << single_element->name()
           << "\\n\";\n"
           << build_indentation(TABS, actual_level + 1) << "return false;\n"
@@ -651,7 +667,7 @@ namespace umi {
           } else if (single_element->isRefClass()) {
             base_element = "Object";
           } else {
-            std::cerr << "Invalid element\n";
+            std::cerr << "Invalid element: " << single_element->name() << "\n";
             exit(-1);
           }
           if (!single_element->optional()) {
@@ -707,7 +723,7 @@ namespace umi {
           } else if (single_element->isString()) {
             base_element = "String";
           } else {
-            std::cerr << "Invalid element\n";
+            std::cerr << "Invalid element: " << single_element->name() << "\n";
             exit(-1);
           }
           _data_reader_single_assign((output_engine<T1, T2>::m_cpp_streamer), TABS,
