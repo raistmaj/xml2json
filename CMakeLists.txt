@@ -15,7 +15,7 @@ else (EXISTS "${PROJECT_SOURCE_DIR}/pugixml/pugixml.hpp")
     message(STATUS "Pugi not found")
 endif (EXISTS "${PROJECT_SOURCE_DIR}/pugixml/pugixml.hpp")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -std=c++14")
 
 set(SOURCE_FILES main.cpp
         umison.cpp umison.h

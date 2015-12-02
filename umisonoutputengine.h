@@ -38,28 +38,6 @@ namespace umi {
   // Forward declaration of the umixml
   class umixml;
 
-  /**
-   * Checks if the type is an internal type
-   * */
-  static bool is_internal(const std::string &val) {
-    if (val == UMI_XMLTAGS_INTEGER) {
-      return true;
-    }
-    if (val == UMI_XMLTAGS_BOOLEAN) {
-      return true;
-    }
-    if (val == UMI_XMLTAGS_FLOAT) {
-      return true;
-    }
-    if (val == UMI_XMLTAGS_STRING) {
-      return true;
-    }
-    if (val == UMI_XMLTAGS_INTEGER32) {
-      return true;
-    }
-    return false;
-  }
-
   static std::string internal_to_rapidjson(const std::string &val) {
     if (val == UMI_XMLTAGS_INTEGER) {
       return "Int64";
@@ -134,7 +112,7 @@ namespace umi {
      *
      * \param ff is pointer with the xml template already parsed
      * */
-    virtual bool internal_write(std::shared_ptr<umi::umixml> &ff) {
+    virtual bool internal_write(std::shared_ptr<umi::umixml> &) {
       return true;
     }
 

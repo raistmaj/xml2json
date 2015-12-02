@@ -476,7 +476,7 @@ namespace umi {
     }
 
     void _data_reader_second_if_optional_member(T2 &streamer, const std::string &space,
-                                                const std::string &type_name, const std::string &rapid_json_type,
+                                                const std::string &/*type_name*/, const std::string &rapid_json_type,
                                                 const std::string &rdata, int level) {
       std::string def_indentation(build_indentation(space, level));
       std::string def_1p_indentation(def_indentation + space);

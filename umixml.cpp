@@ -548,7 +548,7 @@ umi::umixml::umixml(const std::string &content) {
     }
     std::cerr << "XML parsing complete.\n";
     pugi::xml_node umison_node(local_document.first_child());
-    if (!umison_node && umison_node.name() != UMI_XMLTAGS_UMISON) {
+    if (!umison_node || strncmp(umison_node.name(), UMI_XMLTAGS_UMISON, strlen(UMI_XMLTAGS_UMISON)) != 0) {
       std::cerr << "Missing parent umison node on the input string, aborting.\n"
       << umison_node.name() << "\n";
       throw std::runtime_error("Missing parent umison node on input string");

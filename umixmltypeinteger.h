@@ -55,10 +55,10 @@ namespace umi {
      * Returns the type we want to use in the header, it will
      * append the new line
      * */
-    virtual std::string header_type(const std::string& additiona_text, bool append_new_line = true) {
-      std::string retval =  "long long int ";
+    virtual std::string header_type(const std::string &, bool append_new_line = true) {
+      std::string retval = "long long int ";
       retval += m_name;
-      if(append_new_line) {
+      if (append_new_line) {
         retval += ";\n";
       } else {
         retval += ";";
@@ -68,9 +68,9 @@ namespace umi {
     /**
      * Returns the optional header we want to use
      * */
-    virtual std::string optional_name_type(const std::string& additional_text, bool append_new_line = true) {
+    virtual std::string optional_name_type(const std::string &, bool append_new_line = true) {
       std::string retval;
-      if(m_optional && !m_optional_name.empty()) {
+      if (m_optional && !m_optional_name.empty()) {
         retval = "bool ";
         retval += m_optional_name;
         if (append_new_line) {

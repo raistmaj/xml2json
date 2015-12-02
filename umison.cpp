@@ -30,8 +30,8 @@
 #include <boost/program_options.hpp>
 
 umi::umison::umison(int argc, char **argv) : m_inputStream(std::cin.rdbuf()),
-                                             m_cpp_stream(std::cout.rdbuf()),
-                                             m_h_stream(std::cout.rdbuf()) {
+                                             m_h_stream(std::cout.rdbuf()),
+                                             m_cpp_stream(std::cout.rdbuf()) {
   boost::program_options::options_description description("umison allowed options");
   description.add_options()
       ("help,h", "produce this help message")
