@@ -15,6 +15,11 @@ methods, and the parsing even though is trivial is pretty time consuming.
 So this library is as NHibernate is for SQL, or Google Protobuf but for JSON. We will create an xml model of our data, that will create
 and parse automatically the data we want to read.
 
+This is not the same as other libraries like [Cereal][3] or tools like [Google Protocol Buffer][2]. Google Protocol buffer on
+version 3 supports encoding of the .proto file to JSON but doesn't provide decoding of it. Cereal is good library
+to serialize/deserialize data using C++11 but doesn't support the same logic as this tool or Google Protocol Buffer
+offer (conditions, optionals, etc...)
+
 ### Version
 
 1.0.0
@@ -238,6 +243,43 @@ The next list shows the conversion from xml type to cpp type
 * list: `std::list<refType>`
 * map: `std::multimap<std::string,refType>`
 
+### Generated Parser
+
+Once you have your template and you have created your custom parser for that template, it will be surprisingly easy and
+straightforward for you to start using it. The only requirement at the moment is you need to have rapidjson installed. Just
+include the .h, instantiate a new object of the json you want to parse and call read_data.
+
+```cpp
+#include "test.h"
+
+int main(int argc, char** argv) {
+    umison::test1 instance;
+    std::string json_response;
+    // Fill our json_response with a valid json
+    if(instance.read_data(json_response)){
+        // Access the data automatically
+    }
+}
+```
+
+By default, the system will use *std::cerr* to report errors, each class provides a custom method where you can supply
+your own stream.
+
+```cpp
+#include "test.h"
+#include <sstream>
+
+int main(int argc, char** argv) {
+    umison::test1 instance;
+    std::stringstream my_stream;
+    std::string json_response;
+    // Fill our json_response with a valid json
+    if(instance.read_data(json_response, my_stream)){
+        // Access the data automatically
+    }
+}
+```
+
 ### Tested
 
 The software and resulting files have been tested on Linux but should work on Windows.
@@ -255,3 +297,5 @@ See LICENSE.txt for a copy of the license, but well 2 terms standard BSD so you 
 
 
 [1]:http://www.boost.org/
+[2]:https://developers.google.com/protocol-buffers/docs/proto3
+[3]:http://uscilab.github.io/cereal/
