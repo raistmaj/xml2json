@@ -51,12 +51,15 @@ In order to make use of this program I recommend first to take a look at the hel
 ```sh
 $ ./umison -h
 umison allowed options:
-  -h [ --help ]               produce this help message
-  -e [ --write-file-h ] arg   The .h output will be written to this file
-  -p [ --write-file-cpp ] arg The .cpp output will be written to this file
-  -i [ --read-file ] arg      Use this file as input xml template
-  -a [ --append-string ] arg   String to be appended in the internal namespace
-                              to avoid collisions with existing code
+    -h [ --help ]                   produce this help message
+    -e [ --write-file-h ] arg       The .h output will be written to this file
+    -p [ --write-file-cpp ] arg     The .cpp output will be written to this file
+    -i [ --read-file ] arg          Use this file as input xml template
+    -a [ --append-string ] arg      String to be appended in the internal
+                                    namespace to avoid collisions with existing
+                                    code
+    --generate-custom-interface arg Specify an engine you want to create a custom
+                                    read_data method
 ```
 
 By default the program uses the standard input so you can redirect it like in the following case
@@ -114,6 +117,17 @@ Starting to build output.
 $ ls
 umison  test.cpp  test.h
 ```
+
+If you specify the flag --generate-custom-interface with a valid engine, depending on it, we will create additional methods
+on the .h/.cpp where you can specify direct elements for that library.
+
+```sh
+$ ./umison --generate-custom-interface rapidjson -i riot_games.xml -e riot_games.h -p riot_games.cpp
+```
+
+At the moment this are the available engines
+
+* rapidjson
 
 ### Template format
 

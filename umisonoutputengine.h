@@ -78,7 +78,7 @@ namespace umi {
      * */
     bool write(std::shared_ptr<umi::umixml> &ff) {
       file_printer<T1> printer;
-      printer.print(ff, m_h_streamer);
+      printer.print(ff, m_h_streamer, additional_headers(), additional_methods());
       return this->internal_write(ff);
     };
     /**
@@ -96,6 +96,30 @@ namespace umi {
      * */
     void h_filename(const std::string &value) {
       m_h_name = value;
+    }
+
+    /**
+     * Sets the string we want to use fo specify the addition of a custom
+     * method on the .h
+     *
+     * \param value with the string of the engine
+     * */
+    void additional_engine_information(const std::string &value) {
+      m_additional_engine_information = value;
+    }
+
+    /**
+     * Gets the list of additional headers to be included
+     * */
+    virtual std::vector<std::string> additional_headers() const {
+      return std::vector<std::string>();
+    };
+
+    /**
+     * Gets the list of additional methods to be declared
+     * */
+    virtual std::vector<std::string> additional_methods() const {
+      return std::vector<std::string>();
     }
 
   protected:
@@ -132,6 +156,10 @@ namespace umi {
      * Additional string used in the process
      * */
     std::string m_additional_string;
+    /**
+     * Create additional engine information on the .h
+     * */
+    std::string m_additional_engine_information;
   };
 }
 

@@ -111,6 +111,10 @@ namespace umi {
      * String used to append data to the namespace
      * */
     std::string m_append_string;
+    /**
+     * String custom interface engine
+     * */
+    std::string m_custom_interface_engine;
   };
 }
 

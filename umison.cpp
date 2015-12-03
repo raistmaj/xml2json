@@ -41,7 +41,9 @@ umi::umison::umison(int argc, char **argv) : m_inputStream(std::cin.rdbuf()),
        "The .cpp output will be written to this file")
       ("read-file,i", boost::program_options::value<std::string>(), "Use this file as input xml template")
       ("append-string,a", boost::program_options::value<std::string>(),
-       "String to be appended in the internal namespace to avoid collisions with existing code");
+       "String to be appended in the internal namespace to avoid collisions with existing code")
+      ("generate-custom-interface", boost::program_options::value<std::string>(),
+       "Specify an engine you want to create a custom read_data method");
 
   boost::program_options::variables_map variables_map;
   boost::program_options::store(boost::program_options::parse_command_line(argc, argv, description), variables_map);
@@ -87,6 +89,10 @@ umi::umison::umison(int argc, char **argv) : m_inputStream(std::cin.rdbuf()),
   if (variables_map.count("apped-string")) {
     m_append_string = variables_map["apped-string"].as<std::string>();
   }
+
+  if (variables_map.count("generate-custom-interface")) {
+    m_custom_interface_engine = variables_map["generate-custom-interface"].as<std::string>();
+  }
 }
 umi::umison::~umison() {
   m_inputStream.rdbuf(std::cin.rdbuf());
@@ -110,5 +116,6 @@ void umi::umison::run() {
   umi::output_engine_rapid_json<std::ostream, std::ostream> oe(m_h_stream, m_cpp_stream);
   oe.h_filename(m_h_filename);
   oe.additional_string(m_append_string);
+  oe.additional_engine_information(m_custom_interface_engine);
   oe.write(xml);
 }

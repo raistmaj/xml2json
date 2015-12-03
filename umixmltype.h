@@ -27,6 +27,8 @@
 #define UMISON_UMIXMLTYPE_H
 
 #include <string>
+#include "umisonforwarddeclaration.h"
+
 
 namespace umi {
   /**

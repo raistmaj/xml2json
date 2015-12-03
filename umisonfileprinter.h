@@ -56,10 +56,19 @@ namespace umi {
      *
      * \param ff pointer to the umixml instance we want to write within stream
      * \param stream used to output the json representation
+     * \param headers vector of additional headers we want to include
+     * \param methods vector of additional methods we want to include
      * */
-    void print(std::shared_ptr<umi::umixml> &ff, streamer &stream) {
+    void print(std::shared_ptr<umi::umixml> &ff, streamer &stream, const std::vector<std::string> &headers,
+               const std::vector<std::string> &methods) {
       stream << DISCLAIMER
-      << "\n#include <ostream>\n#include <string>\n#include <vector>\n#include <map>\n\n";
+      << "\n#include <ostream>\n#include <string>\n#include <vector>\n#include <map>\n";
+      if (!headers.empty()) {
+        for (auto &header: headers) {
+          stream << "#include <" << header << ">\n";
+        }
+      }
+      stream << "\n";
 
       if (!ff->getClassMap().empty()) {
         stream << "// Internal namespace declaration\nnamespace __internal__umison"
@@ -112,8 +121,17 @@ namespace umi {
         }
         stream << "\n" << TABS << TABS << "// read one input string and fill the data, errors are reported on stderr\n"
         << TABS << TABS << "bool read_data(const std::string& input_text);\n";
-        stream << "\n" << TABS << TABS << "// read one input string and fill the data, errors are reported on out_stream\n"
+        stream << "\n" << TABS << TABS <<
+        "// read one input string and fill the data, errors are reported on out_stream\n"
         << TABS << TABS << "bool read_data(const std::string &input_text, std::ostream &out_stream);\n";
+
+        if (!methods.empty()) {
+          stream << "\n" << TABS << TABS << "// Additional specific engine methods\n";
+          for (auto &method : methods) {
+            stream << TABS << TABS << method << "\n";
+          }
+        }
+
         stream << TABS << "};\n\n";
       }
       stream << "}\n"; // For the umison namespace
@@ -124,8 +142,8 @@ namespace umi {
     std::string m_additional_string;
   protected:
     void create_constructors(const
-    std::shared_ptr<umi::umixmltypeclass> &elem, streamer
-    &stream) {
+                             std::shared_ptr<umi::umixmltypeclass> &elem, streamer
+                             &stream) {
       stream << TABS << TABS << "// Default constructor\n"
       << TABS << TABS << elem->name() << "()";
       auto classChildren = elem->getChildren();
@@ -145,6 +163,7 @@ namespace umi {
         stream << " {}\n";
       }
     }
+
   };
 }
 
