@@ -582,7 +582,7 @@ namespace umi {
       } else {
         output_engine<T1, T2>::m_cpp_streamer
         << def_indentation << "bool umison::" << ff->name() <<
-        "::read_data(const std::string &input_text, std::iostream &ss)\n"
+        "::read_data(const std::string &input_text, std::ostream &ss)\n"
         << def_indentation << "{\n"
         << def_1p_indentation << "rapidjson::Document " << rdata << ";\n"
         << def_1p_indentation << "if (" << rdata << ".Parse(input_text.c_str()).HasParseError()) {\n"
