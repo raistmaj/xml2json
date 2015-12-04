@@ -115,6 +115,10 @@ namespace umi {
      * String custom interface engine
      * */
     std::string m_custom_interface_engine;
+    /**
+     * String engine
+     * */
+    std::string m_engine;
   };
 }
 
