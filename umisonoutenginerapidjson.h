@@ -790,6 +790,8 @@ namespace umi {
         output_engine<T1, T2>::m_cpp_streamer << "\n";
         // Close the if conditional
         if (single_element->optional()) {
+          output_engine<T1, T2>::m_cpp_streamer
+          << build_indentation(TABS, actual_level) << inout_dot << single_element->optional_name() << " = true;\n";
           if (!single_element->isMap()) {
             --actual_level;
             output_engine<T1, T2>::m_cpp_streamer
