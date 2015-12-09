@@ -114,7 +114,7 @@ namespace umi {
       for (auto &class_it: classes) {
         create_default_method_read(class_it);
         create_single_reader(class_it, "", false, false);
-        if( output_engine<T1, T2>::m_additional_engine_information == "rapidjson") {
+        if (output_engine<T1, T2>::m_additional_engine_information == "rapidjson") {
           create_single_reader(class_it, "", false, true);
         }
         output_engine<T1, T2>::m_cpp_streamer << "\n";
@@ -594,7 +594,8 @@ namespace umi {
      * Method to create a reader based if we are a json reader or a input_parse reader. Creates one reader per element
      * being an element a class or data_parser
      * */
-    void create_single_reader(const std::shared_ptr<umixmltypeclass> &ff, const std::string &name, bool data_reader, bool additional_reader) {
+    void create_single_reader(const std::shared_ptr<umixmltypeclass> &ff, const std::string &name, bool data_reader,
+                              bool additional_reader) {
       int actual_level = 1;
       std::string inout;
       std::string inout_dot;
@@ -619,7 +620,7 @@ namespace umi {
         ", Stream &ss)\n"
         << def_indentation << "{\n";
       } else {
-        if(!additional_reader) {
+        if (!additional_reader) {
           output_engine<T1, T2>::m_cpp_streamer
           << def_indentation << "bool umison::" << ff->name() <<
           "::read_data(const std::string &input_text, std::ostream &ss)\n"
@@ -645,13 +646,22 @@ namespace umi {
         // Check the condition and open conditional if necessary
         if (!single_element->condition().empty()) {
           output_engine<T1, T2>::m_cpp_streamer
-          << def_1p_indentation << "if (" << single_element->condition() << ") {\n";
+          << def_1p_indentation << "if (" << inout_dot << single_element->condition() << ") {\n";
           // Increase indentation
           ++actual_level;
         }
         // Check if the element is optional
         if (single_element->optional()) {
           if (!single_element->isMap()) {
+            if (!printedIsObject) {
+              output_engine<T1, T2>::m_cpp_streamer
+              << build_indentation(TABS, actual_level) << "if (!" << rdata << ".IsObject()) {\n"
+              << build_indentation(TABS, actual_level + 1) <<
+              "ss << __FILE__ <<  \":\" << __LINE__ << \" Element is not an object\\n\";\n"
+              << build_indentation(TABS, actual_level + 1) << "return false;\n"
+              << build_indentation(TABS, actual_level) << "}\n";
+              printedIsObject = true;
+            }
             output_engine<T1, T2>::m_cpp_streamer
             << build_indentation(TABS, actual_level) << "if (" << rdata << ".HasMember(\""
             << single_element->name() << "\")) {\n";
@@ -671,15 +681,17 @@ namespace umi {
             printedIsObject = true;
           }
           // Get if the type is valid
-          output_engine<T1, T2>::m_cpp_streamer
-          << build_indentation(TABS, actual_level) << "if (!" << rdata << ".HasMember(\"" << single_element->name()
-          << "\")) {\n"
-          << build_indentation(TABS, actual_level + 1) <<
-          "ss << __FILE__ << \":\" << __LINE__ << \" Error entity: "
-          << name << " is missing mandatory entry or entity is not an object" << single_element->name()
-          << "\\n\";\n"
-          << build_indentation(TABS, actual_level + 1) << "return false;\n"
-          << build_indentation(TABS, actual_level) << "}\n";
+          if (!single_element->optional()) {
+            output_engine<T1, T2>::m_cpp_streamer
+            << build_indentation(TABS, actual_level) << "if (!" << rdata << ".HasMember(\"" << single_element->name()
+            << "\")) {\n"
+            << build_indentation(TABS, actual_level + 1) <<
+            "ss << __FILE__ << \":\" << __LINE__ << \" Error entity: "
+            << name << " is missing mandatory entry or entity is not an object" << single_element->name()
+            << "\\n\";\n"
+            << build_indentation(TABS, actual_level + 1) << "return false;\n"
+            << build_indentation(TABS, actual_level) << "}\n";
+          }
         }
         // Create the if depending on the optionality of the elements 2º IF
         if (single_element->isMap()) {
