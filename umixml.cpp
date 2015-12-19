@@ -625,7 +625,6 @@ umi::umixml::umixml(const std::string &content) {
                                            const std::string &elem2) {
                                           return elem1.first == elem2;
                                         });
-          //auto classFound = m_classMap.find(child->refclass());
           if (classFound == m_classMap.end() && !umi_helper.is_internal(child->refclass())) {
             std::cerr << "Error wrong class referenced on json: " << class_it->name()
             << " Refvalue: " << child->refclass() << " Aborting execution.\n";

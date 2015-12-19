@@ -645,9 +645,9 @@ namespace umi {
       for (auto &single_element : elements) {
         // Check the condition and open conditional if necessary
         if (!single_element->condition().empty()) {
-          output_engine<T1, T2>::m_cpp_streamer
-          << def_1p_indentation << "if (" << inout_dot << single_element->condition() << ") {\n";
-          // Increase indentation
+           output_engine<T1, T2>::m_cpp_streamer
+           << def_1p_indentation << "if (" << inout_dot << single_element->condition() << ") {\n";
+           // Increase indentation
           ++actual_level;
         }
         // Check if the element is optional
