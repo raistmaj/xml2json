@@ -432,10 +432,11 @@ namespace umi {
       std::string def_indentation(build_indentation(space, level));
       std::string def_1p_indentation(def_indentation + space);
       std::string def_2p_indentation(def_1p_indentation + space);
-      streamer << def_indentation << "if (" << rdata << ".MemberCount() == 0) {\n"
+      streamer 
+	  /*<< def_indentation << "if (" << rdata << ".MemberCount() == 0) {\n"
       << def_1p_indentation << "ss << __FILE__ <<  \":\" << __LINE__ << \" Error mandatory map with 0 elements\\n\";\n"
       << def_1p_indentation << "return false;\n"
-      << def_indentation << "}\n"
+      << def_indentation << "}\n"*/
       << def_indentation << "for (rapidjson::Document::ConstMemberIterator i = " << rdata << ".MemberBegin();\n"
       << def_1p_indentation << "i != " << rdata << ".MemberEnd();\n"
       << def_1p_indentation << "++i) {\n"

@@ -61,7 +61,7 @@ namespace umi {
      * */
     void print(std::shared_ptr<umi::umixml> &ff, streamer &stream, const std::vector<std::string> &headers,
                const std::vector<std::string> &methods) {
-      stream << DISCLAIMER
+      stream << DISCLAIMER << "\n#pragma once\n"
       << "\n#include <ostream>\n#include <string>\n#include <vector>\n#include <map>\n";
       if (!headers.empty()) {
         for (auto &header: headers) {
