@@ -641,14 +641,33 @@ namespace umi {
         }
       }
       bool printedIsObject = false;
+#define STATUS_CONDITION_INITIAL 0
+#define STATUS_CONDITION_IN_CONDITION 1
+      int status_condition = STATUS_CONDITION_INITIAL;
+      std::string actualCondition;
       auto &elements = ff->getChildren();
       ++actual_level;
       for (auto &single_element : elements) {
+        bool openCondition = true;
         // Check the condition and open conditional if necessary
-        if (!single_element->condition().empty()) {
+        if (actualCondition == single_element->condition() && !actualCondition.empty()) {
+          // We keep the same condition and it is not empty dont open it
+          openCondition = false;
+        }
+        // if we are in one condition and the option is different
+        // close the previous one
+        if (status_condition == STATUS_CONDITION_IN_CONDITION && actualCondition != single_element->condition()) {
+          --actual_level;
           output_engine<T1, T2>::m_cpp_streamer
-          << def_1p_indentation << "if (" << inout_dot << single_element->condition() << ") {\n";
-          // Increase indentation
+          << def_1p_indentation << "}\n";
+          status_condition = STATUS_CONDITION_INITIAL;
+        }
+        if (!single_element->condition().empty() && openCondition && status_condition == STATUS_CONDITION_INITIAL) {
+          status_condition = STATUS_CONDITION_IN_CONDITION;
+          actualCondition = single_element->condition();
+           output_engine<T1, T2>::m_cpp_streamer
+           << def_1p_indentation << "if (" << inout_dot << single_element->condition() << ") {\n";
+           // Increase indentation
           ++actual_level;
         }
         // Check if the element is optional
@@ -800,11 +819,17 @@ namespace umi {
           }
         }
         // Close the if condition
+        /*
         if (!single_element->condition().empty()) {
           --actual_level;
           output_engine<T1, T2>::m_cpp_streamer
           << def_1p_indentation << "}\n";
-        }
+        }*/
+      }
+      if (status_condition == STATUS_CONDITION_IN_CONDITION) {
+        --actual_level;
+        output_engine<T1, T2>::m_cpp_streamer
+        << def_1p_indentation << "}\n";
       }
       output_engine<T1, T2>::m_cpp_streamer << def_1p_indentation << "return true;\n";
       // Close the method

@@ -26,6 +26,7 @@
 #include "umixml.h"
 #include "umixmltags.h"
 #include "umixmltypestring.h"
+#include <array>
 #include <boost/algorithm/string.hpp>
 #include <exception>
 #include <iostream>
@@ -595,7 +596,7 @@ umi::umixml::umixml(const std::string &content) {
       const std::vector<std::shared_ptr<umixmltype>> &children = class_it.second->getChildren();
       for (auto &&child : children) {
         if (child->isRefClass() || child->isList()) {
-          std::array<std::string, 1> arr{child->refclass()};
+          std::array<std::string, 1> arr{ {child->refclass()}};
           auto classFound = std::search(m_classMap.begin(), m_classMap.end(),
                                         arr.begin(), arr.end(),
                                         [](const std::pair<std::string, std::shared_ptr<umi::umixmltypeclass>> &elem1,
@@ -617,14 +618,13 @@ umi::umixml::umixml(const std::string &content) {
       const std::vector<std::shared_ptr<umixmltype>> &children = class_it->getChildren();
       for (auto &&child : children) {
         if (child->isRefClass() || child->isList()) {
-          std::array<std::string, 1> arr{child->refclass()};
+          std::array<std::string, 1> arr{{child->refclass()}};
           auto classFound = std::search(m_classMap.begin(), m_classMap.end(),
                                         arr.begin(), arr.end(),
                                         [](const std::pair<std::string, std::shared_ptr<umi::umixmltypeclass>> &elem1,
                                            const std::string &elem2) {
                                           return elem1.first == elem2;
                                         });
-          //auto classFound = m_classMap.find(child->refclass());
           if (classFound == m_classMap.end() && !umi_helper.is_internal(child->refclass())) {
             std::cerr << "Error wrong class referenced on json: " << class_it->name()
             << " Refvalue: " << child->refclass() << " Aborting execution.\n";
