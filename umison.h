@@ -61,15 +61,18 @@ namespace umi {
      * \argv arguments
      * */
     umison(int argc, char **argv);
+
     /**
      * Releases the resources used by the instance
      * */
     ~umison();
+
     /**
      * Run the program, in this case we will read the input stream
      * and output in the outputs stream
      * */
     void run();
+
   protected:
     /**
      * Stream used to enter data in the application, by default will

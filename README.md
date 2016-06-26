@@ -22,7 +22,7 @@ offer (conditions, optionals, etc...)
 
 ### Version
 
-1.0.0
+1.0.1
 
 ### Requirements
 
@@ -293,6 +293,11 @@ int main(int argc, char** argv) {
     }
 }
 ```
+
+The visibility of the attributes in the object will be private, so in order to get access to each of them, you need to use
+the different methods provided. There are three different types, "get", "set" and "mutable" accesor. Get will be a const method, so 
+no modification will be done, set will be used to modify the content using a parameter, and mutable is a get that returns a non-const
+reference.
 
 ### Tested
 

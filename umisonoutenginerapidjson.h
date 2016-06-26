@@ -50,6 +50,7 @@ namespace umi {
      * */
     output_engine_rapid_json(T1 &_H_streamer, T2 &_CPP_streamer) : output_engine<T1, T2>(_H_streamer, _CPP_streamer) {
     }
+
     /**
      * Releases the resources used by this engine
      * */
@@ -121,12 +122,14 @@ namespace umi {
       }
       return true;
     }
+
     /**
      * Create the disclaimer at the top of the file
      * */
     void create_disclaimer() {
       output_engine<T1, T2>::m_cpp_streamer << DISCLAIMER << "\n";
     }
+
     /**
      * Create the include of the files in the .cpp file
      * */
@@ -141,6 +144,7 @@ namespace umi {
       << "#include <map>\n"
       << "#include <vector>\n\n";
     }
+
     /**
      * Create the forward declaration if we want to use any of the elements
      * afterwards
@@ -154,6 +158,7 @@ namespace umi {
       create_forward_declaration_parse_classes(ff);
       output_engine<T1, T2>::m_cpp_streamer << "\n";
     }
+
     /**
      * Create the forward declaration of the basic types
      * */
@@ -169,6 +174,7 @@ namespace umi {
       << TABS << "template<typename T, typename Stream>\n"
       << TABS << "bool _read_list(std::vector<std::string> &str, T &data, Stream &ss);\n";
     }
+
     /**
      * Create the forward declaration of the array of classes
      * */
@@ -181,6 +187,7 @@ namespace umi {
         "> &str, T &data, Stream &ss);\n";
       }
     }
+
     /**
      * Create the forward declaration of the maps with basic types
      * */
@@ -432,11 +439,7 @@ namespace umi {
       std::string def_indentation(build_indentation(space, level));
       std::string def_1p_indentation(def_indentation + space);
       std::string def_2p_indentation(def_1p_indentation + space);
-      streamer 
-	  /*<< def_indentation << "if (" << rdata << ".MemberCount() == 0) {\n"
-      << def_1p_indentation << "ss << __FILE__ <<  \":\" << __LINE__ << \" Error mandatory map with 0 elements\\n\";\n"
-      << def_1p_indentation << "return false;\n"
-      << def_indentation << "}\n"*/
+      streamer
       << def_indentation << "for (rapidjson::Document::ConstMemberIterator i = " << rdata << ".MemberBegin();\n"
       << def_1p_indentation << "i != " << rdata << ".MemberEnd();\n"
       << def_1p_indentation << "++i) {\n"
@@ -451,7 +454,8 @@ namespace umi {
                                     const std::string &rapid_json_type, const std::string &inout,
                                     const std::string &rdata, int level) {
       std::string def_indentation(build_indentation(space, level));
-      streamer << def_indentation << inout << type_name << " = " << rdata << "[\"" << type_name << "\"].Get"
+      streamer << def_indentation << inout << "mutable_" << type_name << "() = " << rdata <<
+      "[\"" << type_name << "\"].Get"
       << rapid_json_type << "();\n";
     }
 
@@ -461,8 +465,9 @@ namespace umi {
       std::string def_indentation(build_indentation(space, level));
       std::string def_1p_indentation(def_indentation + space);
       streamer << def_indentation
-      << "if (!__internal__umison" << additional_string << "::_read_list(" << inout << type_name << ", " << rdata <<
-      "[\"" << type_name << "\"], ss)) {\n"
+      << "if (!__internal__umison" << additional_string << "::_read_list(" << inout
+      << "mutable_" << type_name << "(), " << rdata
+      << "[\"" << type_name << "\"], ss)) {\n"
       << def_1p_indentation << "ss << __FILE__ << \":\" << __LINE__ << \" Error reading list\\n\";\n"
       << def_1p_indentation << "return false;\n"
       << def_indentation << "}\n\n";
@@ -473,8 +478,8 @@ namespace umi {
                                       const std::string &rdata, int level) {
       std::string def_indentation(build_indentation(space, level));
       std::string def_1p_indentation(def_indentation + space);
-      streamer << def_indentation << "if (!" << refclass << "__input_parse(" << inout << type_name << ", " << rdata <<
-      "[\"" << type_name << "\"], ss)) {\n"
+      streamer << def_indentation << "if (!" << refclass << "__input_parse(" << inout
+      << "mutable_" << type_name << "(), " << rdata << "[\"" << type_name << "\"], ss)) {\n"
       << def_1p_indentation << "ss << __FILE__ << \":\" << __LINE__ << \" Error reading refclass\\n\";\n"
       << def_1p_indentation << "return false;\n"
       << def_indentation << "}\n\n";
@@ -485,8 +490,8 @@ namespace umi {
                                  const std::string &rdata, int level) {
       std::string def_indentation(build_indentation(space, level));
       std::string def_1p_indentation(def_indentation + space);
-      streamer << def_indentation << "if (!__internal__umison" << additional_string << "::_read_map(" << inout <<
-      type_name << ", " << rdata << ", ss)) {\n"
+      streamer << def_indentation << "if (!__internal__umison" << additional_string << "::_read_map(" << inout
+      << "mutable_" << type_name << "(), " << rdata << ", ss)) {\n"
       << def_1p_indentation << "ss << __FILE__ << \":\" << __LINE__ << \" Error reading map\\n\";\n"
       << def_1p_indentation << "return false;\n"
       << def_indentation << "}\n\n";
@@ -535,7 +540,7 @@ namespace umi {
       std::string def_indentation(build_indentation(space, level));
       std::string def_1p_indentation(def_indentation + space);
       streamer << def_indentation << "if (!__internal__umison" << additional_string << "::_read_list(" << inout
-      << type_name << ", " << rdata << "[\"" << type_name << "\"], ss)) {\n"
+      << "mutable_" << type_name << "(), " << rdata << "[\"" << type_name << "\"], ss)) {\n"
       << def_1p_indentation << "ss << \"Error reading array\\n\";\n"
       << def_1p_indentation << "return false;\n"
       << def_indentation << "}\n";
@@ -546,8 +551,8 @@ namespace umi {
                                                   const std::string &rdata, int level) {
       std::string def_indentation(build_indentation(space, level));
       std::string def_1p_indentation(def_indentation + space);
-      streamer << def_indentation << "if (!" << refclass << "__input_parse(" << inout << type_name << ", " << rdata <<
-      "[\"" << type_name << "\"], ss)) {\n"
+      streamer << def_indentation << "if (!" << refclass << "__input_parse(" << inout
+      << "mutable_" << type_name << "(), " << rdata << "[\"" << type_name << "\"], ss)) {\n"
       << def_1p_indentation << "ss << \"Error reading refclass\\n\";\n"
       << def_1p_indentation << "return false;\n"
       << def_indentation << "}\n";
@@ -562,8 +567,8 @@ namespace umi {
       std::string def_1p_indentation(def_indentation + space);
       std::string def_2p_indentation(def_1p_indentation + space);
       streamer << def_indentation << "if (" << rdata << ".MemberCount() > 0) {\n"
-      << def_1p_indentation << "if (!__internal__umison" << additional_string << "::_read_map(" << inout << type_name <<
-      ", " << rdata << ", ss)) {\n"
+      << def_1p_indentation << "if (!__internal__umison" << additional_string << "::_read_map(" << inout
+      << "mutable_" << type_name << "(), " << rdata << ", ss)) {\n"
       << def_2p_indentation << "ss << \"Error reading map\\n\";\n"
       << def_2p_indentation << "return false;\n"
       << def_1p_indentation << "}\n"
@@ -665,9 +670,9 @@ namespace umi {
         if (!single_element->condition().empty() && openCondition && status_condition == STATUS_CONDITION_INITIAL) {
           status_condition = STATUS_CONDITION_IN_CONDITION;
           actualCondition = single_element->condition();
-           output_engine<T1, T2>::m_cpp_streamer
-           << def_1p_indentation << "if (" << inout_dot << single_element->condition() << ") {\n";
-           // Increase indentation
+          output_engine<T1, T2>::m_cpp_streamer
+          << def_1p_indentation << "if (" << inout_dot << single_element->condition() << ") {\n";
+          // Increase indentation
           ++actual_level;
         }
         // Check if the element is optional
@@ -811,20 +816,14 @@ namespace umi {
         // Close the if conditional
         if (single_element->optional()) {
           output_engine<T1, T2>::m_cpp_streamer
-          << build_indentation(TABS, actual_level) << inout_dot << single_element->optional_name() << " = true;\n";
+          << build_indentation(TABS, actual_level) << inout_dot
+          << "mutable_" << single_element->optional_name() << "() = true;\n";
           if (!single_element->isMap()) {
             --actual_level;
             output_engine<T1, T2>::m_cpp_streamer
             << build_indentation(TABS, actual_level) << "}\n";
           }
         }
-        // Close the if condition
-        /*
-        if (!single_element->condition().empty()) {
-          --actual_level;
-          output_engine<T1, T2>::m_cpp_streamer
-          << def_1p_indentation << "}\n";
-        }*/
       }
       if (status_condition == STATUS_CONDITION_IN_CONDITION) {
         --actual_level;

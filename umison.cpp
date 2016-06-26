@@ -34,17 +34,17 @@ umi::umison::umison(int argc, char **argv) : m_inputStream(std::cin.rdbuf()),
                                              m_cpp_stream(std::cout.rdbuf()) {
   boost::program_options::options_description description("umison allowed options");
   description.add_options()
-      ("help,h", "produce this help message")
-      ("write-file-h,e", boost::program_options::value<std::string>(),
-       "The .h output will be written to this file")
-      ("write-file-cpp,p", boost::program_options::value<std::string>(),
-       "The .cpp output will be written to this file")
-      ("read-file,i", boost::program_options::value<std::string>(), "Use this file as input xml template")
-      ("append-string,a", boost::program_options::value<std::string>(),
-       "String to be appended in the internal namespace to avoid collisions with existing code")
-      ("engine", boost::program_options::value<std::string>(), "Specify an output engine")
-      ("generate-custom-interface", boost::program_options::value<std::string>(),
-       "Specify an engine you want to create a custom read_data method");
+    ("help,h", "produce this help message")
+    ("write-file-h,e", boost::program_options::value<std::string>(),
+     "The .h output will be written to this file")
+    ("write-file-cpp,p", boost::program_options::value<std::string>(),
+     "The .cpp output will be written to this file")
+    ("read-file,i", boost::program_options::value<std::string>(), "Use this file as input xml template")
+    ("append-string,a", boost::program_options::value<std::string>(),
+     "String to be appended in the internal namespace to avoid collisions with existing code")
+    ("engine", boost::program_options::value<std::string>(), "Specify an output engine")
+    ("generate-custom-interface", boost::program_options::value<std::string>(),
+     "Specify an engine you want to create a custom read_data method");
 
   boost::program_options::variables_map variables_map;
   boost::program_options::store(boost::program_options::parse_command_line(argc, argv, description), variables_map);
@@ -99,6 +99,7 @@ umi::umison::umison(int argc, char **argv) : m_inputStream(std::cin.rdbuf()),
     m_engine = variables_map["engine"].as<std::string>();
   }
 }
+
 umi::umison::~umison() {
   m_inputStream.rdbuf(std::cin.rdbuf());
   m_h_stream.rdbuf(std::cout.rdbuf());
@@ -108,6 +109,7 @@ umi::umison::~umison() {
   m_h_file.close();
   m_cpp_file.close();
 }
+
 void umi::umison::run() {
   std::string tmpString;
   {

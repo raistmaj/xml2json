@@ -39,17 +39,20 @@ namespace umi {
      * */
     umixmltyperefclass() : umixmltype() {
     }
+
     /**
      * Destructor
      * */
     virtual ~umixmltyperefclass() {
     }
+
     /**
      * Is a referenced class
      * */
     virtual bool isRefClass() const final {
       return true;
     }
+
     /**
      * Returns the type we want to use in the header, it will
      * append the new line
@@ -69,12 +72,13 @@ namespace umi {
         retval += cpp_type;
       }
       retval += " ";
-      retval += m_name;
+      retval += umi::umixmltype::attribute_prepocess(m_name);
       if (append_new_line) {
         retval += ";\n";
       }
       return retval;
     }
+
     /**
      * Returns the optional header we want to use
      * */
@@ -91,12 +95,13 @@ namespace umi {
       }
       return retval;
     }
+
     /**
      * Returns the initialization element in the constructor
      * */
     virtual std::string constructor_initializer() {
       std::string retval;
-      retval += m_name;
+      retval += umi::umixmltype::attribute_prepocess(m_name);
       retval += "()";
       if (m_optional && !m_optional_name.empty()) {
         retval += ", ";
@@ -105,6 +110,132 @@ namespace umi {
       }
       return retval;
     }
+
+    /**
+     * Returns the get method
+     * */
+    virtual std::string getter_method(const std::string &additiona_text, bool append_new_line,
+                                      const std::string &indentation,
+                                      int basic_indentation) {
+      umi::type_to_cpp tcpp;
+      std::string retval;
+      std::string cpp_type = tcpp.get_type(m_refclass);
+      for (int i = 0; i < basic_indentation; ++i) {
+        retval += indentation;
+      }
+      retval += "inline const ";
+      if (cpp_type.empty()) {
+        retval += "__internal__umison";
+        if (!additiona_text.empty()) {
+          retval += additiona_text;
+        }
+        retval += "::";
+        retval += m_refclass;
+      } else {
+        retval += cpp_type;
+      }
+      retval += "& get_";
+      retval += m_name;
+      retval += "() const {\n";
+      for (int i = 0; i < basic_indentation + 1; ++i) {
+        retval += indentation;
+      }
+      retval += "return ";
+      retval += umi::umixmltype::attribute_prepocess(m_name);
+      retval += ";\n";
+      for (int i = 0; i < basic_indentation; ++i) {
+        retval += indentation;
+      }
+      retval += "}";
+      if (append_new_line) {
+        retval += "\n";
+      }
+      return retval;
+    }
+
+    /**
+     * Returns the set method
+     * */
+    virtual std::string setter_method(const std::string &additiona_text, bool append_new_line,
+                                      const std::string &indentation,
+                                      int basic_indentation) {
+      umi::type_to_cpp tcpp;
+      std::string retval;
+      std::string cpp_type = tcpp.get_type(m_refclass);
+      for (int i = 0; i < basic_indentation; ++i) {
+        retval += indentation;
+      }
+      retval += "inline void set_";
+      retval += m_name;
+      retval += "(const ";
+      if (cpp_type.empty()) {
+        retval += "__internal__umison";
+        if (!additiona_text.empty()) {
+          retval += additiona_text;
+        }
+        retval += "::";
+        retval += m_refclass;
+      } else {
+        retval += cpp_type;
+      }
+      retval += " &val) {\n";
+      for (int i = 0; i < basic_indentation + 1; ++i) {
+        retval += indentation;
+      }
+      retval += umi::umixmltype::attribute_prepocess(m_name);
+      retval += " = val;\n";
+      for (int i = 0; i < basic_indentation; ++i) {
+        retval += indentation;
+      }
+      retval += "}";
+      if (append_new_line) {
+        retval += "\n";
+      }
+      return retval;
+    }
+
+    /**
+     * Returns the mutable method
+     * */
+    virtual std::string mutable_method(const std::string &additiona_text, bool append_new_line,
+                                       const std::string &indentation,
+                                       int basic_indentation) {
+      umi::type_to_cpp tcpp;
+      std::string retval;
+      std::string cpp_type = tcpp.get_type(m_refclass);
+      for (int i = 0; i < basic_indentation; ++i) {
+        retval += indentation;
+      }
+      retval += "inline ";
+      if (cpp_type.empty()) {
+        retval += "__internal__umison";
+        if (!additiona_text.empty()) {
+          retval += additiona_text;
+        }
+        retval += "::";
+        retval += m_refclass;
+      } else {
+        retval += cpp_type;
+      }
+      retval += "& mutable_";
+      retval += m_name;
+      retval += "() {\n";
+      for (int i = 0; i < basic_indentation + 1; ++i) {
+        retval += indentation;
+      }
+      retval += "return ";
+      retval += umi::umixmltype::attribute_prepocess(m_name);
+      retval += ";\n";
+      for (int i = 0; i < basic_indentation; ++i) {
+        retval += indentation;
+      }
+      retval += "}";
+      if (append_new_line) {
+        retval += "\n";
+      }
+      return retval;
+    }
+
   };
 }
 

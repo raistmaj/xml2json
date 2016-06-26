@@ -60,6 +60,7 @@ namespace umi {
       }
       return false;
     }
+
     /**
      * Transform one boolean value string to a valid bool c++ value
      * throws an exception in case not conversion is possible
@@ -72,6 +73,7 @@ namespace umi {
       }
       throw std::runtime_error("Wrong value");
     }
+
     /**
      * Reads one node from rapid xml and fills the map stored in it
      * */
@@ -97,8 +99,8 @@ namespace umi {
               << ". Setting optional to false.\n";
             }
           } else if (
-              strncmp(UMI_XMLATTR_CONDITION, node_attribute->name(), strlen(UMI_XMLATTR_CONDITION)) ==
-              0) {
+            strncmp(UMI_XMLATTR_CONDITION, node_attribute->name(), strlen(UMI_XMLATTR_CONDITION)) ==
+            0) {
             map_node->condition(node_attribute->value());
           } else if (strncmp(UMI_XMLATTR_VALUE, node_attribute->name(), strlen(UMI_XMLATTR_VALUE)) ==
                      0) {
@@ -120,6 +122,7 @@ namespace umi {
       }
       return retval;
     }
+
     /**
      * Reads one node from rapid xml and fills the referenced class stored in it
      * */
@@ -145,8 +148,8 @@ namespace umi {
               << ". Setting optional to false.\n";
             }
           } else if (
-              strncmp(UMI_XMLATTR_CONDITION, node_attribute->name(), strlen(UMI_XMLATTR_CONDITION)) ==
-              0) {
+            strncmp(UMI_XMLATTR_CONDITION, node_attribute->name(), strlen(UMI_XMLATTR_CONDITION)) ==
+            0) {
             refclass_node->condition(node_attribute->value());
           } else if (strncmp(UMI_XMLATTR_REFCLASS, node_attribute->name(), strlen(UMI_XMLATTR_REFCLASS)) ==
                      0) {
@@ -168,6 +171,7 @@ namespace umi {
       }
       return retval;
     }
+
     /**
      * Reads one node from rapid xml and fills the list stored in it
      * */
@@ -193,8 +197,8 @@ namespace umi {
               << ". Setting optional to false.\n";
             }
           } else if (
-              strncmp(UMI_XMLATTR_CONDITION, node_attribute->name(), strlen(UMI_XMLATTR_CONDITION)) ==
-              0) {
+            strncmp(UMI_XMLATTR_CONDITION, node_attribute->name(), strlen(UMI_XMLATTR_CONDITION)) ==
+            0) {
             list_node->condition(node_attribute->value());
           } else if (strncmp(UMI_XMLATTR_REFCLASS, node_attribute->name(), strlen(UMI_XMLATTR_REFCLASS)) ==
                      0) {
@@ -216,6 +220,7 @@ namespace umi {
       }
       return retval;
     }
+
     /**
      * Reads on node from rapid xml and fills the bool stored in it
      * */
@@ -241,8 +246,8 @@ namespace umi {
               << ". Setting optional to false.\n";
             }
           } else if (
-              strncmp(UMI_XMLATTR_CONDITION, node_attribute->name(), strlen(UMI_XMLATTR_CONDITION)) ==
-              0) {
+            strncmp(UMI_XMLATTR_CONDITION, node_attribute->name(), strlen(UMI_XMLATTR_CONDITION)) ==
+            0) {
             boolean_node->condition(node_attribute->value());
           } else {
             std::cerr << "Unsupported attribute on node boolean: << " << node_attribute->name()
@@ -261,6 +266,7 @@ namespace umi {
       }
       return retval;
     }
+
     /**
      * Reads on node from rapid xml and fills the float stored in it
      * */
@@ -286,8 +292,8 @@ namespace umi {
               << ". Setting optional to false.\n";
             }
           } else if (
-              strncmp(UMI_XMLATTR_CONDITION, node_attribute->name(), strlen(UMI_XMLATTR_CONDITION)) ==
-              0) {
+            strncmp(UMI_XMLATTR_CONDITION, node_attribute->name(), strlen(UMI_XMLATTR_CONDITION)) ==
+            0) {
             float_node->condition(node_attribute->value());
           } else {
             std::cerr << "Unsupported attribute on node float: << " << node_attribute->name()
@@ -306,6 +312,7 @@ namespace umi {
       }
       return retval;
     }
+
     /**
      * Reads on node from rapid xml and fills the string stored in it
      * */
@@ -331,8 +338,8 @@ namespace umi {
               << ". Setting optional to false.\n";
             }
           } else if (
-              strncmp(UMI_XMLATTR_CONDITION, node_attribute->name(), strlen(UMI_XMLATTR_CONDITION)) ==
-              0) {
+            strncmp(UMI_XMLATTR_CONDITION, node_attribute->name(), strlen(UMI_XMLATTR_CONDITION)) ==
+            0) {
             string_node->condition(node_attribute->value());
           } else {
             std::cerr << "Unsupported attribute on node string: << " << node_attribute->name()
@@ -351,6 +358,7 @@ namespace umi {
       }
       return retval;
     }
+
     /**
      * Reads on node from rapid xml and fills the integer stored in it
      * */
@@ -376,8 +384,8 @@ namespace umi {
               << ". Setting optional to false.\n";
             }
           } else if (
-              strncmp(UMI_XMLATTR_CONDITION, node_attribute->name(), strlen(UMI_XMLATTR_CONDITION)) ==
-              0) {
+            strncmp(UMI_XMLATTR_CONDITION, node_attribute->name(), strlen(UMI_XMLATTR_CONDITION)) ==
+            0) {
             integer_node->condition(node_attribute->value());
           } else {
             std::cerr << "Unsupported attribute on node integer: << " << node_attribute->name()
@@ -396,6 +404,7 @@ namespace umi {
       }
       return retval;
     }
+
     /**
      * Reads on node from rapid xml and fills the integer32 stored in it
      * */
@@ -421,8 +430,8 @@ namespace umi {
               << ". Setting optional to false.\n";
             }
           } else if (
-              strncmp(UMI_XMLATTR_CONDITION, node_attribute->name(), strlen(UMI_XMLATTR_CONDITION)) ==
-              0) {
+            strncmp(UMI_XMLATTR_CONDITION, node_attribute->name(), strlen(UMI_XMLATTR_CONDITION)) ==
+            0) {
             integer_node->condition(node_attribute->value());
           } else {
             std::cerr << "Unsupported attribute on node integer32: << " << node_attribute->name()
@@ -441,6 +450,7 @@ namespace umi {
       }
       return retval;
     }
+
     /**
      * Reads one node from rapid xml and fills the data
      * */
@@ -466,8 +476,8 @@ namespace umi {
               << ". Setting optional to false.\n";
             }
           } else if (
-              strncmp(UMI_XMLATTR_CONDITION, node_attribute->name(), strlen(UMI_XMLATTR_CONDITION)) ==
-              0) {
+            strncmp(UMI_XMLATTR_CONDITION, node_attribute->name(), strlen(UMI_XMLATTR_CONDITION)) ==
+            0) {
             class_node->condition(node_attribute->value());
           } else {
             std::cerr << "Unsupported attribute on node class: << " << node_attribute->name()
@@ -596,7 +606,7 @@ umi::umixml::umixml(const std::string &content) {
       const std::vector<std::shared_ptr<umixmltype>> &children = class_it.second->getChildren();
       for (auto &&child : children) {
         if (child->isRefClass() || child->isList()) {
-          std::array<std::string, 1> arr{ {child->refclass()}};
+          std::array<std::string, 1> arr{{child->refclass()}};
           auto classFound = std::search(m_classMap.begin(), m_classMap.end(),
                                         arr.begin(), arr.end(),
                                         [](const std::pair<std::string, std::shared_ptr<umi::umixmltypeclass>> &elem1,
@@ -639,5 +649,6 @@ umi::umixml::umixml(const std::string &content) {
     throw;
   }
 }
+
 umi::umixml::~umixml() {
 }

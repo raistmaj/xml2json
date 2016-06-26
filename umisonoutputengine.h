@@ -72,6 +72,7 @@ namespace umi {
      * */
     virtual ~output_engine() {
     }
+
     /**
      * Writes one xml into json. The additional options must be set in
      * other place like the constructor etc.
@@ -81,6 +82,7 @@ namespace umi {
       printer.print(ff, m_h_streamer, additional_headers(), additional_methods());
       return this->internal_write(ff);
     };
+
     /**
      * Sets the additional string we want to append to our namespace
      *
@@ -89,6 +91,7 @@ namespace umi {
     void additional_string(const std::string &value) {
       m_additional_string = value;
     }
+
     /**
      * Sets the .h filename we want to print the file
      *
@@ -131,6 +134,7 @@ namespace umi {
      * */
     output_engine(T1 &_H_streamer, T2 &_CPP_streamer) : m_h_streamer(_H_streamer), m_cpp_streamer(_CPP_streamer) {
     }
+
     /**
      * Implement on subclasses to include logic for the cpp
      *

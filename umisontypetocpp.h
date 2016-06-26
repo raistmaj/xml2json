@@ -38,27 +38,30 @@ namespace umi {
      * Constructor
      * */
     type_to_cpp() { }
+
     /**
      * Destructor
      * */
     ~type_to_cpp() { }
+
     /**
      * Get the type we want
      * */
-    std::string get_type(const std::string& val) {
+    std::string get_type(const std::string &val) {
       std::string retval;
       auto val_it = m_mapType.find(val);
-      if(val_it != m_mapType.end()) {
+      if (val_it != m_mapType.end()) {
         retval = val_it->second;
       }
       return retval;
     }
+
   protected:
-    std::unordered_map <std::string, std::string> m_mapType{{"string",  "std::string"},
-                                                            {"integer", "long long int"},
-                                                            {"int32",   "int"},
-                                                            {"float",   "double"},
-                                                            {"boolean", "bool"}};
+    std::unordered_map<std::string, std::string> m_mapType{{"string",  "std::string"},
+                                                           {"integer", "long long int"},
+                                                           {"int32",   "int"},
+                                                           {"float",   "double"},
+                                                           {"boolean", "bool"}};
   };
 }
 

@@ -45,17 +45,20 @@ namespace umi {
      * */
     umixmltypeclass() : umixmltype() {
     }
+
     /**
      * Destructor
      * */
     virtual ~umixmltypeclass() {
     }
+
     /**
      * It is a class
      * */
     virtual bool isClass() const final {
       return true;
     }
+
     /**
      * Adds one children to the list
      * */
@@ -63,12 +66,14 @@ namespace umi {
     inline void addChildren(T &&val) {
       m_children.push_back(val);
     }
+
     /**
      * Gets the list of children we have in the class
      * */
     const std::vector<std::shared_ptr<umixmltype>> &getChildren() const {
       return m_children;
     }
+
     /**
      * Returns the type we want to use in the header, it will
      * append the new line
@@ -86,12 +91,13 @@ namespace umi {
       }
       return retval;
     }
+
     /**
      * Returns the initialization element in the constructor
      * */
     virtual std::string constructor_initializer() {
       std::string retval;
-      retval += m_name;
+      retval += umi::umixmltype::attribute_prepocess(m_name);
       retval += "()";
       if (m_optional && !m_optional_name.empty()) {
         retval += ", ";
@@ -100,6 +106,18 @@ namespace umi {
       }
       return retval;
     }
+
+    /**
+     * Returns the get method
+     * */
+    virtual std::string getter_method(const std::string &, bool append_new_line, const std::string &indentation,
+                                      int basic_indentation) {
+      (void) append_new_line;
+      (void) indentation;
+      (void) basic_indentation;
+      return std::string();
+    }
+
   protected:
     /**
      * Array of children are included within the class. It is a vector as we

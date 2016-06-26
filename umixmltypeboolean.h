@@ -39,24 +39,27 @@ namespace umi {
      * */
     umixmltypeboolean() : umixmltype() {
     }
+
     /**
      * Destructor of the boolean
      * */
     virtual ~umixmltypeboolean() {
     }
+
     /**
      * Is true for this class
      * */
     virtual bool isBoolean() const final {
       return true;
     }
+
     /**
      * Returns the type we want to use in the header, it will
      * append the new line
      * */
     virtual std::string header_type(const std::string &, bool append_new_line = true) {
       std::string retval = "bool ";
-      retval += m_name;
+      retval += umi::umixmltype::attribute_prepocess(m_name);
       if (append_new_line) {
         retval += ";\n";
       } else {
@@ -64,6 +67,7 @@ namespace umi {
       }
       return retval;
     }
+
     /**
      * Returns the optional header we want to use
      * */
@@ -80,17 +84,104 @@ namespace umi {
       }
       return retval;
     }
+
     /**
      * Returns the initialization element in the constructor
      * */
     virtual std::string constructor_initializer() {
       std::string retval;
-      retval += m_name;
+      retval += umi::umixmltype::attribute_prepocess(m_name);
       retval += "(false)";
       if (m_optional && !m_optional_name.empty()) {
         retval += ", ";
         retval += m_optional_name;
         retval += "(false)";
+      }
+      return retval;
+    }
+
+    /**
+     * Returns the get method
+     * */
+    virtual std::string getter_method(const std::string &, bool append_new_line, const std::string &indentation,
+                                      int basic_indentation) {
+      std::string retval;
+      for (int i = 0; i < basic_indentation; ++i) {
+        retval += indentation;
+      }
+      retval += "inline ";
+      retval += "bool get_";
+      retval += m_name;
+      retval += "() const {\n";
+      for (int i = 0; i < basic_indentation + 1; ++i) {
+        retval += indentation;
+      }
+      retval += "return ";
+      retval += umi::umixmltype::attribute_prepocess(m_name);
+      retval += ";\n";
+      for (int i = 0; i < basic_indentation; ++i) {
+        retval += indentation;
+      }
+      retval += "}";
+      if (append_new_line) {
+        retval += "\n";
+      }
+      return retval;
+    }
+
+    /**
+     * Returns the set method
+     * */
+    virtual std::string setter_method(const std::string &, bool append_new_line, const std::string &indentation,
+                                      int basic_indentation) {
+      std::string retval;
+      for (int i = 0; i < basic_indentation; ++i) {
+        retval += indentation;
+      }
+      retval += "inline ";
+      retval += "void set_";
+      retval += m_name;
+      retval += "(bool val) {\n";
+      for (int i = 0; i < basic_indentation + 1; ++i) {
+        retval += indentation;
+      }
+      retval += umi::umixmltype::attribute_prepocess(m_name);
+      retval += " = val;\n";
+      for (int i = 0; i < basic_indentation; ++i) {
+        retval += indentation;
+      }
+      retval += "}";
+      if (append_new_line) {
+        retval += "\n";
+      }
+      return retval;
+    }
+
+    /**
+     * Returns the mutable method
+     * */
+    virtual std::string mutable_method(const std::string &, bool append_new_line, const std::string &indentation,
+                                       int basic_indentation) {
+      std::string retval;
+      for (int i = 0; i < basic_indentation; ++i) {
+        retval += indentation;
+      }
+      retval += "inline ";
+      retval += "bool& mutable_";
+      retval += m_name;
+      retval += "() {\n";
+      for (int i = 0; i < basic_indentation + 1; ++i) {
+        retval += indentation;
+      }
+      retval += "return ";
+      retval += umi::umixmltype::attribute_prepocess(m_name);
+      retval += ";\n";
+      for (int i = 0; i < basic_indentation; ++i) {
+        retval += indentation;
+      }
+      retval += "}";
+      if (append_new_line) {
+        retval += "\n";
       }
       return retval;
     }

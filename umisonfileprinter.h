@@ -31,6 +31,7 @@
 #include <string>
 #include <unordered_map>
 #include <algorithm>
+#include <iostream>
 
 namespace umi {
   /**
@@ -50,8 +51,7 @@ namespace umi {
     /**
      * Basic constructor, this class uses pure RAII
      * */
-    file_printer() {
-    }
+    file_printer() { }
 
     /**
      * Prints the .h file
@@ -68,11 +68,11 @@ namespace umi {
       << "\n#include <ostream>\n#include <string>\n#include <vector>\n#include <map>\n";
       if (!headers.empty()) {
         std::for_each(
-            headers.begin(),
-            headers.end(),
-            [&stream](const auto &header) {
-              stream << "#include <" << header << ">\n";
-            });
+          headers.begin(),
+          headers.end(),
+          [&stream](const auto &header) {
+            stream << "#include <" << header << ">\n";
+          });
       }
       stream << "\n";
       if (!ff->getClassMap().empty()) {
@@ -87,27 +87,32 @@ namespace umi {
                       });
         stream << "\n";
         std::for_each(
-            classMap.begin(),
-            classMap.end(),
-            [&stream, &localAdditionalString, this](const auto &classMapIt) {
-              stream << TABS << "// struct " << classMapIt.first << "\n"
-              << TABS << "struct " << classMapIt.first << " {\n";
-              this->create_constructors(classMapIt.second, stream);
-              stream << "\n" << TABS << TABS << "// Attributes declaration\n";
-              auto classChildren = classMapIt.second->getChildren();
-              std::for_each(
-                  classChildren.begin(),
-                  classChildren.end(),
-                  [&stream, &localAdditionalString](const auto &childrenIt) {
-                    stream << TABS << TABS
-                    << childrenIt->header_type(localAdditionalString, true);
-                    if (childrenIt->optional()) {
-                      stream << TABS << TABS
-                      << childrenIt->optional_name_type(localAdditionalString, true);
-                    }
-                  });
-              stream << TABS << "};\n\n";
-            });
+          classMap.begin(),
+          classMap.end(),
+          [&stream, &localAdditionalString, this](const auto &classMapIt) {
+            stream << TABS << "// struct " << classMapIt.first << "\n"
+            << TABS << "struct " << classMapIt.first << " {\n";
+            this->set_public(stream);
+            this->create_constructors(classMapIt.second, stream);
+            this->create_destructors(classMapIt.second, stream);
+            this->create_properties(classMapIt.second, stream);
+            stream << "\n";
+            this->set_private(stream);
+            stream << TABS << TABS << "// Attributes declaration\n";
+            auto classChildren = classMapIt.second->getChildren();
+            std::for_each(
+              classChildren.begin(),
+              classChildren.end(),
+              [&stream, &localAdditionalString](const auto &childrenIt) {
+                stream << TABS << TABS
+                << childrenIt->header_type(localAdditionalString, true);
+                if (childrenIt->optional()) {
+                  stream << TABS << TABS
+                  << childrenIt->optional_name_type(localAdditionalString, true);
+                }
+              });
+            stream << TABS << "};\n\n";
+          });
         stream << "}\n\n"; // For the internal namespace
       }
 
@@ -115,52 +120,60 @@ namespace umi {
       << TABS << "// Forward declaration\n";
       auto &jsonArray = ff->getJsonArray();
       std::for_each(
-          jsonArray.begin(),
-          jsonArray.end(),
-          [&stream](auto &jsonArrayIt) {
-            stream << TABS << "struct " << jsonArrayIt->name() << ";\n";
-          });
+        jsonArray.begin(),
+        jsonArray.end(),
+        [&stream](auto &jsonArrayIt) {
+          stream << TABS << "struct " << jsonArrayIt->name() << ";\n";
+        });
       stream << "\n";
       std::for_each(
-          jsonArray.begin(),
-          jsonArray.end(),
-          [&stream, &localAdditionalString, &methods, this](auto &jsonArrayIt) {
-            stream << TABS << "// struct " << jsonArrayIt->name() << "\n"
-            << TABS << "struct " << jsonArrayIt->name() << " {\n";
-            this->create_constructors(jsonArrayIt, stream);
-            stream << "\n" << TABS << TABS << "// Attributes declaration\n";
-            auto classChildren = jsonArrayIt->getChildren();
-            std::for_each(
-                classChildren.begin(),
-                classChildren.end(),
-                [&stream, &localAdditionalString](auto &childrenIt) {
-                  stream << TABS << TABS
-                  << childrenIt->header_type(localAdditionalString, true);
-                  if (childrenIt->optional()) {
-                    stream << TABS << TABS
-                    << childrenIt->optional_name_type(localAdditionalString, true);
-                  }
-                }
-            );
-            stream << "\n" << TABS << TABS <<
-            "// read one input string and fill the data, errors are reported on stderr\n"
-            << TABS << TABS << "bool read_data(const std::string& input_text);\n";
-            stream << "\n" << TABS << TABS <<
-            "// read one input string and fill the data, errors are reported on out_stream\n"
-            << TABS << TABS << "bool read_data(const std::string &input_text, std::ostream &out_stream);\n";
+        jsonArray.begin(),
+        jsonArray.end(),
+        [&stream, &localAdditionalString, &methods, this](auto &jsonArrayIt) {
+          stream << TABS << "// struct " << jsonArrayIt->name() << "\n"
+          << TABS << "struct " << jsonArrayIt->name() << " {\n";
+          this->set_public(stream);
+          this->create_constructors(jsonArrayIt, stream);
+          this->create_destructors(jsonArrayIt, stream);
+          stream << "\n" << TABS << TABS <<
+          "// read one input string and fill the data, errors are reported on stderr\n"
+          << TABS << TABS << "bool read_data(const std::string& input_text);\n";
+          stream << "\n" << TABS << TABS <<
+          "// read one input string and fill the data, errors are reported on out_stream\n"
+          << TABS << TABS << "bool read_data(const std::string &input_text, std::ostream &out_stream);\n";
 
-            if (!methods.empty()) {
-              stream << "\n" << TABS << TABS << "// Additional specific engine methods\n";
-              std::for_each(
-                  methods.begin(),
-                  methods.end(),
-                  [&stream](auto &method) {
-                    stream << TABS << TABS << method << "\n";
-                  }
-              );
-            }
-            stream << TABS << "};\n\n";
+          this->create_properties(jsonArrayIt, stream);
+
+          if (!methods.empty()) {
+            stream << "\n" << TABS << TABS << "// Additional specific engine methods\n";
+            std::for_each(
+              methods.begin(),
+              methods.end(),
+              [&stream](auto &method) {
+                stream << TABS << TABS << method << "\n";
+              }
+            );
           }
+          stream << "\n";
+
+          this->set_private(stream);
+          stream << TABS << TABS << "// Attributes declaration\n";
+          auto classChildren = jsonArrayIt->getChildren();
+          std::for_each(
+            classChildren.begin(),
+            classChildren.end(),
+            [&stream, &localAdditionalString](auto &childrenIt) {
+              stream << TABS << TABS
+              << childrenIt->header_type(localAdditionalString, true);
+              if (childrenIt->optional()) {
+                stream << TABS << TABS
+                << childrenIt->optional_name_type(localAdditionalString, true);
+              }
+            }
+          );
+
+          stream << TABS << "};\n\n";
+        }
       );
       stream << "}\n"; // For the umison namespace
     }
@@ -193,6 +206,37 @@ namespace umi {
       }
     }
 
+    void create_destructors(const std::shared_ptr<umi::umixmltypeclass> &elem, streamer &stream) {
+      stream << "\n" << TABS << TABS << "// Destructor\n"
+      << TABS << TABS << "virtual ~" << elem->name() << "() {}\n";
+    }
+
+    void set_public(streamer &stream) {
+      stream << TABS << "public:\n";
+    }
+
+    void set_private(streamer &stream) {
+      stream << TABS << "private:\n";
+    }
+
+    void create_properties(const std::shared_ptr<umi::umixmltypeclass> &elem, streamer &stream) {
+      auto &localAdditionalString = m_additional_string;
+      auto classChildren = elem->getChildren();
+      stream << "\n" << TABS << TABS << "// Properties declaration\n";
+      std::for_each(
+        classChildren.begin(),
+        classChildren.end(),
+        [&stream, &localAdditionalString](const auto &child) {
+          stream << child->getter_method(localAdditionalString, true, TABS, 2);
+          stream << child->setter_method(localAdditionalString, true, TABS, 2);
+          stream << child->mutable_method(localAdditionalString, true, TABS, 2);
+          stream << child->getter_method_optional(localAdditionalString, true, TABS, 2);
+          stream << child->setter_method_optional(localAdditionalString, true, TABS, 2);
+          stream << child->mutable_method_optional(localAdditionalString, true, TABS, 2);
+          stream << "\n";
+        });
+
+    }
   };
 }
 

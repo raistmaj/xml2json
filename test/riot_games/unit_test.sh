@@ -6,4 +6,4 @@ g++ -g -I../../rapidjson/include -o riot_games main.cpp riot_games.cpp
 
 ./riot_games
 
-AFL_HARDEN=1 afl-g++ -O3 -fPIC -I../../rapidjson/include -o riot_games_afl afl_main.cpp riot_games.cpp
+# AFL_HARDEN=1 afl-g++ -O3 -fPIC -I../../rapidjson/include -o riot_games_afl afl_main.cpp riot_games.cpp

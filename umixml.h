@@ -45,30 +45,36 @@ namespace umi {
      * on disk based on the content string
      * */
     explicit umixml(const std::string &content);
+
     /**
      * Forbid copy
      * */
     umixml(const umixml &) = delete;
+
     /**
      * Clean the resources
      * */
     ~umixml();
+
     /**
      * Forbid assignement
      * */
     umixml &operator=(const umixml &) = delete;
+
     /**
      * Gets the class map
      * */
     inline const std::vector<std::pair<std::string, std::shared_ptr<umi::umixmltypeclass>>> &getClassMap() const {
       return m_classMap;
     }
+
     /**
      * Gets the json array map
      * */
     inline const std::vector<std::shared_ptr<umi::umixmltypeclass>> &getJsonArray() const {
       return m_jsonArray;
     }
+
   protected:
     /**
      * List of classes we will use in the creation of the json, we use a vector of pairs as we need to keep
