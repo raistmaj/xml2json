@@ -119,6 +119,8 @@ namespace umi {
           create_single_reader(class_it, "", false, true);
         }
         output_engine<T1, T2>::m_cpp_streamer << "\n";
+        create_single_reader(class_it, "", false, false, true);
+        output_engine<T1, T2>::m_cpp_streamer << "\n";
       }
       return true;
     }
@@ -141,6 +143,7 @@ namespace umi {
       output_engine<T1, T2>::m_cpp_streamer << "#include \"rapidjson/rapidjson.h\"\n"
       << "#include \"rapidjson/document.h\"\n"
       << "#include <iostream>\n"
+      << "#include <cstdlib>\n"
       << "#include <map>\n"
       << "#include <vector>\n\n";
     }
@@ -593,6 +596,10 @@ namespace umi {
       << def_indentation << "bool umison::" << ff->name() << "::read_data(const std::string &input_text)\n"
       << def_indentation << "{\n"
       << def_1p_indentation << "return this->read_data(input_text, std::cerr);\n"
+      << def_indentation << "}\n\n"
+      << def_indentation << "bool umison::" << ff->name() << "::read_data_from_file(const std::string &input)\n"
+      << def_indentation << "{\n"
+      << def_1p_indentation << "return this->read_data_from_frile(input, std::cerr);\n"
       << def_indentation << "}\n\n";
     }
 
@@ -601,7 +608,7 @@ namespace umi {
      * being an element a class or data_parser
      * */
     void create_single_reader(const std::shared_ptr<umixmltypeclass> &ff, const std::string &name, bool data_reader,
-                              bool additional_reader) {
+                              bool additional_reader, bool from_file = false) {
       int actual_level = 1;
       std::string inout;
       std::string inout_dot;
@@ -618,6 +625,8 @@ namespace umi {
       std::string def_indentation(build_indentation(TABS, actual_level));
       std::string def_1p_indentation(def_indentation + TABS);
       std::string def_2p_indentation(def_1p_indentation + TABS);
+      std::string def_3p_indentation(def_2p_indentation + TABS);
+      std::string def_4p_indentation(def_3p_indentation + TABS);
       // Proceed with the header of the reader
       if (data_reader) {
         output_engine<T1, T2>::m_cpp_streamer
@@ -627,21 +636,65 @@ namespace umi {
         << def_indentation << "{\n";
       } else {
         if (!additional_reader) {
-          output_engine<T1, T2>::m_cpp_streamer
-          << def_indentation << "bool umison::" << ff->name() <<
-          "::read_data(const std::string &input_text, std::ostream &ss)\n"
-          << def_indentation << "{\n"
-          << def_1p_indentation << "rapidjson::Document " << rdata << ";\n"
-          << def_1p_indentation << "if (" << rdata << ".Parse(input_text.c_str()).HasParseError()) {\n"
-          << def_2p_indentation <<
-          "ss << __FILE__ << \":\" << __LINE__ << \" Error parsing input text. Error: \" << "
-          << rdata << ".GetParseError() << \"\\n\";\n"
-          << def_2p_indentation << "return false;\n"
-          << def_1p_indentation << "}\n";
+          if (!from_file) {
+            output_engine<T1, T2>::m_cpp_streamer
+            << def_indentation << "bool umison::" << ff->name()
+            << "::read_data(const std::string &input_text, std::ostream &ss)\n"
+            << def_indentation << "{\n"
+            << def_1p_indentation << "rapidjson::Document " << rdata << ";\n"
+            << def_1p_indentation << "if (" << rdata << ".Parse(input_text.c_str()).HasParseError()) {\n"
+            << def_2p_indentation << "ss << __FILE__ << \":\" << __LINE__ << \" Error parsing input text. Error: \" << "
+            << rdata << ".GetParseError() << \"\\n\";\n"
+            << def_2p_indentation << "return false;\n"
+            << def_1p_indentation << "}\n";
+          } else {
+            output_engine<T1, T2>::m_cpp_streamer
+            << def_indentation << "bool umison::" << ff->name()
+            << "::read_data_from_file(const std::string &input, std::ostream &ss)\n"
+            << def_indentation << "{\n"
+            << def_1p_indentation << "if (input.empty()) {\n"
+            << def_2p_indentation << "ss << __FILE__ << \":\" << __LINE__ << \" Filename is empty.\\n\";\n"
+            << def_2p_indentation << "return false;\n"
+            << def_1p_indentation << "}\n"
+            << def_1p_indentation << "FILE *fi = fopen(input.c_str(), \"rb\");\n"
+            << def_1p_indentation << "fseek(fi, 0, SEEK_END);\n"
+            << def_1p_indentation << "long fi_size = ftell(fi);\n"
+            << def_1p_indentation << "fseek(fi, 0, SEEK_BEG);\n"
+            << def_1p_indentation << "if (fi_size == 0) {\n"
+            << def_2p_indentation << "ss << __FILE__ << \":\" << __LINE__ << \" Error file is empty.\\n\";\n"
+            << def_2p_indentation << "return false;\n"
+            << def_1p_indentation << "}\n"
+            << def_1p_indentation << "long actual_pos = 0;\n"
+            << def_1p_indentation << "std::vector<char> fi_content(fi_size, static_cast<char>(0x00));\n"
+            << def_1p_indentation << "while (actual_pos < fi_size) {\n"
+            << def_2p_indentation << "size_t ret_read = fread(&fi_content[actual_pos], 1, fi_size - actual_pos, fi);\n"
+            << def_2p_indentation << "if (ret_read != static_cast<size_t>(fi_size - actual_pos)) {\n"
+            << def_3p_indentation << "if (foef(fi)) {\n"
+            << def_4p_indentation << "break;\n"
+            << def_3p_indentation << "} else if (ferror(fi)) {\n"
+            << def_4p_indentation << "ss << __FILE__ << \":\" << __LINE__ << \" Error reading file.\\n\";\n"
+            << def_4p_indentation << "fclose(fi);\n"
+            << def_4p_indentation << "return false;\n"
+            << def_3p_indentation << "} else {\n"
+            << def_4p_indentation << "actual_pos += static_cast<long>(ret_read);\n"
+            << def_3p_indentation << "}\n"
+            << def_2p_indentation << "} else {\n"
+            << def_3p_indentation << "break;\n"
+            << def_2p_indentation << "}\n"
+            << def_1p_indentation << "}\n"
+            << def_1p_indentation << "fclose(fi);\n"
+            << def_1p_indentation << "std::string input_text(fi_content.begin(), fi_content.end());\n"
+            << def_1p_indentation << "rapidjson::Document " << rdata << ";\n"
+            << def_1p_indentation << "if (" << rdata << ".Parse(input_text.c_str()).HasParseError()) {\n"
+            << def_2p_indentation << "ss << __FILE__ << \":\" << __LINE__ << \" Error parsing input text. Error: \" << "
+            << rdata << ".GetParseError() << \"\\n\";\n"
+            << def_2p_indentation << "return false;\n"
+            << def_1p_indentation << "}\n";
+          }
         } else {
           output_engine<T1, T2>::m_cpp_streamer
-          << def_indentation << "bool umison::" << ff->name() <<
-          "::read_data(const rapidjson::Document &" << rdata << ", std::ostream &ss)\n"
+          << def_indentation << "bool umison::" << ff->name()
+          << "::read_data(const rapidjson::Document &" << rdata << ", std::ostream &ss)\n"
           << def_indentation << "{\n";
         }
       }

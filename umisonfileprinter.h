@@ -135,12 +135,18 @@ namespace umi {
           this->set_public(stream);
           this->create_constructors(jsonArrayIt, stream);
           this->create_destructors(jsonArrayIt, stream);
-          stream << "\n" << TABS << TABS <<
-          "// read one input string and fill the data, errors are reported on stderr\n"
-          << TABS << TABS << "bool read_data(const std::string& input_text);\n";
-          stream << "\n" << TABS << TABS <<
-          "// read one input string and fill the data, errors are reported on out_stream\n"
-          << TABS << TABS << "bool read_data(const std::string &input_text, std::ostream &out_stream);\n";
+          stream << "\n" << TABS << TABS
+          << "// read one input string and fill the data, errors are reported on stderr\n"
+          << TABS << TABS << "bool read_data(const std::string &input_text);\n"
+          << "\n" << TABS << TABS
+          << "// read one input string and fill the data, errors are reported on out_stream\n"
+          << TABS << TABS << "bool read_data(const std::string &input_text, std::ostream &out_stream);\n"
+          << "\n" << TABS << TABS
+          << "// read one input file and fill the data, errors are reported on stderr\n"
+          << TABS << TABS << "bool read_data_from_file(const std::string &input_file);\n"
+          << "\n" << TABS << TABS
+          << "// read one input file and fill the data, errors are reported on out_stream\n"
+          << TABS << TABS << "bool read_data_from_file(const std::string &input_file, std::ostream &out_stream);\n";
 
           this->create_properties(jsonArrayIt, stream);
 
