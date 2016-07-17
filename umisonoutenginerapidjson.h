@@ -599,7 +599,7 @@ namespace umi {
       << def_indentation << "}\n\n"
       << def_indentation << "bool umison::" << ff->name() << "::read_data_from_file(const std::string &input)\n"
       << def_indentation << "{\n"
-      << def_1p_indentation << "return this->read_data_from_frile(input, std::cerr);\n"
+      << def_1p_indentation << "return this->read_data_from_file(input, std::cerr);\n"
       << def_indentation << "}\n\n";
     }
 
@@ -663,7 +663,7 @@ namespace umi {
             << def_1p_indentation << "}\n"
             << def_1p_indentation << "fseek(fi, 0, SEEK_END);\n"
             << def_1p_indentation << "long fi_size = ftell(fi);\n"
-            << def_1p_indentation << "fseek(fi, 0, SEEK_BEG);\n"
+            << def_1p_indentation << "fseek(fi, 0, SEEK_SET);\n"
             << def_1p_indentation << "if (fi_size == 0) {\n"
             << def_2p_indentation << "ss << __FILE__ << \":\" << __LINE__ << \" Error file is empty.\\n\";\n"
             << def_2p_indentation << "fclose(fi);\n"
@@ -674,7 +674,7 @@ namespace umi {
             << def_1p_indentation << "while (actual_pos < fi_size) {\n"
             << def_2p_indentation << "size_t ret_read = fread(&fi_content[actual_pos], 1, fi_size - actual_pos, fi);\n"
             << def_2p_indentation << "if (ret_read != static_cast<size_t>(fi_size - actual_pos)) {\n"
-            << def_3p_indentation << "if (foef(fi)) {\n"
+            << def_3p_indentation << "if (feof(fi)) {\n"
             << def_4p_indentation << "break;\n"
             << def_3p_indentation << "} else if (ferror(fi)) {\n"
             << def_4p_indentation << "ss << __FILE__ << \":\" << __LINE__ << \" Error reading file.\\n\";\n"
