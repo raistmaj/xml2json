@@ -185,6 +185,38 @@ namespace umi {
       }
       return retval;
     }
+
+    /**
+     * Returns the write method into a string
+     * */
+    std::string write_to_string(const std::string &input_string, bool append_new_line, const std::string &indentation,
+                                int basic_indentation, const std::string &, int, const std::string &) {
+      std::stringstream retval;
+      std::string base_indentation;
+      std::string base_indentation_1p;
+      std::string base_indentation_2p;
+      std::string quoted_name;
+      for (int i = 0; i < basic_indentation; ++i) {
+        base_indentation += indentation;
+      }
+      base_indentation_1p += base_indentation + indentation;
+      base_indentation_2p += base_indentation_1p + indentation;
+      quoted_name += "\\\"";
+      quoted_name += m_name;
+      quoted_name += "\\\"";
+
+      retval << base_indentation << "{\n"
+      << base_indentation_1p << "if (" << umi::umixmltype::attribute_prepocess(m_name) << ") {\n"
+      << base_indentation_2p << input_string << " += \"" << quoted_name << ": true\";\n"
+      << base_indentation_1p << "else {\n"
+      << base_indentation_2p << input_string << " += \"" << quoted_name << ": false\";\n"
+      << base_indentation_1p << "}\n"
+      << base_indentation << "}\n";
+      if (append_new_line) {
+        retval << "\n";
+      }
+      return retval.str();
+    }
   };
 }
 

@@ -186,6 +186,43 @@ namespace umi {
       }
       return retval;
     }
+
+    /**
+     * Returns the write method into a string
+     * */
+    std::string write_to_string(const std::string &input_string, bool append_new_line, const std::string &indentation,
+                                int basic_indentation, const std::string &aux_array, int size_array,
+                                const std::string &out_error) {
+      std::stringstream retval;
+      std::string base_indentation;
+      std::string base_indentation_1p;
+      std::string base_indentation_2p;
+      std::string quoted_name;
+      for (int i = 0; i < basic_indentation; ++i) {
+        base_indentation += indentation;
+      }
+      base_indentation_1p += base_indentation + indentation;
+      base_indentation_2p += base_indentation_1p + indentation;
+      quoted_name = "\\\"";
+      quoted_name += m_name;
+      quoted_name += "\\\"";
+      retval << base_indentation << "{\n"
+             << base_indentation_1p << "memset(" << aux_array << ", 0, " << size_array << ");\n"
+             << base_indentation_1p << "int aux_retval = snprintf(" << aux_array
+             << ", sizeof(" << aux_array << ") - 1, \"%\"PRId64\"\", "
+             << umi::umixmltype::attribute_prepocess(m_name) << ");\n"
+             << base_indentation_1p << "if (aux_retval < 0) {\n"
+             << base_indentation_2p << out_error << " << \"Error in line \" << __LINE__;\n"
+             << base_indentation_2p << "return false;\n"
+             << base_indentation_1p << "}\n"
+             << base_indentation_1p << input_string << " += \"" << quoted_name << ": \";\n"
+             << base_indentation_1p << input_string << " += " << aux_array << ";\n"
+             << base_indentation << "}\n";
+      if (append_new_line) {
+        retval << "\n";
+      }
+      return retval.str();
+    }
   };
 }
 #endif

@@ -240,6 +240,100 @@ namespace umi {
       }
       return retval;
     }
+    /**
+     * Returns the write method into a string
+     * */
+    std::string write_to_string(const std::string &input_string, bool append_new_line, const std::string &indentation,
+                                int basic_indentation, const std::string &aux_array, int size_array,
+                                const std::string &out_error) {
+      (void)aux_array;
+      (void)size_array;
+      (void)out_error;
+      umi::type_to_cpp tcpp;
+      std::string cpp_type = tcpp.get_type(m_refclass);
+      std::stringstream retval;
+      std::string base_indentation;
+      std::string base_indentation_1p;
+      std::string base_indentation_2p;
+      std::string base_indentation_3p;
+      std::string quoted_name;
+      for (int i = 0; i < basic_indentation; ++i) {
+        base_indentation += indentation;
+      }
+      base_indentation_1p += base_indentation + indentation;
+      base_indentation_2p += base_indentation_1p + indentation;
+      base_indentation_3p += base_indentation_2p + indentation;
+      quoted_name = "\\\"";
+      quoted_name += m_name;
+      quoted_name += "\\\"";
+
+      retval << base_indentation << "{\n"
+             << base_indentation_1p << input_string << " += \"" << quoted_name << ": [\";\n";
+
+      if (cpp_type.empty()) {
+
+      } else {
+        retval << base_indentation_1p << "std::size_t position;\n"
+               << base_indentation_1p << "for (position = 0; position < "
+                                      << umi::umixmltype::attribute_prepocess(m_name) << ".size(); ++position) {\n"
+               << base_indentation_2p << "if (position > 0) { " << input_string << " += \",\"; }\n";
+        if (cpp_type == "std::string") {
+          retval << base_indentation_2p << input_string << " += \"\\\"\";\n"
+                 << base_indentation_2p << input_string << " += " << umi::umixmltype::attribute_prepocess(m_name)
+                 << "[position];\n"
+                 << base_indentation_2p << input_string << " += \"\\\"\";\n";
+        } else {
+          if (cpp_type == "long long int") {
+            retval << base_indentation_2p << "memset(" << aux_array << ", 0, " << size_array << ");\n"
+                   << base_indentation_2p << "int aux_retval = snprintf(" << aux_array
+                   << ", sizeof(" << aux_array << ") - 1, \"%\"PRId64\"\", "
+                   << umi::umixmltype::attribute_prepocess(m_name) << "[position]);\n"
+                   << base_indentation_2p << "if (aux_retval < 0) {\n"
+                   << base_indentation_3p << out_error << " << \"Error in line \" << __LINE__;\n"
+                   << base_indentation_3p << "return false;\n"
+                   << base_indentation_2p << "}\n"
+                   << base_indentation_2p << input_string << " += " << aux_array << ";\n";
+          } else if (cpp_type == "int") {
+            retval << base_indentation_2p << "memset(" << aux_array << ", 0, " << size_array << ");\n"
+                   << base_indentation_2p << "int aux_retval = snprintf(" << aux_array
+                   << ", sizeof(" << aux_array << ") - 1, \"%d\", "
+                   << umi::umixmltype::attribute_prepocess(m_name) << "[position]);\n"
+                   << base_indentation_2p << "if (aux_retval < 0) {\n"
+                   << base_indentation_3p << out_error << " << \"Error in line \" << __LINE__;\n"
+                   << base_indentation_3p << "return false;\n"
+                   << base_indentation_2p << "}\n"
+                   << base_indentation_2p << input_string << " += " << aux_array << ";\n";
+          } else if (cpp_type == "double") {
+            retval << base_indentation_2p << "memset(" << aux_array << ", 0, " << size_array << ");\n"
+                   << base_indentation_2p << "int aux_retval = snprintf(" << aux_array
+                   << ", sizeof(" << aux_array << ") - 1, \"%f\", "
+                   << umi::umixmltype::attribute_prepocess(m_name) << "[position]);\n"
+                   << base_indentation_2p << "if (aux_retval < 0) {\n"
+                   << base_indentation_3p << out_error << " << \"Error in line \" << __LINE__;\n"
+                   << base_indentation_3p << "return false;\n"
+                   << base_indentation_2p << "}\n"
+                   << base_indentation_2p << input_string << " += " << aux_array << ";\n";
+          } else if (cpp_type == "bool") {
+            retval << base_indentation_2p << "if ("
+                      << umi::umixmltype::attribute_prepocess(m_name) << "[position]) {\n"
+                   << base_indentation_3p << input_string << " += \"true\";\n"
+                   << base_indentation_2p << "} else {\n"
+                   << base_indentation_3p << input_string << " += \"false\";\n"
+                   << base_indentation_2p << "}\n";
+
+          }
+        }
+        retval << base_indentation_1p << "}\n";
+      }
+
+      retval << base_indentation_1p << input_string << " += \"]\";\n";
+      retval << base_indentation << "}\n";
+
+      if (append_new_line) {
+        retval << "\n";
+      }
+      return retval.str();
+    }
   };
 }
 

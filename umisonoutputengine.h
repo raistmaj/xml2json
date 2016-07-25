@@ -78,9 +78,12 @@ namespace umi {
      * other place like the constructor etc.
      * */
     bool write(std::shared_ptr<umi::umixml> &ff) {
+      bool retval = false;
       file_printer<T1> printer;
       printer.print(ff, m_h_streamer, additional_headers(), additional_methods());
-      return this->internal_write(ff);
+      retval = this->internal_write(ff);
+      printer.print_write_data_on_string(ff, m_cpp_streamer);
+      return retval;
     };
 
     /**

@@ -142,6 +142,7 @@ namespace umi {
       }
       output_engine<T1, T2>::m_cpp_streamer << "#include \"rapidjson/rapidjson.h\"\n"
       << "#include \"rapidjson/document.h\"\n"
+      << "#include <inttypes.h>\n"
       << "#include <iostream>\n"
       << "#include <cstdlib>\n"
       << "#include <map>\n"

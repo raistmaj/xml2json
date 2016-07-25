@@ -146,7 +146,13 @@ namespace umi {
           << TABS << TABS << "bool read_data_from_file(const std::string &input_file);\n"
           << "\n" << TABS << TABS
           << "// read one input file and fill the data, errors are reported on out_stream\n"
-          << TABS << TABS << "bool read_data_from_file(const std::string &input_file, std::ostream &out_stream);\n";
+          << TABS << TABS << "bool read_data_from_file(const std::string &input_file, std::ostream &out_stream);\n"
+          << "\n" << TABS << TABS
+          << "// writes the json into a string, errors are reported on out_stream"
+          << TABS << TABS << "bool write_data_to_string(std::string &output, std::ostream &out_stream) const;"
+          << "\n" << TABS << TABS
+          << "// writes the json into a string, errors are reported on stderr"
+          << TABS << TABS << "bool write_data_to_string(std::string &output) const;";
 
           this->create_properties(jsonArrayIt, stream);
 
@@ -182,6 +188,54 @@ namespace umi {
         }
       );
       stream << "}\n"; // For the umison namespace
+    }
+
+    template<typename stream_out>
+    void print_write_data_on_string(std::shared_ptr<umi::umixml> &ff, stream_out &stream) {
+      int actual_ind = 0;
+      std::string additional_string;
+      std::string indentation;
+      std::string indentation_1p(indentation + TABS);
+
+      if (!m_additional_string.empty()) {
+        additional_string += "::";
+        additional_string += m_additional_string;
+      }
+
+      for (auto &json : ff->getJsonArray()) {
+        // bool write_data_to_string(std::string &output) const;
+        stream << indentation << "bool umison" << additional_string
+               << json->name()
+               << "::write_data_to_string(std::string &output) const {\n"
+               << indentation_1p << "return write_data_to_string(output, std::cerr);\n"
+               << indentation << "}\n\n";
+        // bool write_data_to_string(std::string &output, std::ostream &out_stream) const;
+        stream << indentation << "bool umison"  << additional_string
+               << json->name()
+               << "::write_data_to_string(std::string &output, std::ostream &out_stream) const {\n"
+               << indentation_1p << "char aux_array[512];\n";
+        actual_ind += 1;
+        if (json->getChildren().size() == 1) {
+
+        } else {
+          stream << indentation_1p << "output += \'{\';\n";
+
+          for (decltype(json->getChildren().size()) position = 0;
+               position < json->getChildren().size();
+              ++position) {
+            auto &child = json->getChildren()[position];
+            if (position > 0) {
+              stream << indentation_1p << "output << \",\";\n";
+            }
+            stream << child->write_to_string("output", true, TABS, actual_ind, "aux_array", 512, "out_stream");
+          }
+
+          stream << indentation_1p << "output += \'}\';\n";
+        }
+        actual_ind -= 1;
+        stream << indentation_1p << "return true;\n"
+               << indentation << "}\n";
+      }
     }
 
     /**

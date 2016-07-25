@@ -27,6 +27,7 @@
 #define UMISON_UMIXMLTYPE_H
 
 #include <string>
+#include <sstream>
 #include "umisonforwarddeclaration.h"
 
 
@@ -333,6 +334,19 @@ namespace umi {
       return retval;
     }
 
+    /**
+     * Returns the write method into a string
+     * */
+    virtual std::string write_to_string(
+        const std::string &,
+        bool ,
+        const std::string &,
+        int,
+        const std::string &,
+        int,
+        const std::string &) {
+      return std::string();
+    }
   protected:
 
     /**

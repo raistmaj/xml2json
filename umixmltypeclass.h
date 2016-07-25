@@ -118,6 +118,12 @@ namespace umi {
       return std::string();
     }
 
+    /**
+     * Returns the write method into a string
+     * */
+    std::string write_to_string(const std::string &, bool , const std::string &, int ) {
+      return std::string();
+    }
   protected:
     /**
      * Array of children are included within the class. It is a vector as we

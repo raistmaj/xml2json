@@ -27,7 +27,7 @@ set(SOURCE_FILES main.cpp
         umisonoutputengine.h
         umixmltags.h umixmltyperefclass.h
         ${PUGIFILES}
-        umixmltypeinteger32.h umixmltypemap.h)
+        umixmltypeinteger32.h umixmltypemap.h umisonoutputwrite.h)
 add_executable(umison ${SOURCE_FILES})
 
 target_link_libraries(umison boost_program_options)
