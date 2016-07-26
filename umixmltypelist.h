@@ -246,9 +246,6 @@ namespace umi {
     std::string write_to_string(const std::string &input_string, bool append_new_line, const std::string &indentation,
                                 int basic_indentation, const std::string &aux_array, int size_array,
                                 const std::string &out_error) {
-      (void)aux_array;
-      (void)size_array;
-      (void)out_error;
       umi::type_to_cpp tcpp;
       std::string cpp_type = tcpp.get_type(m_refclass);
       std::stringstream retval;
@@ -271,7 +268,13 @@ namespace umi {
              << base_indentation_1p << input_string << " += \"" << quoted_name << ": [\";\n";
 
       if (cpp_type.empty()) {
-
+        retval << base_indentation_1p << "std::size_t position;\n"
+               << base_indentation_1p << "for (position = 0; position < "
+               << umi::umixmltype::attribute_prepocess(m_name) << ".size(); ++position) {\n"
+               << base_indentation_2p << "if (position > 0) { " << input_string << " += \",\"; }\n"
+               << base_indentation_2p << input_string << " += \"{\";\n"
+               << base_indentation_2p << input_string << " += \"}\";\n";
+        retval << base_indentation_1p << "}\n";
       } else {
         retval << base_indentation_1p << "std::size_t position;\n"
                << base_indentation_1p << "for (position = 0; position < "
@@ -320,7 +323,6 @@ namespace umi {
                    << base_indentation_2p << "} else {\n"
                    << base_indentation_3p << input_string << " += \"false\";\n"
                    << base_indentation_2p << "}\n";
-
           }
         }
         retval << base_indentation_1p << "}\n";

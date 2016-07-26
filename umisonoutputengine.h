@@ -82,6 +82,7 @@ namespace umi {
       file_printer<T1> printer;
       printer.print(ff, m_h_streamer, additional_headers(), additional_methods());
       retval = this->internal_write(ff);
+      printer.print_write_data_common_string(ff, m_cpp_streamer);
       printer.print_write_data_on_string(ff, m_cpp_streamer);
       return retval;
     };

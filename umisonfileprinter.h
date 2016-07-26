@@ -191,6 +191,383 @@ namespace umi {
     }
 
     template<typename stream_out>
+    void implement_type_declaration_writer_basic_types(
+        stream_out &stream, int indentation_level, const std::string &indentation) {
+      std::string indentation_base;
+      std::string indentation_base_1p;
+      std::string indentation_base_2p;
+      for (int i = 0; i < indentation_level; ++i) {
+        indentation_base += indentation;
+      }
+      indentation_base_1p = indentation_base + indentation;
+      indentation_base_2p = indentation_base_1p + indentation;
+      // int
+      stream << indentation_base
+             << "template<typename Stream>\n"
+             << indentation_base
+             << "bool __write_type(const int &arr, std::string &out_str, Stream &ss) {\n"
+             << indentation_base_1p
+             << "char aux_array[512] = {};\n"
+             << indentation_base_1p
+             << "int aux_retval = snprintf(aux_array, sizeof(aux_array) - 1, \"%d\", arr);\n"
+             << indentation_base_1p
+             << "if (aux_retval < 0) {\n"
+             << indentation_base_2p
+             << "return false;\n"
+             << indentation_base_1p
+             << "}\n"
+             << indentation_base_1p
+             << "out_str += aux_array;\n"
+             << indentation_base_1p
+             << "return true;\n"
+             << indentation_base
+             << "}\n\n";
+      // long long int
+      stream << indentation_base
+             << "template<typename Stream>\n"
+             << indentation_base
+             << "bool __write_type(const long long int &arr, std::string &out_str, Stream &ss) {\n"
+             << indentation_base_1p
+             << "char aux_array[512] = {};\n"
+             << indentation_base_1p
+             << "int aux_retval = snprintf(aux_array, sizeof(aux_array) - 1, \"%\"PRId64\"\", arr);\n"
+             << indentation_base_1p
+             << "if (aux_retval < 0) {\n"
+             << indentation_base_2p
+             << "return false;\n"
+             << indentation_base_1p
+             << "}\n"
+             << indentation_base_1p
+             << "out_str += aux_array;\n"
+             << indentation_base_1p
+             << "return true;\n"
+             << indentation_base
+             << "}\n\n";
+      // double
+      stream << indentation_base
+             << "template<typename Stream>\n"
+             << indentation_base
+             << "bool __write_type(const double &arr, std::string &out_str, Stream &ss) {\n"
+             << indentation_base_1p
+             << "char aux_array[512] = {};\n"
+             << indentation_base_1p
+             << "int aux_retval = snprintf(aux_array, sizeof(aux_array) - 1, \"%f\", arr);\n"
+             << indentation_base_1p
+             << "if (aux_retval < 0) {\n"
+             << indentation_base_2p
+             << "return false;\n"
+             << indentation_base_1p
+             << "}\n"
+             << indentation_base_1p
+             << "out_str += aux_array;\n"
+             << indentation_base_1p
+             << "return true;\n"
+             << indentation_base
+             << "}\n\n";
+      // bool
+      stream << indentation_base
+             << "template<typename Stream>\n"
+             << indentation_base
+             << "bool __write_type(const bool &arr, std::string &out_str, Stream &ss) {\n"
+             << indentation_base_1p
+             << "if (arr == true) {\n"
+             << indentation_base_2p
+             << "out_str += \"true\";\n"
+             << indentation_base_1p
+             << "} else {\n"
+             << indentation_base_2p
+             << "out_str += \"false\";\n"
+             << indentation_base_1p
+             << "}\n"
+             << indentation_base_1p
+             << "return true;\n"
+             << indentation_base
+             << "}\n\n";
+      // std::string
+      stream << indentation_base
+             << "template<typename Stream>\n"
+             << indentation_base
+             << "bool __write_type(const std::string &arr, std::string &out_str, Stream &ss) {\n"
+             << indentation_base_1p
+             << "out_str += \"\\\"\";\n"
+             << indentation_base_1p
+             << "out_str += arr;\n"
+             << indentation_base_1p
+             << "out_str += \"\\\"\";\n"
+             << indentation_base_1p
+             << "return true;\n"
+             << indentation_base
+             << "}\n\n";
+    }
+
+    template<typename stream_out>
+    void forward_type_declaration_writer_custom_types(
+        std::shared_ptr<umi::umixml> &ff,
+        stream_out &stream,
+        int indentation_level,
+        const std::string &indentation) {
+      std::string indentation_base;
+      std::string indentation_base_1p;
+      std::string indentation_base_2p;
+      std::string additional_string;
+
+      if (!m_additional_string.empty()) {
+        additional_string += "::";
+        additional_string += m_additional_string;
+      }
+
+      for (int i = 0; i < indentation_level; ++i) {
+        indentation_base += indentation;
+      }
+      indentation_base_1p = indentation_base + indentation;
+      indentation_base_2p = indentation_base_1p + indentation;
+
+      for (auto &element : ff->getClassMap()) {
+        stream << indentation_base
+               << "template<typename Stream>\n"
+               << indentation_base
+               << "bool __write_type(const "
+               << "__internal__umison"
+               << additional_string
+               << "::"
+               << element.first
+               << " &arr, std::string &out_str, Stream &ss);\n";
+      }
+    }
+
+    template<typename stream_out>
+    void implement_type_declaration_writer_custom_types(
+        std::shared_ptr<umi::umixml> &ff,
+        stream_out &stream,
+        int indentation_level,
+        const std::string &indentation) {
+      std::string indentation_base;
+      std::string indentation_base_1p;
+      std::string indentation_base_2p;
+      std::string additional_string;
+
+      if (!m_additional_string.empty()) {
+        additional_string += "::";
+        additional_string += m_additional_string;
+      }
+
+      for (int i = 0; i < indentation_level; ++i) {
+        indentation_base += indentation;
+      }
+      indentation_base_1p = indentation_base + indentation;
+      indentation_base_2p = indentation_base_1p + indentation;
+
+      for (auto &element : ff->getClassMap()) {
+        stream << indentation_base
+               << "template<typename Stream>\n"
+               << indentation_base
+               << "bool __write_type(const "
+               << "__internal__umison"
+               << additional_string
+               << "::"
+               << element.first
+               << " &arr, std::string &out_str, Stream &ss) {\n";
+        stream << indentation_base_1p
+               << "out_str += \"{\";\n";
+
+        for (auto &element_child : element.second->getChildren()) {
+          stream << indentation_base_1p
+                 << "if (!__write_type(\""
+                 << element_child->name()
+                 << "\", out_str, ss)) { return false; }\n"
+                 << indentation_base_1p
+                 << "out_str += \":\";\n"
+                 << indentation_base_1p
+                 << "if (!__write_type("
+                 << umi::umixmltype::attribute_prepocess(element_child->name())
+                 << ", out_str, ss)) { return false; }\n\n";
+        }
+        stream << indentation_base_1p
+               << "out_str += \"}\";\n";
+        stream << indentation_base
+               << "}\n\n";
+      }
+
+    }
+
+    template<typename stream_out>
+    void implement_type_declaration_writer_list(
+        stream_out &stream, int indentation_level, const std::string &indentation) {
+      std::string indentation_base;
+      std::string indentation_base_1p;
+      std::string indentation_base_2p;
+      for (int i = 0; i < indentation_level; ++i) {
+        indentation_base += indentation;
+      }
+      indentation_base_1p = indentation_base + indentation;
+      indentation_base_2p = indentation_base_1p + indentation;
+
+      stream << indentation_base
+             << "template<typename Stream>\n"
+             << indentation_base
+             << "bool __write_type(const std::vector<bool> &arr, std::string &out_str, Stream &ss) {\n"
+             << indentation_base_1p
+             << "out_str += \"[\";\n"
+             << indentation_base_1p
+             << "std::size_t position;\n"
+             << indentation_base_1p
+             << "for (position = 0; position < arr.size(); ++position) { \n"
+             << indentation_base_2p
+             << "if (position > 0) { out_str += \",\"; }\n"
+             << indentation_base_2p
+             << "__write_type(static_cast<bool>(arr[position]), out_str, ss);\n"
+             << indentation_base_1p
+             << "}\n"
+             << indentation_base_1p
+             << "out_str += \"]\";\n"
+             << indentation_base_1p
+             << "return true;\n"
+             << indentation_base
+             << "}\n\n";
+      stream << indentation_base
+             << "template<typename Type, typename Stream>\n"
+             << indentation_base
+             << "bool __write_type(const std::vector<Type> &arr, std::string &out_str, Stream &ss) {\n"
+             << indentation_base_1p
+             << "out_str += \"[\";\n"
+             << indentation_base_1p
+             << "std::size_t position;\n"
+             << indentation_base_1p
+             << "for (position = 0; position < arr.size(); ++position) { \n"
+             << indentation_base_2p
+             << "if (position > 0) { out_str += \",\"; }\n"
+             << indentation_base_2p
+             << "if (!__write_type(arr[position], out_str, ss)) { return false; }\n"
+             << indentation_base_1p
+             << "}\n"
+             << indentation_base_1p
+             << "out_str += \"]\";\n"
+             << indentation_base_1p
+             << "return true;\n"
+             << indentation_base
+             << "}\n\n";
+    }
+
+    template<typename stream_out>
+    void implement_type_declaration_writer_map(
+        stream_out &stream, int indentation_level, const std::string &indentation) {
+      std::string indentation_base;
+      std::string indentation_base_1p;
+      std::string indentation_base_2p;
+      for (int i = 0; i < indentation_level; ++i) {
+        indentation_base += indentation;
+      }
+      indentation_base_1p = indentation_base + indentation;
+      indentation_base_2p = indentation_base_1p + indentation;
+      stream << indentation_base
+             << "template<typename Type, typename Stream>\n"
+             << indentation_base
+             << "bool __write_type(const std::map<std::string, Type> &arr, std::string &out_str, Stream &ss) {\n"
+             << indentation_base_1p
+             << "out_str += \"{\";\n"
+             << indentation_base_1p
+             << "std::size_t position;\n"
+             << indentation_base_1p
+             << "for (std::map<std::string, Type::const_iterator it = arr.begin(), position = 0; it != arr.end(); ++it, ++position) { \n"
+             << indentation_base_2p
+             << "if (position > 0) { out_str += \",\"; }\n"
+             << indentation_base_2p
+             << "if (!__write_type(it->first, out_str, ss)) { return false; }\n"
+             << indentation_base_2p
+             << "out_str += \":\";\n"
+             << indentation_base_2p
+             << "if (!__write_type(it->second, out_str, ss)) { return false; }\n"
+             << indentation_base_1p
+             << "}\n"
+             << indentation_base_1p
+             << "out_str += \"}\";\n"
+             << indentation_base_1p
+             << "return true;\n"
+             << indentation_base
+             << "}\n\n";
+    }
+    template<typename stream_out>
+    void forward_type_declaration_writer(const std::string &type, stream_out &stream,
+                                         int indentation_level, const std::string &indentation) {
+      for (int i = 0; i < indentation_level; ++i) {
+        stream << indentation;
+      }
+      stream << "template<typename Stream>\n";
+      for (int i = 0; i < indentation_level; ++i) {
+        stream << indentation;
+      }
+      stream << "bool __write_type(const " << type << " &arr, std::string &out_str, Stream &ss);\n";
+    }
+
+    template<typename stream_out>
+    void forward_list_declaration_writter(stream_out &stream, int indentation_level, const std::string &indentation) {
+      for (int i = 0; i < indentation_level; ++i) {
+        stream << indentation;
+      }
+      stream << "template<typename Stream>\n";
+      for (int i = 0; i < indentation_level; ++i) {
+        stream << indentation;
+      }
+      stream << "bool __write_type(const std::vector<bool> &arr, std::string &out_str, Stream &ss);\n";
+      for (int i = 0; i < indentation_level; ++i) {
+        stream << indentation;
+      }
+      stream << "template<typename Type, typename Stream>\n";
+      for (int i = 0; i < indentation_level; ++i) {
+        stream << indentation;
+      }
+      stream << "bool __write_type(const std::vector<Type> &arr, std::string &out_str, Stream &ss);\n";
+    }
+
+    template<typename stream_out>
+    void forward_map_declaration_writter(stream_out &stream, int indentation_level, const std::string &indentation) {
+      for (int i = 0; i < indentation_level; ++i) {
+        stream << indentation;
+      }
+      stream << "template<typename Type, typename Stream>\n";
+      for (int i = 0; i < indentation_level; ++i) {
+        stream << indentation;
+      }
+      stream << "bool __write_type(const std::map<std::string, Type> &arr, std::string &out_str, Stream &ss);\n";
+    }
+
+    template<typename stream_out>
+    void print_write_data_common_string(std::shared_ptr<umi::umixml> &ff, stream_out &stream) {
+      int actual_ind = 0;
+      std::vector<std::string> basic_types { "bool", "int" , "long long int", "double", "std::string" };
+      std::string additional_string;
+      std::string indentation;
+      std::string indentation_1p(indentation + TABS);
+
+      if (!m_additional_string.empty()) {
+        additional_string += "::";
+        additional_string += m_additional_string;
+      }
+
+      stream << "namespace __internal__umison" << additional_string << " {\n\n";
+      actual_ind += 1;
+      // Create forward declarations from basic types
+      stream << indentation_1p << "// Forward declaration of writing functions\n";
+      for(auto &ty : basic_types) {
+        forward_type_declaration_writer(ty, stream, actual_ind, TABS);
+      }
+      forward_type_declaration_writer_custom_types(ff, stream, actual_ind, TABS);
+
+      forward_list_declaration_writter(stream, actual_ind, TABS);
+      forward_map_declaration_writter(stream, actual_ind, TABS);
+
+      stream << "\n";
+      implement_type_declaration_writer_basic_types(stream, actual_ind, TABS);
+      implement_type_declaration_writer_custom_types(ff, stream, actual_ind, TABS);
+      implement_type_declaration_writer_list(stream, actual_ind, TABS);
+      implement_type_declaration_writer_map(stream, actual_ind, TABS);
+
+      actual_ind -= 1;
+      // close namespace
+      stream << "}\n\n";
+    }
+
+    template<typename stream_out>
     void print_write_data_on_string(std::shared_ptr<umi::umixml> &ff, stream_out &stream) {
       int actual_ind = 0;
       std::string additional_string;
